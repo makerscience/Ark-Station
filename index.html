@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ark Station</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0f;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 15px;
+        }
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        @media (max-width: 700px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff8855;
+        }
+        .panel {
+            background: #111118;
+            border: 1px solid #00ff8833;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .panel-title {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .stat {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 12px;
+        }
+        .system {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #222;
+        }
+        .system:last-child {
+            border-bottom: none;
+        }
+        .system-info {
+            flex: 1;
+        }
+        .system-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .integrity-bar {
+            width: 450px;
+            max-width: 100%;
+            height: 10px;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .integrity-fill {
+            height: 100%;
+            background: #00ff88;
+            transition: width 0.3s;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .integrity-fill.warning {
+            background: #ffaa00;
+        }
+        .integrity-fill.critical {
+            background: #ff4444;
+        }
+        .integrity-locked {
+            height: 100%;
+            background: #111;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: width 0.3s;
+        }
+        .power-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .power-btn {
+            width: 30px;
+            height: 30px;
+            background: #222;
+            border: 1px solid #00ff8855;
+            color: #00ff88;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .power-btn:hover {
+            background: #00ff8822;
+        }
+        .power-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .power-display {
+            font-size: 16px;
+            min-width: 60px;
+            text-align: center;
+        }
+        .control-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background: #00ff8822;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .control-btn:hover {
+            background: #00ff8844;
+        }
+        .death-rate {
+            color: #ff4444;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .repair-target {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .target-btn {
+            padding: 4px 8px;
+            background: #222;
+            border: 1px solid #00ff8855;
+            color: #666;
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: inherit;
+        }
+        .target-btn:hover {
+            background: #00ff8822;
+            color: #00ff88;
+        }
+        .target-btn.active {
+            background: #00aaff33;
+            border-color: #00aaff;
+            color: #00aaff;
+        }
+        .system.repairing .system-name::after {
+            content: ' [REPAIRING]';
+            color: #00aaff;
+            font-size: 11px;
+        }
+        .orbital-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .distance {
+            font-size: 18px;
+        }
+        .distance.far { color: #00ff88; }
+        .distance.near { color: #ffaa00; }
+        .distance.critical { color: #ff4444; }
+        .radiation-warning {
+            font-size: 11px;
+            color: #ff4444;
+            margin-top: 5px;
+        }
+        /* Orbital Visualization */
+        .orbital-visual {
+            position: relative;
+            height: 60px;
+            margin: 10px 0;
+            background: linear-gradient(to right, #0a0a0f 0%, #1a0a0a 70%, #331100 100%);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .orbital-track {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            right: 50px;
+            height: 2px;
+            background: #333;
+            transform: translateY(-50%);
+        }
+        .orbital-track::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            background: #ff4400;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff4400, 0 0 20px #ff2200;
+        }
+        .roche-limit {
+            position: absolute;
+            right: 45px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ff4444;
+            opacity: 0.5;
+        }
+        .roche-label {
+            position: absolute;
+            right: 35px;
+            top: 5px;
+            font-size: 8px;
+            color: #ff4444;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        .sun-glow {
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ff6600 0%, #ff4400 30%, transparent 70%);
+            border-radius: 50%;
+        }
+        .ark-station {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 2px;
+            box-shadow: 0 0 8px #00ff88;
+            transition: left 0.5s ease-out;
+        }
+        .ark-station::before,
+        .ark-station::after {
+            content: '';
+            position: absolute;
+            background: #00aa66;
+        }
+        .ark-station::before {
+            top: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 3px;
+        }
+        .ark-station::after {
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 3px;
+        }
+        .ark-station.critical {
+            background: #ff4444;
+            box-shadow: 0 0 8px #ff4444;
+            animation: stationPulse 0.5s infinite;
+        }
+        @keyframes stationPulse {
+            50% { opacity: 0.5; }
+        }
+        .solar-forecast {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .forecast-status {
+            font-size: 16px;
+        }
+        .forecast-status.clear { color: #00ff88; }
+        .forecast-status.warning { color: #ffaa00; }
+        .forecast-status.imminent { color: #ff4444; animation: blink 0.5s infinite; }
+        .forecast-status.active { color: #ff0000; animation: blink 0.25s infinite; }
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+        .flare-damage {
+            font-size: 11px;
+            color: #ff8800;
+            margin-top: 5px;
+        }
+        .button-row {
+            display: flex;
+            gap: 10px;
+        }
+        .button-row .control-btn {
+            flex: 1;
+        }
+        .research-btn {
+            background: #4444aa22;
+            border-color: #6666ff;
+            color: #8888ff;
+        }
+        .research-btn:hover {
+            background: #4444aa44;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: #111118;
+            border: 1px solid #6666ff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            color: #8888ff;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .command-level {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .command-level .level {
+            font-size: 36px;
+            color: #8888ff;
+        }
+        .upgrade-list {
+            margin-bottom: 20px;
+        }
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #0a0a0f;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+        .upgrade-item.available {
+            border-color: #6666ff;
+        }
+        .upgrade-item.purchased {
+            border-color: #00ff88;
+            opacity: 0.6;
+        }
+        .upgrade-info {
+            flex: 1;
+        }
+        .upgrade-name {
+            color: #ddd;
+            margin-bottom: 4px;
+        }
+        .upgrade-desc {
+            color: #666;
+            font-size: 11px;
+        }
+        .upgrade-cost {
+            color: #ffaa00;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .upgrade-btn {
+            padding: 6px 12px;
+            background: #6666ff22;
+            border: 1px solid #6666ff;
+            color: #8888ff;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 12px;
+        }
+        .upgrade-btn:hover {
+            background: #6666ff44;
+        }
+        .upgrade-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .close-btn {
+            width: 100%;
+            padding: 10px;
+            background: #333;
+            border: 1px solid #666;
+            color: #aaa;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .close-btn:hover {
+            background: #444;
+        }
+        .researching-indicator {
+            color: #8888ff;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 5px;
+            animation: blink 1s infinite;
+        }
+        /* Research Tree Styles */
+        .level-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #0a0a12;
+            border-radius: 4px;
+            border-left: 3px solid #333;
+        }
+        .level-section.current {
+            border-left-color: #6666ff;
+        }
+        .level-section.locked {
+            opacity: 0.5;
+        }
+        .level-header {
+            color: #888;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #222;
+        }
+        .level-section.current .level-header {
+            color: #8888ff;
+        }
+        .upgrade-item.gate-upgrade {
+            background: #12101a;
+            border-color: #8866ff;
+        }
+        .upgrade-item.gate-upgrade.available {
+            border-color: #aa88ff;
+            box-shadow: 0 0 10px #6644aa44;
+        }
+        .upgrade-item.gate-upgrade .upgrade-name {
+            color: #aa88ff;
+        }
+        /* Intro Screen */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+        .intro-overlay.hidden {
+            display: none;
+        }
+        /* Story Phase */
+        .intro-story {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding-top: 15vh;
+            padding-bottom: 80px;
+            overflow-y: auto;
+        }
+        .intro-story.hidden {
+            display: none;
+        }
+        .story-paragraph {
+            color: #888;
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 2s ease-in;
+            padding: 0 20px;
+        }
+        .story-paragraph.visible {
+            opacity: 1;
+        }
+        .skip-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #333;
+            color: #444;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .skip-btn:hover {
+            border-color: #666;
+            color: #888;
+        }
+        .continue-btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid #00ff8855;
+            color: #00ff88;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 4px;
+            transition: all 0.3s;
+            opacity: 0;
+            margin-top: 20px;
+        }
+        .continue-btn.visible {
+            opacity: 1;
+        }
+        .continue-btn:hover {
+            background: #00ff8822;
+            border-color: #00ff88;
+        }
+        /* Reactor Phase */
+        .intro-reactor {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        .intro-reactor.visible {
+            display: flex;
+        }
+        .intro-title {
+            font-size: 32px;
+            color: #00ff88;
+            text-shadow: 0 0 20px #00ff8855;
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+        .intro-title.visible {
+            opacity: 1;
+        }
+        .intro-text {
+            color: #666;
+            text-align: center;
+            max-width: 400px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .reactor-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #220000;
+            border: 3px solid #440000;
+            color: #ff4444;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.1s;
+        }
+        .reactor-btn:hover {
+            background: #330000;
+            border-color: #660000;
+        }
+        .reactor-btn.active {
+            background: #003300;
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 30px #00ff8855;
+        }
+        .intro-progress {
+            margin-top: 20px;
+            color: #444;
+            font-size: 12px;
+        }
+        /* Cryo-Log */
+        .cryo-log {
+            max-height: 80px;
+            overflow-y: auto;
+            font-size: 11px;
+            color: #666;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #222;
+        }
+        .log-entry {
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+        .log-entry.recent {
+            color: #ff6666;
+            opacity: 1;
+        }
+        /* System Status */
+        .system-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .system-status.online { color: #00ff88; }
+        .system-status.stressed { color: #ffaa00; }
+        .system-status.critical { color: #ff4444; }
+        .system-status.offline { color: #666; }
+        /* Ending Screen */
+        .ending-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+        .ending-overlay.active {
+            display: flex;
+        }
+        .ending-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .ending-title.victory { color: #00ff88; }
+        .ending-title.partial { color: #ffaa00; }
+        .ending-title.defeat { color: #ff4444; }
+        .ending-stats {
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        .ending-message {
+            color: #888;
+            text-align: center;
+            max-width: 400px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        .restart-btn {
+            padding: 15px 40px;
+            background: #222;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .restart-btn:hover {
+            background: #00ff8822;
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div class="intro-overlay" id="introOverlay">
+        <!-- Story Phase -->
+        <div class="intro-story" id="introStory">
+            <p class="story-paragraph" id="story1">You went to sleep dreaming of a new world. You woke to the violent screams of tearing metal and the howl of decompression. The hull has been breached.</p>
+            <p class="story-paragraph" id="story2">Helpless, you watch as hundreds of bodies are ripped from their stasis pods and flung into the vast darkness of space beyond. With seconds to spare, you claw your way free, slamming the emergency manual override as the air is sucked from your lungs. The breach seals. You survive. But the crew is all dead and you lack the command authorization to open any of the remaining pods. </p>
+            <p class="story-paragraph" id="story3">Ahead lies your destination. Closer than you expected. Ark station is only a few days away. It is meant to be your sanctuary, a foothold in a new solar system, built by machines before you even arrived. But as the Ark Ship draws closer, your hope sours. </p>
+            <p class="story-paragraph" id="story4">The station is a ruin, drifting perilously close to the burning star it orbits. There is no welcome beacon. No hail from the automatic systems. You dock with the silent hulk, stepping into a graveyard of cold, dark corridors. </p>
+            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. Thousands of colonists remain trapped in stasis, unaware their time is running out. Backup life support is failing. First hundreds will die, then thousands. </p>
+            <p class="story-paragraph" id="story6">You stand before the silent reactor. It has to start, or everyone is going to die here. </p>
+            <button class="continue-btn" id="continueBtn">CONTINUE</button>
+            <button class="skip-btn" id="skipBtn">SKIP</button>
+        </div>
+        <!-- Reactor Phase -->
+        <div class="intro-reactor" id="introReactor">
+            <button class="reactor-btn" id="reactorBtn">REACTOR<br>OFFLINE</button>
+            <div class="intro-progress" id="introProgress"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>ARK STATION</h1>
+
+        <div class="main-layout">
+            <div class="left-column">
+                <div class="panel">
+                    <div class="panel-title">Survivors</div>
+                    <div class="stat"><span id="survivors">10,000</span></div>
+                    <div class="stat-label">Souls in Cryogenic Stasis</div>
+                    <div class="death-rate" id="deathRate"></div>
+                    <div class="cryo-log" id="cryoLog"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Power Grid</div>
+                    <div class="stat"><span id="powerAllocated">0</span> / <span id="powerTotal">5</span></div>
+                    <div class="stat-label">Allocated / Total Power Units</div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Systems</div>
+            <div class="system" id="reactorSystem">
+                <div class="system-info">
+                    <div class="system-name">Reactor Core</div>
+                    <div class="integrity-bar">
+                        <div class="integrity-fill" id="reactorIntegrity" style="width: 20%"></div>
+                        <div class="integrity-locked" id="reactorLocked" style="width: 80%"></div>
+                    </div>
+                    <div class="stat-label">Integrity: <span id="reactorIntegrityText">20%</span> → <span id="reactorOutput">5</span> power</div>
+                    <div class="system-status critical" id="reactorStatus">CRITICAL</div>
+                </div>
+                <div class="power-controls">
+                    <span class="stat-label" style="color: #666;">No allocation</span>
+                </div>
+            </div>
+            <div class="system" id="stasisSystem">
+                <div class="system-info">
+                    <div class="system-name">Stasis Pod Life Support</div>
+                    <div class="integrity-bar">
+                        <div class="integrity-fill" id="stasisIntegrity" style="width: 20%"></div>
+                        <div class="integrity-locked" id="stasisLocked" style="width: 80%"></div>
+                    </div>
+                    <div class="stat-label">Integrity: <span id="stasisIntegrityText">20%</span></div>
+                    <div class="system-status critical" id="stasisStatus">CRITICAL</div>
+                </div>
+                <div class="power-controls">
+                    <button class="power-btn" id="stasisMinus">−</button>
+                    <div class="power-display"><span id="stasisPower">0</span> ⚡</div>
+                    <button class="power-btn" id="stasisPlus">+</button>
+                </div>
+            </div>
+            <div class="system" id="thrustersSystem">
+                <div class="system-info">
+                    <div class="system-name">Orbital Thrusters</div>
+                    <div class="integrity-bar">
+                        <div class="integrity-fill" id="thrustersIntegrity" style="width: 20%"></div>
+                        <div class="integrity-locked" id="thrustersLocked" style="width: 80%"></div>
+                    </div>
+                    <div class="stat-label">Integrity: <span id="thrustersIntegrityText">20%</span></div>
+                    <div class="system-status critical" id="thrustersStatus">CRITICAL</div>
+                </div>
+                <div class="power-controls">
+                    <button class="power-btn" id="thrustersMinus">−</button>
+                    <div class="power-display"><span id="thrustersPower">0</span> ⚡</div>
+                    <button class="power-btn" id="thrustersPlus">+</button>
+                </div>
+            </div>
+            <div class="system" id="shieldSystem">
+                <div class="system-info">
+                    <div class="system-name">Solar Shield Matrix</div>
+                    <div class="integrity-bar">
+                        <div class="integrity-fill" id="shieldIntegrity" style="width: 20%"></div>
+                        <div class="integrity-locked" id="shieldLocked" style="width: 80%"></div>
+                    </div>
+                    <div class="stat-label">Integrity: <span id="shieldIntegrityText">20%</span></div>
+                    <div class="system-status critical" id="shieldStatus">CRITICAL</div>
+                </div>
+                <div class="power-controls">
+                    <button class="power-btn" id="shieldMinus">−</button>
+                    <div class="power-display"><span id="shieldPower">0</span> ⚡</div>
+                    <button class="power-btn" id="shieldPlus">+</button>
+                </div>
+            </div>
+            <div class="system">
+                <div class="system-info">
+                    <div class="system-name">Repair Drones</div>
+                    <div class="repair-target">
+                        <span class="stat-label">Target:</span>
+                        <button class="target-btn active" id="targetReactor">Reactor</button>
+                        <button class="target-btn" id="targetStasis">Stasis</button>
+                        <button class="target-btn" id="targetThrusters">Thrusters</button>
+                        <button class="target-btn" id="targetShield">Shield</button>
+                    </div>
+                </div>
+                <div class="power-controls">
+                    <button class="power-btn" id="dronesMinus">−</button>
+                    <div class="power-display"><span id="dronesPower">0</span> ⚡</div>
+                    <button class="power-btn" id="dronesPlus">+</button>
+                </div>
+            </div>
+                </div>
+
+                <div class="button-row">
+                    <button class="control-btn" id="startPause">START</button>
+                    <button class="control-btn research-btn" id="researchBtn">RESEARCH</button>
+                </div>
+                <div class="researching-indicator" id="researchingIndicator"></div>
+            </div>
+
+            <div class="right-column">
+                <div class="panel">
+                    <div class="panel-title">Orbital Status</div>
+                    <div class="orbital-visual">
+                        <div class="sun-glow"></div>
+                        <div class="orbital-track"></div>
+                        <div class="roche-limit"></div>
+                        <div class="roche-label">ROCHE</div>
+                        <div class="ark-station" id="arkStation"></div>
+                    </div>
+                    <div class="orbital-status">
+                        <div>
+                            <div class="stat-label">Distance to Roche Limit</div>
+                            <div class="distance far" id="orbitalDistance">FAR</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="stat-label">Orbital Decay</div>
+                            <div id="orbitalDecay">0.0</div>
+                        </div>
+                    </div>
+                    <div class="radiation-warning" id="radiationWarning"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Solar Forecast</div>
+                    <div class="solar-forecast">
+                        <div>
+                            <div class="stat-label">Status</div>
+                            <div class="forecast-status clear" id="solarStatus">CLEAR</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="stat-label">Next Flare</div>
+                            <div id="nextFlare">--</div>
+                        </div>
+                    </div>
+                    <div class="flare-damage" id="flareDamage"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Research Modal -->
+    <div class="modal-overlay" id="researchModal">
+        <div class="modal">
+            <div class="modal-title">COMMAND AUTHORIZATION</div>
+            <div class="command-level">
+                <div class="stat-label">Current Level</div>
+                <div class="level" id="commandLevel">1</div>
+            </div>
+            <div class="upgrade-list" id="upgradeList"></div>
+            <button class="close-btn" id="closeResearch">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Ending Screen -->
+    <div class="ending-overlay" id="endingOverlay">
+        <div class="ending-title" id="endingTitle">MISSION COMPLETE</div>
+        <div class="ending-stats" id="endingStats"></div>
+        <div class="ending-message" id="endingMessage"></div>
+        <button class="restart-btn" id="restartBtn">TRY AGAIN</button>
+    </div>
+
+    <script>
+        // Upgrade definitions - structured as a tech tree
+        // Command Authorization upgrades gate each tier
+        const UPGRADES = [
+            // Level 1 -> 2 gate
+            { id: 'auth_2', name: 'Command Authorization 2', desc: 'Unlock Level 2 system upgrades', cost: 5, level: 1, unlocksLevel: 2, isGate: true },
+
+            // Level 2 upgrades (require auth_2)
+            { id: 'reactor_cap_1', name: 'Reactor Reinforcement I', desc: 'Unlock reactor potential (60% max integrity)', cost: 10, level: 2, system: 'reactor', capBonus: 40 },
+            { id: 'stasis_cap_1', name: 'Stasis Hardening I', desc: 'Unlock stasis potential (60% max integrity)', cost: 10, level: 2, system: 'stasis', capBonus: 40 },
+
+            // Level 2 -> 3 gate
+            { id: 'auth_3', name: 'Command Authorization 3', desc: 'Unlock Level 3 system upgrades', cost: 10, level: 2, unlocksLevel: 3, isGate: true },
+
+            // Level 3 upgrades (require auth_3)
+            { id: 'power_1', name: 'Reactor Upgrade I', desc: 'Increase max power output to 6', cost: 15, level: 3, powerBonus: 1 },
+            { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (60% max integrity)', cost: 12, level: 3, system: 'thrusters', capBonus: 40 },
+            { id: 'shield_cap_1', name: 'Shield Reinforcement I', desc: 'Unlock shield potential (60% max integrity)', cost: 12, level: 3, system: 'shield', capBonus: 40 },
+
+            // Level 3 -> 4 gate
+            { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 15, level: 3, unlocksLevel: 4, isGate: true },
+
+            // Level 4 upgrades (require auth_4)
+            { id: 'reactor_cap_2', name: 'Reactor Reinforcement II', desc: 'Maximize reactor potential (100% max integrity)', cost: 20, level: 4, system: 'reactor', capBonus: 40 },
+            { id: 'stasis_cap_2', name: 'Stasis Hardening II', desc: 'Maximize stasis potential (100% max integrity)', cost: 20, level: 4, system: 'stasis', capBonus: 40 },
+
+            // Level 4 -> 5 gate
+            { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 20, level: 4, unlocksLevel: 5, isGate: true },
+
+            // Level 5 upgrades (require auth_5)
+            { id: 'power_2', name: 'Reactor Upgrade II', desc: 'Increase max power output to 7', cost: 25, level: 5, powerBonus: 1 },
+            { id: 'repair_boost', name: 'Drone Efficiency', desc: 'Drones repair 50% faster', cost: 20, level: 5, repairBoost: 0.5 },
+
+            // Level 5 -> 6 gate
+            { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 25, level: 5, unlocksLevel: 6, isGate: true },
+
+            // Level 6 upgrades (require auth_6)
+            { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Maximize thruster potential (100% max integrity)', cost: 25, level: 6, system: 'thrusters', capBonus: 40 },
+            { id: 'shield_cap_2', name: 'Shield Reinforcement II', desc: 'Maximize shield potential (100% max integrity)', cost: 25, level: 6, system: 'shield', capBonus: 40 },
+
+            // Level 6 -> 7 gate
+            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 30, level: 6, unlocksLevel: 7, isGate: true },
+
+            // Level 7 upgrade (require auth_7)
+            { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 30, level: 7, unlocksFinal: true }
+        ];
+
+        // Game State
+        const gameState = {
+            power: { total: 5, maxPower: 5, allocated: { stasis: 0, thrusters: 0, shield: 0, drones: 0 } },
+            survivors: 10000,
+            systems: {
+                reactor: { integrity: 20, maxIntegrity: 20 },
+                stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
+                thrusters: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
+                shield: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
+                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.8 }
+            },
+            orbital: {
+                distance: 100, // 100 = far, 66 = near, 33 = critical, 0 = destruction
+                decayRate: 0
+            },
+            solar: {
+                nextFlare: 30 + Math.floor(Math.random() * 210), // 30-240 ticks (30s to 4min)
+                flareActive: false,
+                flareDuration: 0,
+                lastDamage: 0
+            },
+            research: {
+                commandLevel: 1,
+                purchased: [],
+                inProgress: null,
+                timeRemaining: 0
+            },
+            intro: {
+                active: true,
+                phase: 'story', // 'story' or 'reactor'
+                storyStep: 0,
+                storyTimers: [],
+                clicks: 0,
+                requiredClicks: 10
+            },
+            cryoLog: [],
+            initialSurvivors: 10000,
+            gameOver: false,
+            victory: false,
+            paused: true,
+            lastDeaths: 0
+        };
+
+        // Death messages for cryo-log
+        const DEATH_MESSAGES = [
+            "Pod #{pod} life support failed",
+            "Cryo-loss in sector {sector}",
+            "Emergency thaw failure: Pod #{pod}",
+            "Cascade failure: {count} pods offline",
+            "Stasis breach in bay {sector}",
+            "Power fluctuation: Pod #{pod} lost",
+            "Thermal runaway: Sector {sector}",
+            "Life signs terminated: Pod #{pod}"
+        ];
+
+        // DOM Elements
+        const els = {
+            powerAllocated: document.getElementById('powerAllocated'),
+            powerTotal: document.getElementById('powerTotal'),
+            survivors: document.getElementById('survivors'),
+            deathRate: document.getElementById('deathRate'),
+            orbitalDistance: document.getElementById('orbitalDistance'),
+            orbitalDecay: document.getElementById('orbitalDecay'),
+            radiationWarning: document.getElementById('radiationWarning'),
+            solarStatus: document.getElementById('solarStatus'),
+            nextFlare: document.getElementById('nextFlare'),
+            flareDamage: document.getElementById('flareDamage'),
+            reactorSystem: document.getElementById('reactorSystem'),
+            reactorIntegrity: document.getElementById('reactorIntegrity'),
+            reactorLocked: document.getElementById('reactorLocked'),
+            reactorIntegrityText: document.getElementById('reactorIntegrityText'),
+            reactorOutput: document.getElementById('reactorOutput'),
+            stasisSystem: document.getElementById('stasisSystem'),
+            stasisIntegrity: document.getElementById('stasisIntegrity'),
+            stasisLocked: document.getElementById('stasisLocked'),
+            stasisIntegrityText: document.getElementById('stasisIntegrityText'),
+            stasisPower: document.getElementById('stasisPower'),
+            stasisMinus: document.getElementById('stasisMinus'),
+            stasisPlus: document.getElementById('stasisPlus'),
+            thrustersSystem: document.getElementById('thrustersSystem'),
+            thrustersIntegrity: document.getElementById('thrustersIntegrity'),
+            thrustersLocked: document.getElementById('thrustersLocked'),
+            thrustersIntegrityText: document.getElementById('thrustersIntegrityText'),
+            thrustersPower: document.getElementById('thrustersPower'),
+            thrustersMinus: document.getElementById('thrustersMinus'),
+            thrustersPlus: document.getElementById('thrustersPlus'),
+            shieldSystem: document.getElementById('shieldSystem'),
+            shieldIntegrity: document.getElementById('shieldIntegrity'),
+            shieldLocked: document.getElementById('shieldLocked'),
+            shieldIntegrityText: document.getElementById('shieldIntegrityText'),
+            shieldPower: document.getElementById('shieldPower'),
+            shieldMinus: document.getElementById('shieldMinus'),
+            shieldPlus: document.getElementById('shieldPlus'),
+            dronesPower: document.getElementById('dronesPower'),
+            dronesMinus: document.getElementById('dronesMinus'),
+            dronesPlus: document.getElementById('dronesPlus'),
+            targetReactor: document.getElementById('targetReactor'),
+            targetStasis: document.getElementById('targetStasis'),
+            targetThrusters: document.getElementById('targetThrusters'),
+            targetShield: document.getElementById('targetShield'),
+            startPause: document.getElementById('startPause'),
+            researchBtn: document.getElementById('researchBtn'),
+            researchModal: document.getElementById('researchModal'),
+            commandLevel: document.getElementById('commandLevel'),
+            upgradeList: document.getElementById('upgradeList'),
+            closeResearch: document.getElementById('closeResearch'),
+            researchingIndicator: document.getElementById('researchingIndicator'),
+            // Intro elements
+            introOverlay: document.getElementById('introOverlay'),
+            introStory: document.getElementById('introStory'),
+            introReactor: document.getElementById('introReactor'),
+            story1: document.getElementById('story1'),
+            story2: document.getElementById('story2'),
+            story3: document.getElementById('story3'),
+            story4: document.getElementById('story4'),
+            story5: document.getElementById('story5'),
+            story6: document.getElementById('story6'),
+            continueBtn: document.getElementById('continueBtn'),
+            skipBtn: document.getElementById('skipBtn'),
+            reactorBtn: document.getElementById('reactorBtn'),
+            introProgress: document.getElementById('introProgress'),
+            cryoLog: document.getElementById('cryoLog'),
+            reactorStatus: document.getElementById('reactorStatus'),
+            stasisStatus: document.getElementById('stasisStatus'),
+            thrustersStatus: document.getElementById('thrustersStatus'),
+            shieldStatus: document.getElementById('shieldStatus'),
+            endingOverlay: document.getElementById('endingOverlay'),
+            endingTitle: document.getElementById('endingTitle'),
+            endingStats: document.getElementById('endingStats'),
+            endingMessage: document.getElementById('endingMessage'),
+            restartBtn: document.getElementById('restartBtn'),
+            arkStation: document.getElementById('arkStation')
+        };
+
+        // Get total allocated power
+        function getTotalAllocated() {
+            return Object.values(gameState.power.allocated).reduce((a, b) => a + b, 0);
+        }
+
+        // Generate cryo-log death message
+        function generateDeathMessage(deaths) {
+            const msg = DEATH_MESSAGES[Math.floor(Math.random() * DEATH_MESSAGES.length)];
+            const pod = Math.floor(Math.random() * 9000) + 1000;
+            const sector = String.fromCharCode(65 + Math.floor(Math.random() * 8)) + Math.floor(Math.random() * 9 + 1);
+            return msg.replace('{pod}', pod).replace('{sector}', sector).replace('{count}', deaths);
+        }
+
+        // Add entry to cryo-log
+        function addCryoLogEntry(message) {
+            gameState.cryoLog.unshift({ message, recent: true });
+            if (gameState.cryoLog.length > 10) {
+                gameState.cryoLog.pop();
+            }
+            // Mark all but first as not recent after a tick
+            setTimeout(() => {
+                if (gameState.cryoLog.length > 0) {
+                    gameState.cryoLog[0].recent = false;
+                    renderCryoLog();
+                }
+            }, 2000);
+            renderCryoLog();
+        }
+
+        // Render cryo-log
+        function renderCryoLog() {
+            els.cryoLog.innerHTML = gameState.cryoLog.map(entry =>
+                `<div class="log-entry ${entry.recent ? 'recent' : ''}">${entry.message}</div>`
+            ).join('');
+        }
+
+        // Get system status text and class
+        function getSystemStatus(integrity) {
+            if (integrity <= 0) return { text: 'OFFLINE', class: 'offline' };
+            if (integrity < 25) return { text: 'CRITICAL', class: 'critical' };
+            if (integrity < 50) return { text: 'STRESSED', class: 'stressed' };
+            return { text: 'ONLINE', class: 'online' };
+        }
+
+        // Show ending screen
+        function showEnding() {
+            const survivors = gameState.survivors;
+            const initial = gameState.initialSurvivors;
+            const percent = Math.round((survivors / initial) * 100);
+
+            let title, titleClass, message;
+
+            if (survivors === 0) {
+                title = 'MISSION FAILED';
+                titleClass = 'defeat';
+                message = 'The last pod has gone dark. No one remains to remember Earth.';
+            } else if (percent >= 90) {
+                title = 'MISSION COMPLETE';
+                titleClass = 'victory';
+                message = 'Against all odds, you saved nearly everyone. Humanity will remember this day.';
+            } else if (percent >= 50) {
+                title = 'MISSION COMPLETE';
+                titleClass = 'partial';
+                message = 'The colony will survive, but at a great cost. The losses will haunt you forever.';
+            } else if (percent >= 10) {
+                title = 'PYRRHIC VICTORY';
+                titleClass = 'partial';
+                message = 'A handful survived. Is it enough to rebuild? Only time will tell.';
+            } else {
+                title = 'NEAR TOTAL LOSS';
+                titleClass = 'defeat';
+                message = 'A few souls cling to life. The Ark is but a tomb now.';
+            }
+
+            els.endingTitle.textContent = title;
+            els.endingTitle.className = 'ending-title ' + titleClass;
+            els.endingStats.innerHTML = `
+                <div>Initial Colonists: ${initial.toLocaleString()}</div>
+                <div>Survivors: ${survivors.toLocaleString()}</div>
+                <div>Survival Rate: ${percent}%</div>
+            `;
+            els.endingMessage.textContent = message;
+            els.endingOverlay.classList.add('active');
+        }
+
+        // Restart game
+        function restartGame() {
+            // Reset game state
+            gameState.power.total = 5;
+            gameState.power.maxPower = 5;
+            gameState.power.allocated = { stasis: 0, thrusters: 0, shield: 0, drones: 0 };
+            gameState.survivors = 10000;
+            gameState.systems.reactor.integrity = 20;
+            gameState.systems.reactor.maxIntegrity = 20;
+            gameState.systems.stasis.integrity = 20;
+            gameState.systems.stasis.maxIntegrity = 20;
+            gameState.systems.stasis.powerAllocated = 0;
+            gameState.systems.thrusters.integrity = 20;
+            gameState.systems.thrusters.maxIntegrity = 20;
+            gameState.systems.thrusters.powerAllocated = 0;
+            gameState.systems.shield.integrity = 20;
+            gameState.systems.shield.maxIntegrity = 20;
+            gameState.systems.shield.powerAllocated = 0;
+            gameState.systems.drones.powerAllocated = 0;
+            gameState.systems.drones.target = 'reactor';
+            gameState.systems.drones.repairRate = 0.8;
+            gameState.orbital.distance = 100;
+            gameState.orbital.decayRate = 0;
+            gameState.solar.nextFlare = 30 + Math.floor(Math.random() * 210);
+            gameState.solar.flareActive = false;
+            gameState.solar.flareDuration = 0;
+            gameState.solar.lastDamage = 0;
+            gameState.research.commandLevel = 1;
+            gameState.research.purchased = [];
+            gameState.research.inProgress = null;
+            gameState.research.timeRemaining = 0;
+            gameState.intro.active = true;
+            gameState.intro.phase = 'story';
+            gameState.intro.storyStep = 0;
+            gameState.intro.storyTimers.forEach(t => clearTimeout(t));
+            gameState.intro.storyTimers = [];
+            gameState.intro.clicks = 0;
+            gameState.cryoLog = [];
+            gameState.gameOver = false;
+            gameState.victory = false;
+            gameState.paused = true;
+            gameState.lastDeaths = 0;
+
+            // Reset UI
+            els.startPause.textContent = 'START';
+            els.startPause.disabled = false;
+            els.endingOverlay.classList.remove('active');
+            els.introOverlay.classList.remove('hidden');
+
+            // Reset intro phases
+            els.introStory.classList.remove('hidden');
+            els.introReactor.classList.remove('visible');
+            els.story1.classList.remove('visible');
+            els.story2.classList.remove('visible');
+            els.story3.classList.remove('visible');
+            els.story4.classList.remove('visible');
+            els.story5.classList.remove('visible');
+            els.story6.classList.remove('visible');
+            els.continueBtn.classList.remove('visible');
+            els.reactorBtn.classList.remove('active');
+            els.reactorBtn.style.boxShadow = '';
+            els.reactorBtn.innerHTML = 'REACTOR<br>OFFLINE';
+            els.introProgress.textContent = '';
+
+            // Restart the story sequence
+            startStorySequence();
+            els.cryoLog.innerHTML = '';
+
+            updateUI();
+        }
+
+        // Helper to set integrity bar color
+        function setIntegrityColor(el, value) {
+            el.className = 'integrity-fill';
+            if (value < 25) {
+                el.classList.add('critical');
+            } else if (value < 50) {
+                el.classList.add('warning');
+            }
+        }
+
+        // Get distance label and class
+        function getDistanceInfo(distance) {
+            if (distance > 66) return { label: 'FAR', class: 'far' };
+            if (distance > 33) return { label: 'NEAR', class: 'near' };
+            return { label: 'CRITICAL', class: 'critical' };
+        }
+
+        // Render upgrade list in modal as a tree structure
+        function renderUpgradeList() {
+            const research = gameState.research;
+            els.commandLevel.textContent = research.commandLevel;
+
+            // Group upgrades by level
+            const levels = {};
+            for (const upgrade of UPGRADES) {
+                if (!levels[upgrade.level]) levels[upgrade.level] = [];
+                levels[upgrade.level].push(upgrade);
+            }
+
+            let html = '';
+            for (let level = 1; level <= 7; level++) {
+                if (!levels[level]) continue;
+
+                const isCurrentLevel = level === research.commandLevel;
+                const isUnlocked = level <= research.commandLevel;
+                const isFuture = level > research.commandLevel;
+
+                // Level header
+                html += `<div class="level-section ${isCurrentLevel ? 'current' : ''} ${isFuture ? 'locked' : ''}">
+                    <div class="level-header">Level ${level} ${isCurrentLevel ? '(Current)' : ''}</div>`;
+
+                for (const upgrade of levels[level]) {
+                    const isPurchased = research.purchased.includes(upgrade.id);
+                    const isAvailable = !isPurchased && upgrade.level <= research.commandLevel;
+
+                    let statusClass = '';
+                    if (isPurchased) statusClass = 'purchased';
+                    else if (isAvailable) statusClass = 'available';
+                    if (upgrade.isGate) statusClass += ' gate-upgrade';
+
+                    html += `<div class="upgrade-item ${statusClass}">
+                        <div class="upgrade-info">
+                            <div class="upgrade-name">${upgrade.isGate ? '🔓 ' : ''}${upgrade.name}</div>
+                            <div class="upgrade-desc">${upgrade.desc}</div>
+                        </div>
+                        <div class="upgrade-cost">${upgrade.cost}s</div>
+                        ${isPurchased ? '<span style="color:#00ff88">✓</span>' :
+                          !isAvailable ? `<span style="color:#666">Locked</span>` :
+                          `<button class="upgrade-btn" onclick="startResearch('${upgrade.id}')">RESEARCH</button>`}
+                    </div>`;
+                }
+                html += '</div>';
+            }
+            els.upgradeList.innerHTML = html;
+        }
+
+        // Start researching an upgrade
+        function startResearch(upgradeId) {
+            const upgrade = UPGRADES.find(u => u.id === upgradeId);
+            if (!upgrade || gameState.research.purchased.includes(upgradeId)) return;
+            if (upgrade.level > gameState.research.commandLevel) return;
+
+            gameState.research.inProgress = upgradeId;
+            gameState.research.timeRemaining = upgrade.cost;
+            els.researchModal.classList.remove('active');
+
+            // Unpause if paused
+            if (gameState.paused) {
+                gameState.paused = false;
+                els.startPause.textContent = 'PAUSE';
+            }
+        }
+
+        // Complete research
+        function completeResearch() {
+            const upgradeId = gameState.research.inProgress;
+            const upgrade = UPGRADES.find(u => u.id === upgradeId);
+            if (!upgrade) return;
+
+            gameState.research.purchased.push(upgradeId);
+            gameState.research.inProgress = null;
+
+            // Apply upgrade effects
+            if (upgrade.capBonus && upgrade.system) {
+                gameState.systems[upgrade.system].maxIntegrity += upgrade.capBonus;
+            }
+            if (upgrade.powerBonus) {
+                gameState.power.maxPower += upgrade.powerBonus;
+            }
+            if (upgrade.repairBoost) {
+                gameState.systems.drones.repairRate += upgrade.repairBoost;
+            }
+
+            // Gate upgrades unlock the next command level
+            if (upgrade.unlocksLevel) {
+                gameState.research.commandLevel = upgrade.unlocksLevel;
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            const totalAllocated = getTotalAllocated();
+            els.powerAllocated.textContent = totalAllocated;
+            els.powerTotal.textContent = gameState.power.total;
+            els.survivors.textContent = gameState.survivors.toLocaleString();
+
+            // Orbital status
+            const orbital = gameState.orbital;
+            const distInfo = getDistanceInfo(orbital.distance);
+            els.orbitalDistance.textContent = distInfo.label;
+            els.orbitalDistance.className = 'distance ' + distInfo.class;
+            els.orbitalDecay.textContent = orbital.decayRate.toFixed(1);
+
+            // Update ark station position in visualization
+            // Distance 100 = left (safe), Distance 0 = right (destroyed)
+            const stationPercent = 15 + ((100 - orbital.distance) * 0.65); // 15% to 80% of track
+            els.arkStation.style.left = stationPercent + '%';
+            els.arkStation.classList.toggle('critical', orbital.distance <= 33);
+
+            // Radiation warning based on distance
+            if (orbital.distance <= 33) {
+                els.radiationWarning.textContent = '⚠ EXTREME RADIATION - All systems taking damage!';
+            } else if (orbital.distance <= 66) {
+                els.radiationWarning.textContent = '⚠ High radiation - Systems degrading faster';
+            } else {
+                els.radiationWarning.textContent = '';
+            }
+
+            // Solar forecast
+            const solar = gameState.solar;
+            if (solar.flareActive) {
+                els.solarStatus.textContent = '☀ FLARE ACTIVE';
+                els.solarStatus.className = 'forecast-status active';
+                els.nextFlare.textContent = solar.flareDuration + 's left';
+            } else if (solar.nextFlare <= 5) {
+                els.solarStatus.textContent = 'IMMINENT';
+                els.solarStatus.className = 'forecast-status imminent';
+                els.nextFlare.textContent = solar.nextFlare + 's';
+            } else if (solar.nextFlare <= 15) {
+                els.solarStatus.textContent = 'WARNING';
+                els.solarStatus.className = 'forecast-status warning';
+                els.nextFlare.textContent = solar.nextFlare + 's';
+            } else {
+                els.solarStatus.textContent = 'CLEAR';
+                els.solarStatus.className = 'forecast-status clear';
+                els.nextFlare.textContent = solar.nextFlare + 's';
+            }
+
+            // Flare damage indicator
+            if (solar.flareActive && solar.lastDamage > 0) {
+                els.flareDamage.textContent = `☀ Solar flare dealing ${solar.lastDamage.toFixed(1)}% damage to all systems!`;
+            } else {
+                els.flareDamage.textContent = '';
+            }
+
+            // Reactor system
+            const reactor = gameState.systems.reactor;
+            const reactorFillPercent = (reactor.integrity / reactor.maxIntegrity) * 100;
+            els.reactorIntegrity.style.width = reactor.integrity + '%';
+            els.reactorLocked.style.width = (100 - reactor.maxIntegrity) + '%';
+            els.reactorIntegrityText.textContent = Math.round(reactor.integrity) + '%';
+            els.reactorOutput.textContent = gameState.power.total;
+            setIntegrityColor(els.reactorIntegrity, reactorFillPercent);
+
+            // Stasis system
+            const stasis = gameState.systems.stasis;
+            els.stasisPower.textContent = stasis.powerAllocated;
+            const stasisFillPercent = (stasis.integrity / stasis.maxIntegrity) * 100;
+            els.stasisIntegrity.style.width = stasis.integrity + '%';
+            els.stasisLocked.style.width = (100 - stasis.maxIntegrity) + '%';
+            els.stasisIntegrityText.textContent = Math.round(stasis.integrity) + '%';
+            setIntegrityColor(els.stasisIntegrity, stasisFillPercent);
+
+            // Thrusters system
+            const thrusters = gameState.systems.thrusters;
+            els.thrustersPower.textContent = thrusters.powerAllocated;
+            const thrustersFillPercent = (thrusters.integrity / thrusters.maxIntegrity) * 100;
+            els.thrustersIntegrity.style.width = thrusters.integrity + '%';
+            els.thrustersLocked.style.width = (100 - thrusters.maxIntegrity) + '%';
+            els.thrustersIntegrityText.textContent = Math.round(thrusters.integrity) + '%';
+            setIntegrityColor(els.thrustersIntegrity, thrustersFillPercent);
+
+            // Shield system
+            const shield = gameState.systems.shield;
+            els.shieldPower.textContent = shield.powerAllocated;
+            const shieldFillPercent = (shield.integrity / shield.maxIntegrity) * 100;
+            els.shieldIntegrity.style.width = shield.integrity + '%';
+            els.shieldLocked.style.width = (100 - shield.maxIntegrity) + '%';
+            els.shieldIntegrityText.textContent = Math.round(shield.integrity) + '%';
+            setIntegrityColor(els.shieldIntegrity, shieldFillPercent);
+
+            // Drones system
+            const drones = gameState.systems.drones;
+            els.dronesPower.textContent = drones.powerAllocated;
+
+            // Update target buttons
+            els.targetReactor.classList.toggle('active', drones.target === 'reactor');
+            els.targetStasis.classList.toggle('active', drones.target === 'stasis');
+            els.targetThrusters.classList.toggle('active', drones.target === 'thrusters');
+            els.targetShield.classList.toggle('active', drones.target === 'shield');
+
+            // Show repairing indicator on target system (only if drones have power)
+            const isRepairing = drones.powerAllocated > 0;
+            els.reactorSystem.classList.toggle('repairing', isRepairing && drones.target === 'reactor');
+            els.stasisSystem.classList.toggle('repairing', isRepairing && drones.target === 'stasis');
+            els.thrustersSystem.classList.toggle('repairing', isRepairing && drones.target === 'thrusters');
+            els.shieldSystem.classList.toggle('repairing', isRepairing && drones.target === 'shield');
+
+            // Update button states
+            els.stasisMinus.disabled = stasis.powerAllocated <= 0;
+            els.stasisPlus.disabled = totalAllocated >= gameState.power.total;
+            els.thrustersMinus.disabled = thrusters.powerAllocated <= 0;
+            els.thrustersPlus.disabled = totalAllocated >= gameState.power.total;
+            els.shieldMinus.disabled = shield.powerAllocated <= 0;
+            els.shieldPlus.disabled = totalAllocated >= gameState.power.total;
+            els.dronesMinus.disabled = drones.powerAllocated <= 0;
+            els.dronesPlus.disabled = totalAllocated >= gameState.power.total;
+
+            // Death rate display
+            if (!gameState.paused && gameState.lastDeaths > 0) {
+                els.deathRate.textContent = `−${gameState.lastDeaths} per cycle`;
+            } else {
+                els.deathRate.textContent = '';
+            }
+
+            // Research indicator
+            const research = gameState.research;
+            if (research.inProgress) {
+                const upgrade = UPGRADES.find(u => u.id === research.inProgress);
+                els.researchingIndicator.textContent = `⟳ Researching ${upgrade.name}... ${research.timeRemaining}s`;
+            } else {
+                els.researchingIndicator.textContent = '';
+            }
+
+            // System status indicators
+            const reactorStatusInfo = getSystemStatus(reactor.integrity);
+            els.reactorStatus.textContent = reactorStatusInfo.text;
+            els.reactorStatus.className = 'system-status ' + reactorStatusInfo.class;
+
+            const stasisStatusInfo = getSystemStatus(stasis.integrity);
+            els.stasisStatus.textContent = stasisStatusInfo.text;
+            els.stasisStatus.className = 'system-status ' + stasisStatusInfo.class;
+
+            const thrustersStatusInfo = getSystemStatus(thrusters.integrity);
+            els.thrustersStatus.textContent = thrustersStatusInfo.text;
+            els.thrustersStatus.className = 'system-status ' + thrustersStatusInfo.class;
+
+            const shieldStatusInfo = getSystemStatus(shield.integrity);
+            els.shieldStatus.textContent = shieldStatusInfo.text;
+            els.shieldStatus.className = 'system-status ' + shieldStatusInfo.class;
+        }
+
+        // Game loop tick
+        function gameTick() {
+            if (gameState.paused) return;
+
+            const reactor = gameState.systems.reactor;
+            const stasis = gameState.systems.stasis;
+            const thrusters = gameState.systems.thrusters;
+            const shield = gameState.systems.shield;
+            const drones = gameState.systems.drones;
+            const orbital = gameState.orbital;
+            const solar = gameState.solar;
+            const research = gameState.research;
+
+            // Process research
+            if (research.inProgress) {
+                research.timeRemaining--;
+                if (research.timeRemaining <= 0) {
+                    completeResearch();
+                }
+            }
+
+            // Solar flare mechanics
+            if (solar.flareActive) {
+                solar.flareDuration--;
+                if (solar.flareDuration <= 0) {
+                    solar.flareActive = false;
+                    solar.nextFlare = 30 + Math.floor(Math.random() * 210); // 30-240 ticks (30s to 4min)
+                    solar.lastDamage = 0;
+                }
+            } else {
+                solar.nextFlare--;
+                if (solar.nextFlare <= 0) {
+                    solar.flareActive = true;
+                    solar.flareDuration = 5 + Math.floor(Math.random() * 5); // 5-10 ticks duration
+                }
+            }
+
+            // Scale shield with integrity (every 20% = 1x effectiveness)
+            const shieldEffectiveness = shield.integrity / 20;
+            const shieldEffect = shield.powerAllocated * shieldEffectiveness * 0.2;
+            // At 20%: 1 * power * 0.2 = old baseline
+            // At 100%: 5 * power * 0.2 = 5x stronger protection
+            const flareReduction = Math.min(0.9, shieldEffect * 0.3); // Up to 90% reduction
+
+            // Calculate radiation multiplier based on distance
+            let radiationMult = 1;
+            if (orbital.distance <= 33) {
+                radiationMult = 2.0; // Critical - double decay
+            } else if (orbital.distance <= 66) {
+                radiationMult = 1.5; // Near - 50% more decay
+            }
+
+            // Solar flare damage (affects all systems)
+            let flareDamage = 0;
+            if (solar.flareActive) {
+                flareDamage = 3 * (1 - flareReduction); // Base 3% damage, reduced by shield
+                solar.lastDamage = flareDamage;
+            }
+
+            // Reactor decays (0.3% per tick base, affected by radiation and flares)
+            reactor.integrity = Math.max(0, reactor.integrity - 0.3 * radiationMult - flareDamage);
+
+            // Calculate total power based on reactor integrity
+            // Every 20% integrity = 5 base power, plus bonus from upgrades
+            const basePower = Math.floor((reactor.integrity / 20) * 5);
+            const bonusPower = gameState.power.maxPower - 5; // upgrades add to base 5
+            const newPower = Math.max(1, basePower + bonusPower);
+
+            // If power decreased, reduce allocations if necessary
+            if (newPower < gameState.power.total) {
+                let excess = getTotalAllocated() - newPower;
+                // Remove from drones first, then shield, then thrusters, then stasis
+                if (excess > 0 && drones.powerAllocated > 0) {
+                    const reduction = Math.min(drones.powerAllocated, excess);
+                    drones.powerAllocated -= reduction;
+                    gameState.power.allocated.drones -= reduction;
+                    excess -= reduction;
+                }
+                if (excess > 0 && shield.powerAllocated > 0) {
+                    const reduction = Math.min(shield.powerAllocated, excess);
+                    shield.powerAllocated -= reduction;
+                    gameState.power.allocated.shield -= reduction;
+                    excess -= reduction;
+                }
+                if (excess > 0 && thrusters.powerAllocated > 0) {
+                    const reduction = Math.min(thrusters.powerAllocated, excess);
+                    thrusters.powerAllocated -= reduction;
+                    gameState.power.allocated.thrusters -= reduction;
+                    excess -= reduction;
+                }
+                if (excess > 0 && stasis.powerAllocated > 0) {
+                    const reduction = Math.min(stasis.powerAllocated, excess);
+                    stasis.powerAllocated -= reduction;
+                    gameState.power.allocated.stasis -= reduction;
+                }
+            }
+            gameState.power.total = newPower;
+
+            // Stasis integrity decays (0.5% per tick base, affected by radiation and flares)
+            stasis.integrity = Math.max(0, stasis.integrity - 0.5 * radiationMult - flareDamage);
+
+            // Thrusters decay (0.2% per tick base, affected by radiation and flares)
+            thrusters.integrity = Math.max(0, thrusters.integrity - 0.2 * radiationMult - flareDamage);
+
+            // Shield decay (0.2% per tick base, affected by radiation and takes extra flare damage)
+            const shieldFlareDamage = solar.flareActive ? 2 : 0; // Shield takes extra damage during flares
+            shield.integrity = Math.max(0, shield.integrity - 0.2 * radiationMult - shieldFlareDamage);
+
+            // Orbital decay calculation
+            // Base decay of 0.5 per tick, reduced by thruster power and integrity
+            // Scale thrust with integrity (every 20% = 1x effectiveness)
+            const thrusterEffectiveness = thrusters.integrity / 20;
+            const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.06;
+            // At 20%: 1 * power * 0.06 = 0.06 per power (same as old 0.3 * 0.2)
+            // At 100%: 5 * power * 0.06 = 0.3 per power (5x stronger)
+            orbital.decayRate = Math.max(0, 0.5 - thrusterEffect);
+            orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
+
+            // Repair drones: restore integrity to target system
+            if (drones.powerAllocated > 0) {
+                const repairAmount = drones.powerAllocated * drones.repairRate;
+                if (drones.target === 'reactor') {
+                    reactor.integrity = Math.min(reactor.maxIntegrity, reactor.integrity + repairAmount);
+                } else if (drones.target === 'stasis') {
+                    stasis.integrity = Math.min(stasis.maxIntegrity, stasis.integrity + repairAmount);
+                } else if (drones.target === 'thrusters') {
+                    thrusters.integrity = Math.min(thrusters.maxIntegrity, thrusters.integrity + repairAmount);
+                } else if (drones.target === 'shield') {
+                    shield.integrity = Math.min(shield.maxIntegrity, shield.integrity + repairAmount);
+                }
+            }
+
+            // Calculate death rate
+            // Base death rate modified by power and integrity
+            // More power = fewer deaths, higher integrity = fewer deaths
+            const powerFactor = 1 - (stasis.powerAllocated / gameState.power.maxPower) * 0.7; // 0-70% reduction from power
+            // Scale with integrity ratio (higher = lower death rate)
+            const stasisEffectiveness = stasis.integrity / 20; // 1.0 at 20%, 5.0 at 100%
+            const integrityFactor = 1 - Math.min(1, stasisEffectiveness * 0.1); // up to 50% reduction
+
+            // Base deaths per tick, modified by factors
+            const baseDeaths = 50;
+            const deaths = Math.floor(baseDeaths * powerFactor * integrityFactor);
+
+            gameState.lastDeaths = deaths;
+            gameState.survivors = Math.max(0, gameState.survivors - deaths);
+
+            // Add to cryo-log on significant deaths
+            if (deaths > 0 && Math.random() < 0.3) { // 30% chance per tick with deaths
+                addCryoLogEntry(generateDeathMessage(deaths));
+            }
+
+            // Check for game over
+            if (gameState.survivors <= 0 && !gameState.gameOver) {
+                gameState.gameOver = true;
+                gameState.paused = true;
+                els.startPause.textContent = 'ALL SOULS LOST';
+                els.startPause.disabled = true;
+                showEnding();
+            }
+
+            // Check for orbital destruction
+            if (orbital.distance <= 0 && !gameState.gameOver) {
+                gameState.gameOver = true;
+                gameState.paused = true;
+                els.startPause.textContent = 'STATION DESTROYED';
+                els.startPause.disabled = true;
+                showEnding();
+            }
+
+            updateUI();
+        }
+
+        // Power allocation
+        els.stasisMinus.addEventListener('click', () => {
+            if (gameState.systems.stasis.powerAllocated > 0) {
+                gameState.systems.stasis.powerAllocated--;
+                gameState.power.allocated.stasis--;
+                updateUI();
+            }
+        });
+
+        els.stasisPlus.addEventListener('click', () => {
+            if (getTotalAllocated() < gameState.power.total) {
+                gameState.systems.stasis.powerAllocated++;
+                gameState.power.allocated.stasis++;
+                updateUI();
+            }
+        });
+
+        // Thrusters power allocation
+        els.thrustersMinus.addEventListener('click', () => {
+            if (gameState.systems.thrusters.powerAllocated > 0) {
+                gameState.systems.thrusters.powerAllocated--;
+                gameState.power.allocated.thrusters--;
+                updateUI();
+            }
+        });
+
+        els.thrustersPlus.addEventListener('click', () => {
+            if (getTotalAllocated() < gameState.power.total) {
+                gameState.systems.thrusters.powerAllocated++;
+                gameState.power.allocated.thrusters++;
+                updateUI();
+            }
+        });
+
+        // Shield power allocation
+        els.shieldMinus.addEventListener('click', () => {
+            if (gameState.systems.shield.powerAllocated > 0) {
+                gameState.systems.shield.powerAllocated--;
+                gameState.power.allocated.shield--;
+                updateUI();
+            }
+        });
+
+        els.shieldPlus.addEventListener('click', () => {
+            if (getTotalAllocated() < gameState.power.total) {
+                gameState.systems.shield.powerAllocated++;
+                gameState.power.allocated.shield++;
+                updateUI();
+            }
+        });
+
+        // Drones power allocation
+        els.dronesMinus.addEventListener('click', () => {
+            if (gameState.systems.drones.powerAllocated > 0) {
+                gameState.systems.drones.powerAllocated--;
+                gameState.power.allocated.drones--;
+                updateUI();
+            }
+        });
+
+        els.dronesPlus.addEventListener('click', () => {
+            if (getTotalAllocated() < gameState.power.total) {
+                gameState.systems.drones.powerAllocated++;
+                gameState.power.allocated.drones++;
+                updateUI();
+            }
+        });
+
+        // Drones target selection
+        els.targetReactor.addEventListener('click', () => {
+            gameState.systems.drones.target = 'reactor';
+            updateUI();
+        });
+
+        els.targetStasis.addEventListener('click', () => {
+            gameState.systems.drones.target = 'stasis';
+            updateUI();
+        });
+
+        els.targetThrusters.addEventListener('click', () => {
+            gameState.systems.drones.target = 'thrusters';
+            updateUI();
+        });
+
+        els.targetShield.addEventListener('click', () => {
+            gameState.systems.drones.target = 'shield';
+            updateUI();
+        });
+
+        // Start/Pause
+        els.startPause.addEventListener('click', () => {
+            if (gameState.survivors <= 0) return;
+            gameState.paused = !gameState.paused;
+            els.startPause.textContent = gameState.paused ? 'START' : 'PAUSE';
+        });
+
+        // Research modal
+        els.researchBtn.addEventListener('click', () => {
+            renderUpgradeList();
+            els.researchModal.classList.add('active');
+        });
+
+        els.closeResearch.addEventListener('click', () => {
+            els.researchModal.classList.remove('active');
+        });
+
+        // Close modal on overlay click
+        els.researchModal.addEventListener('click', (e) => {
+            if (e.target === els.researchModal) {
+                els.researchModal.classList.remove('active');
+            }
+        });
+
+        // Story sequence functions
+        function startStorySequence() {
+            const intro = gameState.intro;
+            intro.phase = 'story';
+            intro.storyStep = 0;
+
+            // Clear any existing timers
+            intro.storyTimers.forEach(t => clearTimeout(t));
+            intro.storyTimers = [];
+
+            const paragraphs = [els.story1, els.story2, els.story3, els.story4, els.story5, els.story6];
+            // Slowed to 25% speed (4x slower): ~10s between paragraphs
+            const delays = [4000, 14000, 24000, 34000, 44000, 54000];
+            const continueDelay = 60000; // When continue button appears
+
+            // Schedule each paragraph to appear
+            delays.forEach((delay, i) => {
+                const timer = setTimeout(() => {
+                    if (intro.phase === 'story') {
+                        paragraphs[i].classList.add('visible');
+                    }
+                }, delay);
+                intro.storyTimers.push(timer);
+            });
+
+            // Schedule continue button to appear after last paragraph
+            const continueTimer = setTimeout(() => {
+                if (intro.phase === 'story') {
+                    els.continueBtn.classList.add('visible');
+                }
+            }, continueDelay);
+            intro.storyTimers.push(continueTimer);
+        }
+
+        function transitionToReactorPhase() {
+            const intro = gameState.intro;
+            intro.phase = 'reactor';
+
+            // Clear any remaining timers
+            intro.storyTimers.forEach(t => clearTimeout(t));
+            intro.storyTimers = [];
+
+            // Hide story, show reactor
+            els.introStory.classList.add('hidden');
+            els.introReactor.classList.add('visible');
+        }
+
+        // Continue button handler
+        els.continueBtn.addEventListener('click', () => {
+            if (gameState.intro.phase === 'story') {
+                transitionToReactorPhase();
+            }
+        });
+
+        // Skip button handler
+        els.skipBtn.addEventListener('click', () => {
+            if (gameState.intro.phase === 'story') {
+                transitionToReactorPhase();
+            }
+        });
+
+        // Intro reactor click handler
+        els.reactorBtn.addEventListener('click', () => {
+            const intro = gameState.intro;
+            if (!intro.active || intro.phase !== 'reactor') return;
+
+            intro.clicks++;
+            const progress = Math.round((intro.clicks / intro.requiredClicks) * 100);
+
+            if (intro.clicks < intro.requiredClicks) {
+                els.introProgress.textContent = `Initializing... ${progress}%`;
+                els.reactorBtn.style.boxShadow = `0 0 ${intro.clicks * 5}px #00ff8844`;
+            } else {
+                // Reactor online!
+                intro.active = false;
+                els.reactorBtn.classList.add('active');
+                els.reactorBtn.innerHTML = 'REACTOR<br>ONLINE';
+                els.introProgress.textContent = 'Reactor online. Systems booting...';
+
+                // Hide intro after short delay
+                setTimeout(() => {
+                    els.introOverlay.classList.add('hidden');
+                }, 1500);
+            }
+        });
+
+        // Restart button
+        els.restartBtn.addEventListener('click', restartGame);
+
+        // Initialize
+        updateUI();
+
+        // Start the intro story sequence
+        startStorySequence();
+
+        // Game loop - runs every second
+        setInterval(gameTick, 1000);
+    </script>
+</body>
+</html>
