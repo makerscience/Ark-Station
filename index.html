@@ -1998,7 +1998,7 @@
                             </div>
                         </div>
                         <div class="survivors-info-vertical">
-                            <div class="survivor-count" id="survivors">10,000</div>
+                            <div class="survivor-count" id="survivors">1,347</div>
                             <div class="survivor-label">Souls in Stasis</div>
                             <div class="death-rate" id="deathRate"></div>
                             <div class="stasis-controls-section">
@@ -2317,7 +2317,7 @@
         // Game State
         const gameState = {
             power: { total: 5, maxPower: 5, allocated: { stasis: 0, thrusters: 0, shield: 0, drones: 0 } },
-            survivors: 10000,
+            survivors: 1347,
             systems: {
                 reactor: { integrity: 20, maxIntegrity: 20 },
                 stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
@@ -2330,7 +2330,7 @@
                 decayRate: 0
             },
             solar: {
-                nextFlare: 30 + Math.floor(Math.random() * 210), // 30-240 ticks (30s to 4min)
+                nextFlare: 90 + Math.floor(Math.random() * 630), // 90-720 ticks (1.5min to 12min)
                 flareActive: false,
                 flareDuration: 0,
                 lastDamage: 0
@@ -2350,7 +2350,7 @@
                 requiredClicks: 10
             },
             cryoLog: [],
-            initialSurvivors: 10000,
+            initialSurvivors: 1347,
             gameOver: false,
             victory: false,
             paused: true,
@@ -2602,7 +2602,7 @@
             gameState.power.total = 5;
             gameState.power.maxPower = 5;
             gameState.power.allocated = { stasis: 0, thrusters: 0, shield: 0, drones: 0 };
-            gameState.survivors = 10000;
+            gameState.survivors = 1347;
             gameState.systems.reactor.integrity = 20;
             gameState.systems.reactor.maxIntegrity = 20;
             gameState.systems.stasis.integrity = 20;
@@ -2619,7 +2619,7 @@
             gameState.systems.drones.repairRate = 0.8;
             gameState.orbital.distance = 100;
             gameState.orbital.decayRate = 0;
-            gameState.solar.nextFlare = 30 + Math.floor(Math.random() * 210);
+            gameState.solar.nextFlare = 90 + Math.floor(Math.random() * 630);
             gameState.solar.flareActive = false;
             gameState.solar.flareDuration = 0;
             gameState.solar.lastDamage = 0;
@@ -3061,8 +3061,8 @@
                 solar.lastDamage = flareDamage;
             }
 
-            // Reactor decays (0.3% per tick base, affected by radiation and flares)
-            reactor.integrity = Math.max(0, reactor.integrity - 0.3 * radiationMult - flareDamage);
+            // Reactor decays (0.1% per tick base, affected by radiation and flares)
+            reactor.integrity = Math.max(0, reactor.integrity - 0.1 * radiationMult - flareDamage);
 
             // Calculate total power based on reactor integrity
             // Every 20% integrity = 5 base power, plus bonus from upgrades
@@ -3100,24 +3100,24 @@
             }
             gameState.power.total = newPower;
 
-            // Stasis integrity decays (0.5% per tick base, affected by radiation and flares)
-            stasis.integrity = Math.max(0, stasis.integrity - 0.5 * radiationMult - flareDamage);
+            // Stasis integrity decays (0.15% per tick base, affected by radiation and flares)
+            stasis.integrity = Math.max(0, stasis.integrity - 0.15 * radiationMult - flareDamage);
 
-            // Thrusters decay (0.2% per tick base, affected by radiation and flares)
-            thrusters.integrity = Math.max(0, thrusters.integrity - 0.2 * radiationMult - flareDamage);
+            // Thrusters decay (0.07% per tick base, affected by radiation and flares)
+            thrusters.integrity = Math.max(0, thrusters.integrity - 0.07 * radiationMult - flareDamage);
 
-            // Shield decay (0.2% per tick base, affected by radiation and takes extra flare damage)
+            // Shield decay (0.07% per tick base, affected by radiation and takes extra flare damage)
             const shieldFlareDamage = solar.flareActive ? 2 : 0; // Shield takes extra damage during flares
-            shield.integrity = Math.max(0, shield.integrity - 0.2 * radiationMult - shieldFlareDamage);
+            shield.integrity = Math.max(0, shield.integrity - 0.07 * radiationMult - shieldFlareDamage);
 
             // Orbital decay calculation
-            // Base decay of 0.5 per tick, reduced by thruster power and integrity
+            // Base decay of 0.15 per tick, reduced by thruster power and integrity
             // Scale thrust with integrity (every 20% = 1x effectiveness)
             const thrusterEffectiveness = thrusters.integrity / 20;
             const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.06;
             // At 20%: 1 * power * 0.06 = 0.06 per power (same as old 0.3 * 0.2)
             // At 100%: 5 * power * 0.06 = 0.3 per power (5x stronger)
-            orbital.decayRate = Math.max(0, 0.5 - thrusterEffect);
+            orbital.decayRate = Math.max(0, 0.15 - thrusterEffect);
             orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
 
             // Repair drones: restore integrity to target system
@@ -3143,7 +3143,7 @@
             const integrityFactor = 1 - Math.min(1, stasisEffectiveness * 0.1); // up to 50% reduction
 
             // Base deaths per tick, modified by factors
-            const baseDeaths = 50;
+            const baseDeaths = 5;
             const deaths = Math.floor(baseDeaths * powerFactor * integrityFactor);
 
             gameState.lastDeaths = deaths;
@@ -3299,9 +3299,9 @@
             intro.storyTimers = [];
 
             const paragraphs = [els.story1, els.story2, els.story3, els.story4, els.story5, els.story6];
-            // Custom timing: P1 fast, then gaps of 8.5s, 22s, 15s, 12s, 12s between paragraphs
-            const delays = [1500, 10000, 32000, 47000, 59000, 71000];
-            const continueDelay = 76000; // 5s after final paragraph
+            // Custom timing: P1 fast, then gaps reduced by 5s each
+            const delays = [1500, 5000, 22000, 32000, 44000, 56000];
+            const continueDelay = 61000; // 5s after final paragraph
 
             // Schedule each paragraph to appear
             delays.forEach((delay, i) => {
