@@ -18,15 +18,20 @@
             padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 280px 1fr 280px;
             gap: 15px;
         }
-        .left-column {
+        .left-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .center-column {
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -36,7 +41,15 @@
             flex-direction: column;
             gap: 15px;
         }
-        @media (max-width: 700px) {
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+            .left-sidebar {
+                grid-column: 1 / -1;
+            }
+        }
+        @media (max-width: 600px) {
             .main-layout {
                 grid-template-columns: 1fr;
             }
@@ -59,6 +72,164 @@
             font-size: 12px;
             margin-bottom: 10px;
             text-transform: uppercase;
+        }
+        /* Reactor Core Visual */
+        .reactor-panel {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .reactor-visual-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+        }
+        .reactor-core-visual {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #115522 0%, #0a2211 50%, #051108 100%);
+            border: 2px solid #00ff8833;
+            box-shadow: inset 0 0 10px #00ff8822;
+            transition: all 0.5s;
+        }
+        /* Integrity levels - size expansion */
+        .reactor-core-visual.integrity-1 { width: 30px; height: 30px; }
+        .reactor-core-visual.integrity-2 { width: 50px; height: 50px; }
+        .reactor-core-visual.integrity-3 { width: 70px; height: 70px; }
+        .reactor-core-visual.integrity-4 { width: 90px; height: 90px; }
+        .reactor-core-visual.integrity-5 { width: 110px; height: 110px; }
+        /* Power glow levels */
+        .reactor-core-visual.glow-1 {
+            background: radial-gradient(circle, #1a6633 0%, #0d3318 50%, #051108 100%);
+            border-color: #00ff8844;
+            box-shadow:
+                0 0 10px #00ff8822,
+                0 0 20px #00ff8811,
+                inset 0 0 15px #00ff8833;
+        }
+        .reactor-core-visual.glow-2 {
+            background: radial-gradient(circle, #228844 0%, #115522 50%, #082810 100%);
+            border-color: #00ff8866;
+            box-shadow:
+                0 0 15px #00ff8833,
+                0 0 30px #00ff8822,
+                0 0 45px #00ff8811,
+                inset 0 0 20px #00ff8844;
+        }
+        .reactor-core-visual.glow-3 {
+            background: radial-gradient(circle, #33aa55 0%, #1a7733 50%, #0d4418 100%);
+            border-color: #00ff8888;
+            box-shadow:
+                0 0 20px #00ff8844,
+                0 0 40px #00ff8833,
+                0 0 60px #00ff8822,
+                inset 0 0 25px #00ff8855;
+        }
+        .reactor-core-visual.glow-4 {
+            background: radial-gradient(circle, #44cc66 0%, #228844 50%, #115522 100%);
+            border-color: #00ff88aa;
+            box-shadow:
+                0 0 30px #00ff8855,
+                0 0 50px #00ff8844,
+                0 0 80px #00ff8833,
+                inset 0 0 30px #00ff8866;
+        }
+        .reactor-core-visual.glow-5 {
+            background: radial-gradient(circle, #66ff88 0%, #33cc55 50%, #1a8833 100%);
+            border-color: #00ff88cc;
+            box-shadow:
+                0 0 40px #00ff8877,
+                0 0 70px #00ff8855,
+                0 0 100px #00ff8844,
+                inset 0 0 35px #00ff8888;
+            animation: reactorPulseGlow 2s ease-in-out infinite;
+        }
+        @keyframes reactorPulseGlow {
+            0%, 100% {
+                box-shadow:
+                    0 0 40px #00ff8877,
+                    0 0 70px #00ff8855,
+                    0 0 100px #00ff8844,
+                    inset 0 0 35px #00ff8888;
+            }
+            50% {
+                box-shadow:
+                    0 0 50px #00ff8899,
+                    0 0 90px #00ff8866,
+                    0 0 130px #00ff8855,
+                    inset 0 0 45px #00ff88aa;
+            }
+        }
+        .reactor-core-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00ff88 0%, #00aa55 100%);
+            opacity: 0.3;
+            transition: opacity 0.5s, width 0.5s, height 0.5s;
+        }
+        .reactor-core-visual.integrity-2 .reactor-core-inner { width: 25px; height: 25px; }
+        .reactor-core-visual.integrity-3 .reactor-core-inner { width: 30px; height: 30px; }
+        .reactor-core-visual.integrity-4 .reactor-core-inner { width: 35px; height: 35px; }
+        .reactor-core-visual.integrity-5 .reactor-core-inner { width: 40px; height: 40px; }
+        .reactor-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid #00ff8822;
+            transition: border-color 0.5s, box-shadow 0.5s;
+        }
+        .reactor-ring-1 { width: 40px; height: 40px; }
+        .reactor-ring-2 { width: 60px; height: 60px; }
+        .reactor-ring-3 { width: 80px; height: 80px; }
+        .reactor-ring-4 { width: 100px; height: 100px; }
+        .reactor-ring-5 { width: 120px; height: 120px; }
+        .reactor-ring.active {
+            border-color: #00ff8866;
+            box-shadow: 0 0 8px #00ff8844;
+        }
+        .reactor-ring.active.powered {
+            border-color: #00ff88aa;
+            box-shadow: 0 0 15px #00ff8866;
+        }
+        .reactor-info {
+            flex: 1;
+        }
+        .reactor-power-display {
+            font-size: 32px;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+        .reactor-power-display .allocated {
+            color: #00ff88;
+        }
+        .reactor-power-display .separator {
+            color: #444;
+        }
+        .reactor-power-display .total {
+            color: #00aa55;
+        }
+        .reactor-max-power {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .reactor-integrity-section {
+            border-top: 1px solid #222;
+            padding-top: 10px;
+            margin-top: 10px;
         }
         .stat {
             font-size: 24px;
@@ -304,6 +475,352 @@
         @keyframes stationPulse {
             50% { opacity: 0.5; }
         }
+        /* Thruster Visual */
+        .thruster-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+        }
+        .thruster-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .thruster-title {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .thruster-power-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .thruster-stats {
+            margin-top: 5px;
+        }
+        .thruster-stats .integrity-bar {
+            width: 100%;
+            height: 8px;
+        }
+        .thruster-graphic-container {
+            margin-top: 12px;
+            height: 50px;
+            position: relative;
+            overflow: visible;
+        }
+        .thruster-graphic {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 60px;
+            height: 50px;
+        }
+        .thruster-body {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 28px;
+            background: linear-gradient(180deg, #2a2a4e 0%, #1a1a2e 50%, #2a2a4e 100%);
+            border: 1px solid #3a3a5e;
+            border-radius: 4px;
+        }
+        .thruster-nozzle {
+            position: absolute;
+            top: 50%;
+            left: 43px;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 18px;
+            background: linear-gradient(90deg, #2a2a4e 0%, #3a3a5e 50%, #4a4a6e 100%);
+            border-radius: 0 4px 4px 0;
+            border: 1px solid #3a3a5e;
+            border-left: none;
+        }
+        .thruster-flame-outer {
+            position: absolute;
+            top: 50%;
+            left: 57px;
+            transform: translateY(-50%);
+            width: 0;
+            height: 16px;
+            background: linear-gradient(90deg, #0066aa 0%, #00aaff66 40%, transparent 100%);
+            border-radius: 0 8px 8px 0;
+            opacity: 0;
+            transition: width 0.2s ease-out, opacity 0.2s;
+        }
+        .thruster-flame-inner {
+            position: absolute;
+            top: 50%;
+            left: 57px;
+            transform: translateY(-50%);
+            width: 0;
+            height: 10px;
+            background: linear-gradient(90deg, #00ddff 0%, #00ffff 30%, transparent 100%);
+            border-radius: 0 5px 5px 0;
+            opacity: 0;
+            transition: width 0.2s ease-out, opacity 0.2s;
+        }
+        .thruster-graphic.power-1 .thruster-flame-inner {
+            width: 20px;
+            opacity: 0.8;
+            animation: flameFlicker 0.15s infinite;
+        }
+        .thruster-graphic.power-1 .thruster-flame-outer {
+            width: 30px;
+            opacity: 0.5;
+        }
+        .thruster-graphic.power-2 .thruster-flame-inner {
+            width: 40px;
+            opacity: 0.9;
+            animation: flameFlicker 0.12s infinite;
+        }
+        .thruster-graphic.power-2 .thruster-flame-outer {
+            width: 55px;
+            opacity: 0.6;
+        }
+        .thruster-graphic.power-3 .thruster-flame-inner {
+            width: 60px;
+            opacity: 1;
+            animation: flameFlicker 0.1s infinite;
+        }
+        .thruster-graphic.power-3 .thruster-flame-outer {
+            width: 80px;
+            height: 20px;
+            opacity: 0.7;
+        }
+        .thruster-graphic.power-4 .thruster-flame-inner {
+            width: 90px;
+            height: 12px;
+            opacity: 1;
+            animation: flameFlicker 0.08s infinite;
+        }
+        .thruster-graphic.power-4 .thruster-flame-outer {
+            width: 120px;
+            height: 24px;
+            opacity: 0.8;
+        }
+        .thruster-graphic.power-5 .thruster-flame-inner {
+            width: 130px;
+            height: 14px;
+            background: linear-gradient(90deg, #ffffff 0%, #00ffff 20%, #00aaff 50%, transparent 100%);
+            opacity: 1;
+            animation: flameFlicker 0.06s infinite;
+        }
+        .thruster-graphic.power-5 .thruster-flame-outer {
+            width: 170px;
+            height: 28px;
+            opacity: 0.9;
+            animation: flamePulse 0.3s infinite;
+        }
+        @keyframes flameFlicker {
+            0%, 100% { opacity: 1; transform: translateY(-50%) scaleY(1); }
+            50% { opacity: 0.85; transform: translateY(-50%) scaleY(0.92); }
+        }
+        @keyframes flamePulse {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 0.7; }
+        }
+        /* Solar Visual */
+        .solar-visual-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #1a0a00 0%, #0a0a0f 60%);
+            border-radius: 4px;
+        }
+        .solar-graphic {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        .sun-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #ffdd44 0%, #ff8800 50%, #ff4400 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ff660088, 0 0 40px #ff440044;
+            transition: all 0.5s;
+        }
+        .sun-corona {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: transparent;
+            box-shadow: 0 0 15px #ff880044, 0 0 30px #ff660022;
+            transition: all 0.5s;
+        }
+        .sun-rays {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .sun-ray {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, #ffaa00 0%, transparent 100%);
+            transform-origin: center bottom;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .sun-ray:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); }
+        .sun-ray:nth-child(2) { transform: translate(-50%, -100%) rotate(45deg); }
+        .sun-ray:nth-child(3) { transform: translate(-50%, -100%) rotate(90deg); }
+        .sun-ray:nth-child(4) { transform: translate(-50%, -100%) rotate(135deg); }
+        .sun-ray:nth-child(5) { transform: translate(-50%, -100%) rotate(180deg); }
+        .sun-ray:nth-child(6) { transform: translate(-50%, -100%) rotate(225deg); }
+        .sun-ray:nth-child(7) { transform: translate(-50%, -100%) rotate(270deg); }
+        .sun-ray:nth-child(8) { transform: translate(-50%, -100%) rotate(315deg); }
+        .flare-burst {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: transparent;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        /* CLEAR state - calm sun */
+        .solar-graphic.clear .sun-core {
+            animation: sunPulseCalm 4s ease-in-out infinite;
+        }
+        @keyframes sunPulseCalm {
+            0%, 100% { box-shadow: 0 0 20px #ff660066, 0 0 40px #ff440033; }
+            50% { box-shadow: 0 0 25px #ff660088, 0 0 50px #ff440044; }
+        }
+        /* WARNING state - sun getting active */
+        .solar-graphic.warning .sun-core {
+            background: radial-gradient(circle, #ffee55 0%, #ffaa00 50%, #ff5500 100%);
+            box-shadow: 0 0 25px #ff8800aa, 0 0 50px #ff660066;
+            animation: sunPulseWarning 2s ease-in-out infinite;
+        }
+        .solar-graphic.warning .sun-corona {
+            width: 65px;
+            height: 65px;
+            box-shadow: 0 0 20px #ff880066, 0 0 40px #ff660044;
+            animation: coronaPulse 2s ease-in-out infinite;
+        }
+        @keyframes sunPulseWarning {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        @keyframes coronaPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        /* IMMINENT state - intense activity */
+        .solar-graphic.imminent .sun-core {
+            background: radial-gradient(circle, #ffffff 0%, #ffcc00 30%, #ff6600 70%, #ff3300 100%);
+            box-shadow: 0 0 30px #ffaa00cc, 0 0 60px #ff660088;
+            animation: sunPulseImminent 0.5s ease-in-out infinite;
+        }
+        .solar-graphic.imminent .sun-corona {
+            width: 75px;
+            height: 75px;
+            box-shadow: 0 0 25px #ff880088, 0 0 50px #ff660066, 0 0 80px #ff440044;
+            animation: coronaPulseImminent 0.5s ease-in-out infinite;
+        }
+        .solar-graphic.imminent .sun-rays {
+            opacity: 1;
+        }
+        .solar-graphic.imminent .sun-ray {
+            opacity: 0.7;
+            height: 15px;
+            animation: rayPulse 0.3s ease-in-out infinite;
+        }
+        @keyframes sunPulseImminent {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        @keyframes coronaPulseImminent {
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+        @keyframes rayPulse {
+            0%, 100% { opacity: 0.5; height: 12px; }
+            50% { opacity: 1; height: 18px; }
+        }
+        /* ACTIVE state - full flare */
+        .solar-graphic.active .sun-core {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #ffffff 0%, #ffffaa 20%, #ffcc00 50%, #ff6600 80%, #ff3300 100%);
+            box-shadow: 0 0 40px #ffcc00ff, 0 0 80px #ff8800aa, 0 0 120px #ff440066;
+            animation: sunFlare 0.2s ease-in-out infinite;
+        }
+        .solar-graphic.active .sun-corona {
+            width: 90px;
+            height: 90px;
+            box-shadow: 0 0 30px #ffaa00aa, 0 0 60px #ff880088, 0 0 100px #ff660066;
+            animation: coronaFlare 0.3s ease-in-out infinite;
+        }
+        .solar-graphic.active .sun-rays {
+            opacity: 1;
+            animation: raysRotate 2s linear infinite;
+        }
+        .solar-graphic.active .sun-ray {
+            opacity: 1;
+            height: 30px;
+            width: 6px;
+            background: linear-gradient(180deg, #ffdd00 0%, #ff8800 50%, transparent 100%);
+            animation: rayFlare 0.15s ease-in-out infinite;
+        }
+        .solar-graphic.active .flare-burst {
+            width: 120px;
+            height: 120px;
+            opacity: 1;
+            background: radial-gradient(circle, transparent 30%, #ff880022 50%, #ff660011 70%, transparent 100%);
+            animation: flareBurst 0.4s ease-in-out infinite;
+        }
+        @keyframes sunFlare {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+        }
+        @keyframes coronaFlare {
+            0%, 100% { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+        }
+        @keyframes raysRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes rayFlare {
+            0%, 100% { opacity: 0.8; height: 25px; }
+            50% { opacity: 1; height: 35px; }
+        }
+        @keyframes flareBurst {
+            0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+        }
+        .solar-status-bar {
+            margin-top: 10px;
+        }
         .solar-forecast {
             display: flex;
             justify-content: space-between;
@@ -324,6 +841,436 @@
             color: #ff8800;
             margin-top: 5px;
         }
+
+        /* Solar Shield Visual */
+        .shield-graphic {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 50px;
+            pointer-events: none;
+        }
+        .shield-arc {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid transparent;
+            border-bottom-color: transparent;
+            border-radius: 100px 100px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .shield-arc-1 {
+            width: 180px;
+            height: 35px;
+        }
+        .shield-arc-2 {
+            width: 160px;
+            height: 30px;
+        }
+        .shield-arc-3 {
+            width: 140px;
+            height: 25px;
+        }
+        .shield-arc-4 {
+            width: 120px;
+            height: 20px;
+        }
+        .shield-arc-5 {
+            width: 100px;
+            height: 15px;
+        }
+
+        /* Shield power levels */
+        .shield-graphic.power-1 .shield-arc-1 {
+            opacity: 0.4;
+            border-color: #00aaff44;
+            box-shadow: 0 0 8px #00aaff33;
+        }
+        .shield-graphic.power-2 .shield-arc-1,
+        .shield-graphic.power-2 .shield-arc-2 {
+            opacity: 0.5;
+            border-color: #00ccff66;
+            box-shadow: 0 0 10px #00ccff44;
+        }
+        .shield-graphic.power-3 .shield-arc-1,
+        .shield-graphic.power-3 .shield-arc-2,
+        .shield-graphic.power-3 .shield-arc-3 {
+            opacity: 0.6;
+            border-color: #00ddff88;
+            box-shadow: 0 0 12px #00ddff55;
+        }
+        .shield-graphic.power-4 .shield-arc-1,
+        .shield-graphic.power-4 .shield-arc-2,
+        .shield-graphic.power-4 .shield-arc-3,
+        .shield-graphic.power-4 .shield-arc-4 {
+            opacity: 0.7;
+            border-color: #00eeffaa;
+            box-shadow: 0 0 15px #00eeff66;
+        }
+        .shield-graphic.power-5 .shield-arc-1,
+        .shield-graphic.power-5 .shield-arc-2,
+        .shield-graphic.power-5 .shield-arc-3,
+        .shield-graphic.power-5 .shield-arc-4,
+        .shield-graphic.power-5 .shield-arc-5 {
+            opacity: 0.9;
+            border-color: #66ffffff;
+            box-shadow: 0 0 20px #00ffff88, 0 0 40px #00aaff44;
+            animation: shieldPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes shieldPulse {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 1; }
+        }
+
+        /* Shield particles */
+        .shield-particles {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .shield-graphic.power-3 .shield-particles,
+        .shield-graphic.power-4 .shield-particles,
+        .shield-graphic.power-5 .shield-particles {
+            opacity: 1;
+        }
+        .shield-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #00ffff;
+            border-radius: 50%;
+            opacity: 0;
+        }
+        .shield-graphic.power-3 .shield-particle,
+        .shield-graphic.power-4 .shield-particle,
+        .shield-graphic.power-5 .shield-particle {
+            animation: particleFloat 2s ease-in-out infinite;
+        }
+        .shield-particle:nth-child(1) { left: 20%; bottom: 10px; animation-delay: 0s; }
+        .shield-particle:nth-child(2) { left: 35%; bottom: 20px; animation-delay: 0.3s; }
+        .shield-particle:nth-child(3) { left: 50%; bottom: 25px; animation-delay: 0.6s; }
+        .shield-particle:nth-child(4) { left: 65%; bottom: 20px; animation-delay: 0.9s; }
+        .shield-particle:nth-child(5) { left: 80%; bottom: 10px; animation-delay: 1.2s; }
+        .shield-particle:nth-child(6) { left: 50%; bottom: 15px; animation-delay: 1.5s; }
+
+        @keyframes particleFloat {
+            0%, 100% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 0.8; transform: translateY(-10px); }
+        }
+
+        /* Shield impact effect during flare */
+        .shield-impact {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 40px;
+            background: radial-gradient(ellipse at center bottom, #ff880044 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .shield-graphic.absorbing .shield-impact {
+            opacity: 1;
+            animation: shieldAbsorb 0.3s ease-in-out infinite;
+        }
+        .shield-graphic.absorbing .shield-arc {
+            border-color: #ffaa44 !important;
+            box-shadow: 0 0 25px #ff880088, 0 0 50px #ff440044 !important;
+        }
+
+        @keyframes shieldAbsorb {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Shield controls in Solar Forecast panel */
+        .shield-controls {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid #333;
+        }
+        .shield-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .shield-controls .system-name {
+            font-size: 13px;
+            color: #aaa;
+        }
+        .shield-controls .integrity-bar {
+            margin-bottom: 5px;
+        }
+        .shield-controls .power-controls {
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        /* Repair Drones Visual */
+        .drone-visual-container {
+            position: relative;
+            height: 140px;
+            background: radial-gradient(ellipse at center, #0a1520 0%, #0a0a0f 100%);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .drone-targets {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 10px;
+        }
+        .drone-target-row {
+            display: flex;
+            justify-content: space-around;
+        }
+        .drone-target {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.4;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .drone-target.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .drone-target.repairing {
+            animation: repairPulse 1s ease-in-out infinite;
+        }
+        @keyframes repairPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .target-icon {
+            width: 36px;
+            height: 36px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .target-label {
+            font-size: 9px;
+            color: #666;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+        .drone-target.active .target-label {
+            color: #00ff88;
+        }
+
+        /* Reactor Icon */
+        .reactor-icon-core {
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle, #ffaa00 0%, #ff6600 100%);
+            border-radius: 50%;
+            position: absolute;
+        }
+        .reactor-icon-ring {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #ff880066;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .drone-target.active .reactor-icon-core {
+            background: radial-gradient(circle, #ffdd00 0%, #ff8800 100%);
+            box-shadow: 0 0 10px #ffaa0066;
+        }
+        .drone-target.active .reactor-icon-ring {
+            border-color: #ffaa00;
+            box-shadow: 0 0 8px #ff880044;
+        }
+
+        /* Stasis Icon */
+        .stasis-icon {
+            display: flex;
+            gap: 3px;
+        }
+        .stasis-icon-pod {
+            width: 8px;
+            height: 18px;
+            background: linear-gradient(180deg, #004422 0%, #002211 100%);
+            border-radius: 4px 4px 2px 2px;
+            border: 1px solid #00ff8833;
+        }
+        .drone-target.active .stasis-icon-pod {
+            background: linear-gradient(180deg, #00aa66 0%, #006644 100%);
+            border-color: #00ff88;
+            box-shadow: 0 0 6px #00ff8844;
+        }
+
+        /* Thruster Icon */
+        .thruster-icon {
+            flex-direction: column;
+        }
+        .thruster-icon-body {
+            width: 20px;
+            height: 12px;
+            background: linear-gradient(90deg, #1a1a2e 0%, #2a2a4e 50%, #1a1a2e 100%);
+            border-radius: 3px;
+            border: 1px solid #3a3a5e;
+        }
+        .thruster-icon-flame {
+            width: 12px;
+            height: 8px;
+            background: linear-gradient(180deg, #0066aa44 0%, transparent 100%);
+            margin: 0 auto;
+            border-radius: 0 0 6px 6px;
+        }
+        .drone-target.active .thruster-icon-body {
+            border-color: #00aaff;
+            box-shadow: 0 0 6px #00aaff44;
+        }
+        .drone-target.active .thruster-icon-flame {
+            background: linear-gradient(180deg, #00ccff 0%, #0066aa 50%, transparent 100%);
+            box-shadow: 0 0 8px #00aaff66;
+        }
+
+        /* Shield Icon */
+        .shield-icon {
+            flex-direction: column;
+            gap: 2px;
+        }
+        .shield-icon-arc {
+            width: 24px;
+            height: 10px;
+            border: 2px solid #00aaff33;
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+        }
+        .shield-icon-arc:nth-child(2) {
+            width: 18px;
+            height: 8px;
+        }
+        .drone-target.active .shield-icon-arc {
+            border-color: #00ffff;
+            box-shadow: 0 0 6px #00ffff44;
+        }
+
+        /* Drone Hub */
+        .drone-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+        }
+        .drone-hub-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #334455 0%, #1a2233 100%);
+            border: 1px solid #445566;
+            border-radius: 50%;
+        }
+
+        /* Individual Drones */
+        .drone {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .drone.active {
+            opacity: 1;
+            background: #00ff88;
+            box-shadow: 0 0 6px #00ff8888;
+        }
+
+        /* Drone positions and animations */
+        .drone-visual-container.power-1 #drone1,
+        .drone-visual-container.power-2 #drone1,
+        .drone-visual-container.power-2 #drone2,
+        .drone-visual-container.power-3 #drone1,
+        .drone-visual-container.power-3 #drone2,
+        .drone-visual-container.power-3 #drone3,
+        .drone-visual-container.power-4 #drone1,
+        .drone-visual-container.power-4 #drone2,
+        .drone-visual-container.power-4 #drone3,
+        .drone-visual-container.power-4 #drone4,
+        .drone-visual-container.power-5 #drone1,
+        .drone-visual-container.power-5 #drone2,
+        .drone-visual-container.power-5 #drone3,
+        .drone-visual-container.power-5 #drone4,
+        .drone-visual-container.power-5 #drone5 {
+            opacity: 1;
+            background: #00ff88;
+            box-shadow: 0 0 6px #00ff8888;
+        }
+
+        /* Drone flying animations to targets */
+        .drone-visual-container.target-reactor .drone { animation: flyToReactor 2s ease-in-out infinite; }
+        .drone-visual-container.target-stasis .drone { animation: flyToStasis 2s ease-in-out infinite; }
+        .drone-visual-container.target-thrusters .drone { animation: flyToThrusters 2s ease-in-out infinite; }
+        .drone-visual-container.target-shield .drone { animation: flyToShield 2s ease-in-out infinite; }
+
+        #drone1 { top: 10px; left: 10px; animation-delay: 0s !important; }
+        #drone2 { top: 10px; left: 18px; animation-delay: 0.4s !important; }
+        #drone3 { top: 14px; left: 6px; animation-delay: 0.8s !important; }
+        #drone4 { top: 14px; left: 22px; animation-delay: 1.2s !important; }
+        #drone5 { top: 18px; left: 14px; animation-delay: 1.6s !important; }
+
+        @keyframes flyToReactor {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-75px, -40px); }
+        }
+        @keyframes flyToStasis {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(75px, -40px); }
+        }
+        @keyframes flyToThrusters {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-75px, 40px); }
+        }
+        @keyframes flyToShield {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(75px, 40px); }
+        }
+
+        
+        /* Drone Controls */
+        .drone-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .target-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .drone-controls .power-controls {
+            justify-content: center;
+        }
+
         .button-row {
             display: flex;
             gap: 10px;
@@ -612,6 +1559,8 @@
             cursor: pointer;
             font-family: inherit;
             transition: all 0.1s;
+            position: relative;
+            overflow: visible;
         }
         .reactor-btn:hover {
             background: #330000;
@@ -622,6 +1571,74 @@
             border-color: #00ff88;
             color: #00ff88;
             box-shadow: 0 0 30px #00ff8855;
+        }
+        .reactor-btn .pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00ff88 0%, #00ff8888 30%, transparent 70%);
+            opacity: 0;
+            pointer-events: none;
+            animation: reactorPulse 0.5s ease-out forwards;
+        }
+        @keyframes reactorPulse {
+            0% {
+                opacity: var(--pulse-intensity, 0.3);
+                width: 100%;
+                height: 100%;
+            }
+            100% {
+                opacity: 0;
+                width: 2500%;
+                height: 2500%;
+            }
+        }
+        .reactor-btn .pulse.final {
+            background: radial-gradient(circle, #ffffff 0%, #00ff88 20%, #00ff8888 40%, transparent 70%);
+            animation: reactorPulseFinal 1.2s ease-out forwards;
+        }
+        @keyframes reactorPulseFinal {
+            0% {
+                opacity: 1;
+                width: 100%;
+                height: 100%;
+            }
+            70% {
+                opacity: 1;
+                width: 3000%;
+                height: 3000%;
+            }
+            100% {
+                opacity: 1;
+                width: 4000%;
+                height: 4000%;
+            }
+        }
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #00ff88;
+            z-index: 1000;
+            animation: screenFlash 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes screenFlash {
+            0% {
+                opacity: 1;
+            }
+            40% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
         }
         .intro-progress {
             margin-top: 20px;
@@ -705,6 +1722,233 @@
         .restart-btn:hover {
             background: #00ff8822;
         }
+        /* Ark Ship Survivors Panel */
+        .survivors-panel {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+        }
+        .survivors-panel-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .ark-ship-visual {
+            position: relative;
+            width: 140px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .ark-ship-container {
+            position: relative;
+            width: 100px;
+            height: 180px;
+        }
+        /* Ark Ship SVG-like structure using CSS */
+        .ark-ship-hull {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 140px;
+            background: linear-gradient(90deg, #1a1a2e 0%, #2a2a4e 30%, #2a2a4e 70%, #1a1a2e 100%);
+            border-radius: 30px 30px 10px 10px;
+            border: 1px solid #3a3a5e;
+            overflow: hidden;
+        }
+        .ark-ship-hull::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 25px;
+            background: linear-gradient(180deg, #4a4a6e 0%, #2a2a4e 100%);
+            border-radius: 15px 15px 0 0;
+        }
+        .ark-pod-grid {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 100px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 2px;
+            padding: 4px;
+        }
+        .ark-pod {
+            background: #00ff8855;
+            border-radius: 1px;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .ark-pod.active {
+            background: #00ff88;
+            box-shadow: 0 0 4px #00ff8888;
+        }
+        .ark-pod.dead {
+            background: #331111;
+        }
+        .ark-ship-engine {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            background: linear-gradient(180deg, #2a2a4e 0%, #1a1a2e 100%);
+            border-radius: 0 0 8px 8px;
+        }
+        .ark-engine-glow {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 15px;
+            background: radial-gradient(ellipse at center top, #00aaff44 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .ark-engine-glow.powered {
+            opacity: 1;
+            animation: enginePulse 1.5s ease-in-out infinite;
+        }
+        @keyframes enginePulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .ark-power-indicator {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .ark-power-bar {
+            width: 80px;
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .ark-power-fill {
+            height: 100%;
+            background: #00aaff;
+            transition: width 0.3s;
+            box-shadow: 0 0 8px #00aaff66;
+        }
+        .ark-power-label {
+            font-size: 10px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .survivors-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .survivors-info-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+        .survivors-info-vertical .survivor-count {
+            font-size: 42px;
+        }
+        .survivors-info-vertical .stasis-controls-section {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .survivors-info-vertical .stasis-header {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .survivors-info-vertical .cryo-log {
+            max-height: 120px;
+            text-align: left;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .survivors-info-vertical .integrity-bar {
+            width: 100%;
+        }
+        .survivor-count {
+            font-size: 56px;
+            font-weight: bold;
+            color: #00ff88;
+            line-height: 1;
+            text-shadow: 0 0 20px #00ff8844;
+            margin-bottom: 5px;
+        }
+        .survivor-count.warning {
+            color: #ffaa00;
+            text-shadow: 0 0 20px #ffaa0044;
+        }
+        .survivor-count.critical {
+            color: #ff4444;
+            text-shadow: 0 0 20px #ff444444;
+            animation: countPulse 1s ease-in-out infinite;
+        }
+        @keyframes countPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .survivor-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .stasis-controls-section {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+        }
+        .stasis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .stasis-title {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .stasis-power-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stasis-power-controls .power-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+        }
+        .stasis-power-controls .power-display {
+            min-width: 50px;
+            font-size: 14px;
+        }
+        .stasis-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+        }
+        .stasis-stat {
+            flex: 1;
+        }
+        .stasis-stat .integrity-bar {
+            width: 100%;
+            height: 8px;
+        }
     </style>
 </head>
 <body>
@@ -712,12 +1956,12 @@
     <div class="intro-overlay" id="introOverlay">
         <!-- Story Phase -->
         <div class="intro-story" id="introStory">
-            <p class="story-paragraph" id="story1">You went to sleep dreaming of a new world. You woke to the violent screams of tearing metal and the howl of decompression. The hull has been breached.</p>
-            <p class="story-paragraph" id="story2">Helpless, you watch as hundreds of bodies are ripped from their stasis pods and flung into the vast darkness of space beyond. With seconds to spare, you claw your way free, slamming the emergency manual override as the air is sucked from your lungs. The breach seals. You survive. But the crew is all dead and you lack the command authorization to open any of the remaining pods. </p>
-            <p class="story-paragraph" id="story3">Ahead lies your destination. Closer than you expected. Ark station is only a few days away. It is meant to be your sanctuary, a foothold in a new solar system, built by machines before you even arrived. But as the Ark Ship draws closer, your hope sours. </p>
-            <p class="story-paragraph" id="story4">The station is a ruin, drifting perilously close to the burning star it orbits. There is no welcome beacon. No hail from the automatic systems. You dock with the silent hulk, stepping into a graveyard of cold, dark corridors. </p>
-            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. Thousands of colonists remain trapped in stasis, unaware their time is running out. Backup life support is failing. First hundreds will die, then thousands. </p>
-            <p class="story-paragraph" id="story6">You stand before the silent reactor. It has to start, or everyone is going to die here. </p>
+            <p class="story-paragraph" id="story1">You went to sleep dreaming of life in a new world. You woke to the violent screams of tearing metal and the howl of decompression. The hull has been breached.</p>
+            <p class="story-paragraph" id="story2">Helpless, you watch as hundreds of bodies are ripped from their stasis pods and flung into the vast darkness of space beyond. With seconds to spare, you claw your way free, slamming the emergency manual override as the air is sucked from your lungs. The breach seals. You survive. But the crew is dead and you lack command authorization to open any of the remaining pods. </p>
+            <p class="story-paragraph" id="story3">Ahead lies your destination. Closer than you expected. Ark station is only a few days away. It is meant to be your sanctuary, your foothold in a new solar system, built by machines before you even arrived. But as the Ark Ship draws closer, your hope sours. </p>
+            <p class="story-paragraph" id="story4">The station is a ruin drifting perilously close to the burning star it orbits. There is no welcome beacon. No hail from the automatic systems. You dock with the silent hulk, stepping into a graveyard of cold, dark corridors. </p>
+            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. Thousands of colonists remain trapped in stasis, unaware their time is running out. Backup life support is failing. First, hundreds will die, then thousands. </p>
+            <p class="story-paragraph" id="story6">You stand before the silent reactor, praying it will start. </p>
             <button class="continue-btn" id="continueBtn">CONTINUE</button>
             <button class="skip-btn" id="skipBtn">SKIP</button>
         </div>
@@ -732,102 +1976,149 @@
         <h1>ARK STATION</h1>
 
         <div class="main-layout">
-            <div class="left-column">
+            <div class="left-sidebar">
                 <div class="panel">
-                    <div class="panel-title">Survivors</div>
-                    <div class="stat"><span id="survivors">10,000</span></div>
-                    <div class="stat-label">Souls in Cryogenic Stasis</div>
-                    <div class="death-rate" id="deathRate"></div>
-                    <div class="cryo-log" id="cryoLog"></div>
+                    <div class="panel-title">Ark Ship — Stasis Bay</div>
+                    <div class="survivors-panel-vertical">
+                        <div class="ark-ship-visual">
+                            <div class="ark-ship-container">
+                                <div class="ark-ship-hull">
+                                    <div class="ark-pod-grid" id="arkPodGrid">
+                                        <!-- 32 pods will be generated by JS -->
+                                    </div>
+                                </div>
+                                <div class="ark-ship-engine"></div>
+                                <div class="ark-engine-glow" id="arkEngineGlow"></div>
+                            </div>
+                            <div class="ark-power-indicator">
+                                <div class="ark-power-bar">
+                                    <div class="ark-power-fill" id="arkPowerFill" style="width: 0%"></div>
+                                </div>
+                                <div class="ark-power-label">LIFE SUPPORT</div>
+                            </div>
+                        </div>
+                        <div class="survivors-info-vertical">
+                            <div class="survivor-count" id="survivors">10,000</div>
+                            <div class="survivor-label">Souls in Stasis</div>
+                            <div class="death-rate" id="deathRate"></div>
+                            <div class="stasis-controls-section">
+                                <div class="stasis-header">
+                                    <div class="stasis-title">Life Support</div>
+                                    <div class="stasis-power-controls">
+                                        <button class="power-btn" id="stasisMinus">−</button>
+                                        <div class="power-display"><span id="stasisPower">0</span> ⚡</div>
+                                        <button class="power-btn" id="stasisPlus">+</button>
+                                    </div>
+                                </div>
+                                <div class="stasis-stats">
+                                    <div class="stasis-stat">
+                                        <div class="integrity-bar">
+                                            <div class="integrity-fill" id="stasisIntegrity" style="width: 20%"></div>
+                                            <div class="integrity-locked" id="stasisLocked" style="width: 80%"></div>
+                                        </div>
+                                        <div class="stat-label">Integrity: <span id="stasisIntegrityText">20%</span></div>
+                                    </div>
+                                </div>
+                                <div class="system-status critical" id="stasisStatus">CRITICAL</div>
+                            </div>
+                            <div class="cryo-log" id="cryoLog"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-column">
+                <div class="panel">
+                    <div class="panel-title">Reactor Core</div>
+                    <div class="reactor-panel">
+                        <div class="reactor-visual-container">
+                            <div class="reactor-ring reactor-ring-5" id="reactorRing5"></div>
+                            <div class="reactor-ring reactor-ring-4" id="reactorRing4"></div>
+                            <div class="reactor-ring reactor-ring-3" id="reactorRing3"></div>
+                            <div class="reactor-ring reactor-ring-2" id="reactorRing2"></div>
+                            <div class="reactor-ring reactor-ring-1" id="reactorRing1"></div>
+                            <div class="reactor-core-visual integrity-1 glow-1" id="reactorCoreVisual">
+                                <div class="reactor-core-inner" id="reactorCoreInner"></div>
+                            </div>
+                        </div>
+                        <div class="reactor-info">
+                            <div class="reactor-power-display">
+                                <span class="allocated" id="powerAllocated">0</span><span class="separator"> / </span><span class="total" id="powerTotal">5</span>
+                            </div>
+                            <div class="stat-label">Power Allocated / Output</div>
+                            <div class="reactor-max-power">Max Potential: <span id="reactorMaxPotential">27</span> power</div>
+                            <div class="reactor-integrity-section">
+                                <div class="integrity-bar">
+                                    <div class="integrity-fill" id="reactorIntegrity" style="width: 20%"></div>
+                                    <div class="integrity-locked" id="reactorLocked" style="width: 80%"></div>
+                                </div>
+                                <div class="stat-label">Integrity: <span id="reactorIntegrityText">20%</span> <span id="reactorRepairing" style="color: #00aaff; display: none;">[REPAIRING]</span></div>
+                                <div class="system-status critical" id="reactorStatus">CRITICAL</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="panel">
-                    <div class="panel-title">Power Grid</div>
-                    <div class="stat"><span id="powerAllocated">0</span> / <span id="powerTotal">5</span></div>
-                    <div class="stat-label">Allocated / Total Power Units</div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-title">Systems</div>
-            <div class="system" id="reactorSystem">
-                <div class="system-info">
-                    <div class="system-name">Reactor Core</div>
-                    <div class="integrity-bar">
-                        <div class="integrity-fill" id="reactorIntegrity" style="width: 20%"></div>
-                        <div class="integrity-locked" id="reactorLocked" style="width: 80%"></div>
+                    <div class="panel-title">Repair Drones</div>
+                    <div class="drone-visual-container" id="droneVisualContainer">
+                        <div class="drone-targets">
+                            <div class="drone-target-row">
+                                <div class="drone-target" id="droneTargetReactor">
+                                    <div class="target-icon reactor-icon">
+                                        <div class="reactor-icon-core"></div>
+                                        <div class="reactor-icon-ring"></div>
+                                    </div>
+                                    <div class="target-label">Reactor</div>
+                                </div>
+                                <div class="drone-target" id="droneTargetStasis">
+                                    <div class="target-icon stasis-icon">
+                                        <div class="stasis-icon-pod"></div>
+                                        <div class="stasis-icon-pod"></div>
+                                        <div class="stasis-icon-pod"></div>
+                                    </div>
+                                    <div class="target-label">Stasis</div>
+                                </div>
+                            </div>
+                            <div class="drone-target-row">
+                                <div class="drone-target" id="droneTargetThrusters">
+                                    <div class="target-icon thruster-icon">
+                                        <div class="thruster-icon-body"></div>
+                                        <div class="thruster-icon-flame"></div>
+                                    </div>
+                                    <div class="target-label">Thrusters</div>
+                                </div>
+                                <div class="drone-target" id="droneTargetShield">
+                                    <div class="target-icon shield-icon">
+                                        <div class="shield-icon-arc"></div>
+                                        <div class="shield-icon-arc"></div>
+                                    </div>
+                                    <div class="target-label">Shield</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drone-hub">
+                            <div class="drone-hub-core"></div>
+                            <div class="drone" id="drone1"></div>
+                            <div class="drone" id="drone2"></div>
+                            <div class="drone" id="drone3"></div>
+                            <div class="drone" id="drone4"></div>
+                            <div class="drone" id="drone5"></div>
+                        </div>
+                                            </div>
+                    <div class="drone-controls">
+                        <div class="target-buttons">
+                            <button class="target-btn active" id="targetReactor">Reactor</button>
+                            <button class="target-btn" id="targetStasis">Stasis</button>
+                            <button class="target-btn" id="targetThrusters">Thrusters</button>
+                            <button class="target-btn" id="targetShield">Shield</button>
+                        </div>
+                        <div class="power-controls">
+                            <button class="power-btn" id="dronesMinus">−</button>
+                            <div class="power-display"><span id="dronesPower">0</span> ⚡</div>
+                            <button class="power-btn" id="dronesPlus">+</button>
+                        </div>
                     </div>
-                    <div class="stat-label">Integrity: <span id="reactorIntegrityText">20%</span> → <span id="reactorOutput">5</span> power</div>
-                    <div class="system-status critical" id="reactorStatus">CRITICAL</div>
-                </div>
-                <div class="power-controls">
-                    <span class="stat-label" style="color: #666;">No allocation</span>
-                </div>
-            </div>
-            <div class="system" id="stasisSystem">
-                <div class="system-info">
-                    <div class="system-name">Stasis Pod Life Support</div>
-                    <div class="integrity-bar">
-                        <div class="integrity-fill" id="stasisIntegrity" style="width: 20%"></div>
-                        <div class="integrity-locked" id="stasisLocked" style="width: 80%"></div>
-                    </div>
-                    <div class="stat-label">Integrity: <span id="stasisIntegrityText">20%</span></div>
-                    <div class="system-status critical" id="stasisStatus">CRITICAL</div>
-                </div>
-                <div class="power-controls">
-                    <button class="power-btn" id="stasisMinus">−</button>
-                    <div class="power-display"><span id="stasisPower">0</span> ⚡</div>
-                    <button class="power-btn" id="stasisPlus">+</button>
-                </div>
-            </div>
-            <div class="system" id="thrustersSystem">
-                <div class="system-info">
-                    <div class="system-name">Orbital Thrusters</div>
-                    <div class="integrity-bar">
-                        <div class="integrity-fill" id="thrustersIntegrity" style="width: 20%"></div>
-                        <div class="integrity-locked" id="thrustersLocked" style="width: 80%"></div>
-                    </div>
-                    <div class="stat-label">Integrity: <span id="thrustersIntegrityText">20%</span></div>
-                    <div class="system-status critical" id="thrustersStatus">CRITICAL</div>
-                </div>
-                <div class="power-controls">
-                    <button class="power-btn" id="thrustersMinus">−</button>
-                    <div class="power-display"><span id="thrustersPower">0</span> ⚡</div>
-                    <button class="power-btn" id="thrustersPlus">+</button>
-                </div>
-            </div>
-            <div class="system" id="shieldSystem">
-                <div class="system-info">
-                    <div class="system-name">Solar Shield Matrix</div>
-                    <div class="integrity-bar">
-                        <div class="integrity-fill" id="shieldIntegrity" style="width: 20%"></div>
-                        <div class="integrity-locked" id="shieldLocked" style="width: 80%"></div>
-                    </div>
-                    <div class="stat-label">Integrity: <span id="shieldIntegrityText">20%</span></div>
-                    <div class="system-status critical" id="shieldStatus">CRITICAL</div>
-                </div>
-                <div class="power-controls">
-                    <button class="power-btn" id="shieldMinus">−</button>
-                    <div class="power-display"><span id="shieldPower">0</span> ⚡</div>
-                    <button class="power-btn" id="shieldPlus">+</button>
-                </div>
-            </div>
-            <div class="system">
-                <div class="system-info">
-                    <div class="system-name">Repair Drones</div>
-                    <div class="repair-target">
-                        <span class="stat-label">Target:</span>
-                        <button class="target-btn active" id="targetReactor">Reactor</button>
-                        <button class="target-btn" id="targetStasis">Stasis</button>
-                        <button class="target-btn" id="targetThrusters">Thrusters</button>
-                        <button class="target-btn" id="targetShield">Shield</button>
-                    </div>
-                </div>
-                <div class="power-controls">
-                    <button class="power-btn" id="dronesMinus">−</button>
-                    <div class="power-display"><span id="dronesPower">0</span> ⚡</div>
-                    <button class="power-btn" id="dronesPlus">+</button>
-                </div>
-            </div>
                 </div>
 
                 <div class="button-row">
@@ -858,10 +2149,70 @@
                         </div>
                     </div>
                     <div class="radiation-warning" id="radiationWarning"></div>
+
+                    <div class="thruster-section">
+                        <div class="thruster-header">
+                            <div class="thruster-title">Orbital Thrusters</div>
+                            <div class="thruster-power-display">
+                                <button class="power-btn" id="thrustersMinus">−</button>
+                                <div class="power-display"><span id="thrustersPower">0</span> ⚡</div>
+                                <button class="power-btn" id="thrustersPlus">+</button>
+                            </div>
+                        </div>
+                        <div class="thruster-stats">
+                            <div class="integrity-bar">
+                                <div class="integrity-fill" id="thrustersIntegrity" style="width: 20%"></div>
+                                <div class="integrity-locked" id="thrustersLocked" style="width: 80%"></div>
+                            </div>
+                            <div class="stat-label">Integrity: <span id="thrustersIntegrityText">20%</span></div>
+                        </div>
+                        <div class="system-status critical" id="thrustersStatus">CRITICAL</div>
+                        <div class="thruster-graphic-container">
+                            <div class="thruster-graphic" id="thrusterGraphic">
+                                <div class="thruster-body"></div>
+                                <div class="thruster-nozzle"></div>
+                                <div class="thruster-flame-outer"></div>
+                                <div class="thruster-flame-inner"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="panel">
                     <div class="panel-title">Solar Forecast</div>
+                    <div class="solar-visual-container">
+                        <div class="solar-graphic clear" id="solarGraphic">
+                            <div class="flare-burst"></div>
+                            <div class="sun-corona"></div>
+                            <div class="sun-rays">
+                                <div class="sun-ray"></div>
+                                <div class="sun-ray"></div>
+                                <div class="sun-ray"></div>
+                                <div class="sun-ray"></div>
+                                <div class="sun-ray"></div>
+                                <div class="sun-ray"></div>
+                                <div class="sun-ray"></div>
+                                <div class="sun-ray"></div>
+                            </div>
+                            <div class="sun-core"></div>
+                        </div>
+                        <div class="shield-graphic power-0" id="shieldGraphic">
+                            <div class="shield-arc shield-arc-1"></div>
+                            <div class="shield-arc shield-arc-2"></div>
+                            <div class="shield-arc shield-arc-3"></div>
+                            <div class="shield-arc shield-arc-4"></div>
+                            <div class="shield-arc shield-arc-5"></div>
+                            <div class="shield-particles">
+                                <div class="shield-particle"></div>
+                                <div class="shield-particle"></div>
+                                <div class="shield-particle"></div>
+                                <div class="shield-particle"></div>
+                                <div class="shield-particle"></div>
+                                <div class="shield-particle"></div>
+                            </div>
+                            <div class="shield-impact"></div>
+                        </div>
+                    </div>
                     <div class="solar-forecast">
                         <div>
                             <div class="stat-label">Status</div>
@@ -873,6 +2224,23 @@
                         </div>
                     </div>
                     <div class="flare-damage" id="flareDamage"></div>
+
+                    <div class="shield-controls">
+                        <div class="shield-header">
+                            <span class="system-name">Solar Shield Matrix</span>
+                            <span class="system-status critical" id="shieldStatus">CRITICAL</span>
+                        </div>
+                        <div class="integrity-bar">
+                            <div class="integrity-fill" id="shieldIntegrity" style="width: 20%"></div>
+                            <div class="integrity-locked" id="shieldLocked" style="width: 80%"></div>
+                        </div>
+                        <div class="stat-label">Integrity: <span id="shieldIntegrityText">20%</span></div>
+                        <div class="power-controls">
+                            <button class="power-btn" id="shieldMinus">−</button>
+                            <div class="power-display"><span id="shieldPower">0</span> ⚡</div>
+                            <button class="power-btn" id="shieldPlus">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1011,34 +2379,49 @@
             orbitalDecay: document.getElementById('orbitalDecay'),
             radiationWarning: document.getElementById('radiationWarning'),
             solarStatus: document.getElementById('solarStatus'),
+            solarGraphic: document.getElementById('solarGraphic'),
+            shieldGraphic: document.getElementById('shieldGraphic'),
             nextFlare: document.getElementById('nextFlare'),
             flareDamage: document.getElementById('flareDamage'),
-            reactorSystem: document.getElementById('reactorSystem'),
+            reactorCoreVisual: document.getElementById('reactorCoreVisual'),
+            reactorCoreInner: document.getElementById('reactorCoreInner'),
+            reactorRing1: document.getElementById('reactorRing1'),
+            reactorRing2: document.getElementById('reactorRing2'),
+            reactorRing3: document.getElementById('reactorRing3'),
+            reactorRing4: document.getElementById('reactorRing4'),
+            reactorRing5: document.getElementById('reactorRing5'),
+            reactorMaxPotential: document.getElementById('reactorMaxPotential'),
             reactorIntegrity: document.getElementById('reactorIntegrity'),
             reactorLocked: document.getElementById('reactorLocked'),
             reactorIntegrityText: document.getElementById('reactorIntegrityText'),
-            reactorOutput: document.getElementById('reactorOutput'),
-            stasisSystem: document.getElementById('stasisSystem'),
+            reactorRepairing: document.getElementById('reactorRepairing'),
+            arkPodGrid: document.getElementById('arkPodGrid'),
+            arkEngineGlow: document.getElementById('arkEngineGlow'),
+            arkPowerFill: document.getElementById('arkPowerFill'),
             stasisIntegrity: document.getElementById('stasisIntegrity'),
             stasisLocked: document.getElementById('stasisLocked'),
             stasisIntegrityText: document.getElementById('stasisIntegrityText'),
             stasisPower: document.getElementById('stasisPower'),
             stasisMinus: document.getElementById('stasisMinus'),
             stasisPlus: document.getElementById('stasisPlus'),
-            thrustersSystem: document.getElementById('thrustersSystem'),
+            thrusterGraphic: document.getElementById('thrusterGraphic'),
             thrustersIntegrity: document.getElementById('thrustersIntegrity'),
             thrustersLocked: document.getElementById('thrustersLocked'),
             thrustersIntegrityText: document.getElementById('thrustersIntegrityText'),
             thrustersPower: document.getElementById('thrustersPower'),
             thrustersMinus: document.getElementById('thrustersMinus'),
             thrustersPlus: document.getElementById('thrustersPlus'),
-            shieldSystem: document.getElementById('shieldSystem'),
             shieldIntegrity: document.getElementById('shieldIntegrity'),
             shieldLocked: document.getElementById('shieldLocked'),
             shieldIntegrityText: document.getElementById('shieldIntegrityText'),
             shieldPower: document.getElementById('shieldPower'),
             shieldMinus: document.getElementById('shieldMinus'),
             shieldPlus: document.getElementById('shieldPlus'),
+            droneVisualContainer: document.getElementById('droneVisualContainer'),
+            droneTargetReactor: document.getElementById('droneTargetReactor'),
+            droneTargetStasis: document.getElementById('droneTargetStasis'),
+            droneTargetThrusters: document.getElementById('droneTargetThrusters'),
+            droneTargetShield: document.getElementById('droneTargetShield'),
             dronesPower: document.getElementById('dronesPower'),
             dronesMinus: document.getElementById('dronesMinus'),
             dronesPlus: document.getElementById('dronesPlus'),
@@ -1083,6 +2466,54 @@
         // Get total allocated power
         function getTotalAllocated() {
             return Object.values(gameState.power.allocated).reduce((a, b) => a + b, 0);
+        }
+
+        // Initialize Ark Ship pod grid
+        function initArkPodGrid() {
+            els.arkPodGrid.innerHTML = '';
+            for (let i = 0; i < 32; i++) {
+                const pod = document.createElement('div');
+                pod.className = 'ark-pod active';
+                pod.dataset.index = i;
+                els.arkPodGrid.appendChild(pod);
+            }
+        }
+
+        // Update Ark Ship visual based on game state
+        function updateArkShipVisual() {
+            const pods = els.arkPodGrid.querySelectorAll('.ark-pod');
+            const survivorPercent = gameState.survivors / gameState.initialSurvivors;
+            const activePods = Math.ceil(survivorPercent * 32);
+
+            pods.forEach((pod, index) => {
+                pod.classList.remove('active', 'dead');
+                if (index < activePods) {
+                    pod.classList.add('active');
+                } else {
+                    pod.classList.add('dead');
+                }
+            });
+
+            // Update power fill bar based on stasis power allocation
+            const stasisPower = gameState.power.allocated.stasis;
+            const maxPower = gameState.power.maxPower;
+            const powerPercent = maxPower > 0 ? (stasisPower / maxPower) * 100 : 0;
+            els.arkPowerFill.style.width = powerPercent + '%';
+
+            // Update engine glow based on power allocation
+            if (stasisPower > 0) {
+                els.arkEngineGlow.classList.add('powered');
+            } else {
+                els.arkEngineGlow.classList.remove('powered');
+            }
+
+            // Update survivor count color based on percentage
+            els.survivors.classList.remove('warning', 'critical');
+            if (survivorPercent < 0.3) {
+                els.survivors.classList.add('critical');
+            } else if (survivorPercent < 0.5) {
+                els.survivors.classList.add('warning');
+            }
         }
 
         // Generate cryo-log death message
@@ -1230,6 +2661,7 @@
             els.introProgress.textContent = '';
 
             // Restart the story sequence
+            initArkPodGrid();
             startStorySequence();
             els.cryoLog.innerHTML = '';
 
@@ -1394,6 +2826,18 @@
                 els.nextFlare.textContent = solar.nextFlare + 's';
             }
 
+            // Update solar graphic based on status
+            els.solarGraphic.className = 'solar-graphic';
+            if (solar.flareActive) {
+                els.solarGraphic.classList.add('active');
+            } else if (solar.nextFlare <= 5) {
+                els.solarGraphic.classList.add('imminent');
+            } else if (solar.nextFlare <= 15) {
+                els.solarGraphic.classList.add('warning');
+            } else {
+                els.solarGraphic.classList.add('clear');
+            }
+
             // Flare damage indicator
             if (solar.flareActive && solar.lastDamage > 0) {
                 els.flareDamage.textContent = `☀ Solar flare dealing ${solar.lastDamage.toFixed(1)}% damage to all systems!`;
@@ -1407,8 +2851,32 @@
             els.reactorIntegrity.style.width = reactor.integrity + '%';
             els.reactorLocked.style.width = (100 - reactor.maxIntegrity) + '%';
             els.reactorIntegrityText.textContent = Math.round(reactor.integrity) + '%';
-            els.reactorOutput.textContent = gameState.power.total;
             setIntegrityColor(els.reactorIntegrity, reactorFillPercent);
+
+            // Reactor visual - integrity controls size, power controls glow
+            const power = gameState.power.total;
+            const maxPossiblePower = 27;
+            const integrity = reactor.integrity;
+
+            // Integrity level (1-5) based on 20% increments
+            const integrityLevel = Math.min(5, Math.max(1, Math.ceil(integrity / 20)));
+
+            // Power glow level (1-5)
+            const glowLevel = Math.min(5, Math.max(0, Math.ceil((power / maxPossiblePower) * 5)));
+
+            // Update reactor core visual classes
+            els.reactorCoreVisual.className = 'reactor-core-visual integrity-' + integrityLevel + (glowLevel > 0 ? ' glow-' + glowLevel : '');
+            els.reactorCoreInner.style.opacity = 0.2 + (power / maxPossiblePower) * 0.8;
+
+            // Update rings - activate based on integrity level, add 'powered' if generating power
+            const rings = [els.reactorRing1, els.reactorRing2, els.reactorRing3, els.reactorRing4, els.reactorRing5];
+            rings.forEach((ring, i) => {
+                const ringLevel = i + 1;
+                const isActive = integrity >= ringLevel * 20;
+                const isPowered = isActive && power >= ringLevel * 5;
+                ring.classList.toggle('active', isActive);
+                ring.classList.toggle('powered', isPowered);
+            });
 
             // Stasis system
             const stasis = gameState.systems.stasis;
@@ -1428,6 +2896,13 @@
             els.thrustersIntegrityText.textContent = Math.round(thrusters.integrity) + '%';
             setIntegrityColor(els.thrustersIntegrity, thrustersFillPercent);
 
+            // Update thruster visual based on power allocation
+            els.thrusterGraphic.className = 'thruster-graphic';
+            if (thrusters.powerAllocated > 0) {
+                const powerLevel = Math.min(5, thrusters.powerAllocated);
+                els.thrusterGraphic.classList.add('power-' + powerLevel);
+            }
+
             // Shield system
             const shield = gameState.systems.shield;
             els.shieldPower.textContent = shield.powerAllocated;
@@ -1436,6 +2911,14 @@
             els.shieldLocked.style.width = (100 - shield.maxIntegrity) + '%';
             els.shieldIntegrityText.textContent = Math.round(shield.integrity) + '%';
             setIntegrityColor(els.shieldIntegrity, shieldFillPercent);
+
+            // Update shield graphic based on power
+            els.shieldGraphic.className = 'shield-graphic';
+            const shieldPowerLevel = Math.min(5, shield.powerAllocated);
+            els.shieldGraphic.classList.add('power-' + shieldPowerLevel);
+            if (solar.flareActive && shield.powerAllocated > 0) {
+                els.shieldGraphic.classList.add('absorbing');
+            }
 
             // Drones system
             const drones = gameState.systems.drones;
@@ -1447,12 +2930,30 @@
             els.targetThrusters.classList.toggle('active', drones.target === 'thrusters');
             els.targetShield.classList.toggle('active', drones.target === 'shield');
 
+            // Update drone visual container
+            els.droneVisualContainer.className = 'drone-visual-container';
+            const dronePowerLevel = Math.min(5, drones.powerAllocated);
+            if (dronePowerLevel > 0) {
+                els.droneVisualContainer.classList.add('power-' + dronePowerLevel);
+            }
+            els.droneVisualContainer.classList.add('target-' + drones.target);
+
+            // Update drone target icons
+            els.droneTargetReactor.classList.toggle('active', drones.target === 'reactor');
+            els.droneTargetStasis.classList.toggle('active', drones.target === 'stasis');
+            els.droneTargetThrusters.classList.toggle('active', drones.target === 'thrusters');
+            els.droneTargetShield.classList.toggle('active', drones.target === 'shield');
+
+            // Add repairing animation to active target when drones have power
+            const isRepairingVisual = drones.powerAllocated > 0;
+            els.droneTargetReactor.classList.toggle('repairing', isRepairingVisual && drones.target === 'reactor');
+            els.droneTargetStasis.classList.toggle('repairing', isRepairingVisual && drones.target === 'stasis');
+            els.droneTargetThrusters.classList.toggle('repairing', isRepairingVisual && drones.target === 'thrusters');
+            els.droneTargetShield.classList.toggle('repairing', isRepairingVisual && drones.target === 'shield');
+
             // Show repairing indicator on target system (only if drones have power)
             const isRepairing = drones.powerAllocated > 0;
-            els.reactorSystem.classList.toggle('repairing', isRepairing && drones.target === 'reactor');
-            els.stasisSystem.classList.toggle('repairing', isRepairing && drones.target === 'stasis');
-            els.thrustersSystem.classList.toggle('repairing', isRepairing && drones.target === 'thrusters');
-            els.shieldSystem.classList.toggle('repairing', isRepairing && drones.target === 'shield');
+            els.reactorRepairing.style.display = (isRepairing && drones.target === 'reactor') ? 'inline' : 'none';
 
             // Update button states
             els.stasisMinus.disabled = stasis.powerAllocated <= 0;
@@ -1496,6 +2997,9 @@
             const shieldStatusInfo = getSystemStatus(shield.integrity);
             els.shieldStatus.textContent = shieldStatusInfo.text;
             els.shieldStatus.className = 'system-status ' + shieldStatusInfo.class;
+
+            // Update Ark Ship visual
+            updateArkShipVisual();
         }
 
         // Game loop tick
@@ -1795,9 +3299,9 @@
             intro.storyTimers = [];
 
             const paragraphs = [els.story1, els.story2, els.story3, els.story4, els.story5, els.story6];
-            // Slowed to 25% speed (4x slower): ~10s between paragraphs
-            const delays = [4000, 14000, 24000, 34000, 44000, 54000];
-            const continueDelay = 60000; // When continue button appears
+            // Custom timing: P1 fast, then gaps of 8.5s, 22s, 15s, 12s, 12s between paragraphs
+            const delays = [1500, 10000, 32000, 47000, 59000, 71000];
+            const continueDelay = 76000; // 5s after final paragraph
 
             // Schedule each paragraph to appear
             delays.forEach((delay, i) => {
@@ -1852,8 +3356,20 @@
 
             intro.clicks++;
             const progress = Math.round((intro.clicks / intro.requiredClicks) * 100);
+            const isFinalClick = intro.clicks >= intro.requiredClicks;
 
-            if (intro.clicks < intro.requiredClicks) {
+            // Calculate pulse intensity: starts at 0.3, increases to 1.0 by final click
+            const intensity = 0.3 + (intro.clicks / intro.requiredClicks) * 0.7;
+
+            // Create pulse effect with scaling intensity
+            const pulse = document.createElement('div');
+            pulse.className = isFinalClick ? 'pulse final' : 'pulse';
+            pulse.style.setProperty('--pulse-intensity', intensity);
+            els.reactorBtn.appendChild(pulse);
+            // Remove pulse element after animation completes
+            setTimeout(() => pulse.remove(), isFinalClick ? 1200 : 500);
+
+            if (!isFinalClick) {
                 els.introProgress.textContent = `Initializing... ${progress}%`;
                 els.reactorBtn.style.boxShadow = `0 0 ${intro.clicks * 5}px #00ff8844`;
             } else {
@@ -1861,12 +3377,22 @@
                 intro.active = false;
                 els.reactorBtn.classList.add('active');
                 els.reactorBtn.innerHTML = 'REACTOR<br>ONLINE';
-                els.introProgress.textContent = 'Reactor online. Systems booting...';
+                els.introProgress.textContent = '';
 
-                // Hide intro after short delay
+                // Create screen flash after the final pulse ripples out
                 setTimeout(() => {
-                    els.introOverlay.classList.add('hidden');
-                }, 1500);
+                    const flash = document.createElement('div');
+                    flash.className = 'screen-flash';
+                    document.body.appendChild(flash);
+
+                    // Hide intro and remove flash after animation
+                    setTimeout(() => {
+                        els.introOverlay.classList.add('hidden');
+                    }, 600);
+                    setTimeout(() => {
+                        flash.remove();
+                    }, 1500);
+                }, 900); // Delay flash until pulse has expanded
             }
         });
 
@@ -1874,6 +3400,9 @@
         els.restartBtn.addEventListener('click', restartGame);
 
         // Initialize
+        // Initialize Ark Ship pod grid
+        initArkPodGrid();
+
         updateUI();
 
         // Start the intro story sequence

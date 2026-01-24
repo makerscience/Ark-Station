@@ -6,6 +6,160 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-20 - Repair Drones Panel Redesign
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Systems panel renamed to "Repair Drones" panel with visual graphics:**
+  - Central drone hub with up to 5 animated drones
+  - 4 target system icons in corners:
+    - **Reactor**: Orange glowing core with containment ring
+    - **Stasis**: Three green stasis pods
+    - **Thrusters**: Engine body with exhaust flame
+    - **Shield**: Two cyan arc barriers
+  - Drones fly all the way from hub to active target icon with staggered timing
+  - Active target highlighted and pulsing when being repaired
+
+#### Visual Feedback Based on Power Level
+- **Power 0**: No drones visible
+- **Power 1**: 1 drone flying to target
+- **Power 2**: 2 drones flying to target
+- **Power 3-4**: 3-4 drones flying to target
+- **Power 5**: All 5 drones flying to target with full swarm effect
+
+#### Notes
+- All animations use CSS for performance
+- Drone positions staggered to create swarm effect
+- Target icons use same visual language as main system panels
+- Inactive targets dimmed to emphasize current repair focus
+
+---
+
+### 2026-01-20 - Solar Forecast Panel Enhancement
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Solar Forecast panel now has animated sun graphic:**
+  - Sun core with corona and 8 radiating rays
+  - 4 visual states matching forecast status:
+    - **CLEAR**: Calm orange sun with slow 4-second pulse
+    - **WARNING**: Brighter sun, corona expands, 2-second pulse
+    - **IMMINENT**: White-hot core, rays become visible, rapid 0.5-second pulse
+    - **ACTIVE**: Maximum intensity with rotating rays and flare burst animation
+  - Flare burst element that animates outward during active state
+  - Background shows deep space gradient
+
+- **Solar Shield Matrix integrated into Solar Forecast panel:**
+  - Shield visual graphic with 5 concentric arcs
+  - Arcs light up progressively based on power allocation (1-5 levels)
+  - Floating energy particles appear at power level 3+
+  - "Absorbing" effect during active solar flares (arcs glow orange)
+  - Impact glow effect when shield is absorbing flare damage
+  - Power level 5 has continuous pulse animation
+  - Power controls, integrity bar, and status moved into panel
+
+#### Removed
+- Solar Shield Matrix entry from Systems panel (consolidated into Solar Forecast)
+
+#### Fixed
+- JavaScript error where `shield` variable was used before being defined in updateUI()
+- This bug caused all game controls (start button, power buttons) to stop working
+
+#### Notes
+- All animations are CSS-only for performance
+- Shield visual positioned at bottom of solar graphic area
+- Shield arcs create protective barrier effect between sun and bottom of view
+- "Absorbing" state provides visual feedback when shield is actively protecting
+- Complements existing sun animation to show the defensive relationship
+
+---
+
+### 2026-01-20 - Orbital Status Panel Enhancement
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Orbital Thrusters integrated into Orbital Status panel:**
+  - Thruster visual graphic with animated firing effect
+  - Flame intensity scales with power allocation (5 levels)
+  - Level 1-2: Small blue flame with subtle flicker
+  - Level 3-4: Larger flame with faster animation
+  - Level 5: White-hot core with intense pulsing flame
+  - Power controls, integrity bar, and status moved into panel
+  - Thruster graphic positioned next to orbital visualization
+
+#### Removed
+- Orbital Thrusters entry from Systems panel (consolidated into Orbital Status)
+
+#### Notes
+- Flame uses CSS-only animation for performance
+- Outer flame provides glow effect, inner flame shows core
+- Visual feedback helps players understand thruster power allocation
+- Panel now shows complete orbital management: position, decay, and thrust control
+
+---
+
+### 2026-01-20 - Ark Ship Survivors Panel Redesign
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Survivors panel completely redesigned as "Ark Ship — Stasis Bay":**
+  - Visual Ark Ship with CSS-based hull, pod grid, and engine section
+  - 32-pod grid (4x8) representing stasis pods - pods light up green when active, turn dark red as survivors die
+  - Pod grid updates proportionally based on survivor percentage
+  - Engine glow effect activates when power is allocated to life support
+  - Power indicator bar below ship shows current life support power allocation
+  - Survivor count now much larger (56px font) with dynamic coloring:
+    - Green: Normal (>50% survivors)
+    - Orange/Warning: Below 50% survivors
+    - Red/Pulsing: Below 30% survivors (critical)
+- **Stasis Pod Life Support controls integrated into Survivors panel:**
+  - Power controls ([−] / [+]) moved into panel
+  - Integrity bar and status indicator included
+  - Cleaner "Life Support System" header
+
+#### Removed
+- Stasis Pod Life Support entry from Systems panel (consolidated into Ark Ship panel)
+
+#### Notes
+- Pod grid uses 32 visual pods to represent ~10,000 colonists (each pod ≈ 312 survivors)
+- Engine glow has pulsing animation when powered
+- Panel positioned on left side of screen for prominence
+- Survivor count pulses when critical to draw attention
+
+---
+
+### 2026-01-20 - Reactor Core Visual Redesign
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Power Grid panel redesigned as "Reactor Core" panel:**
+  - Visual reactor core with dynamic glow effect
+  - Five concentric containment rings corresponding to integrity levels (20%, 40%, 60%, 80%, 100%)
+  - Reactor core expands outward as integrity increases, filling more rings
+  - Rings light up when integrity reaches their threshold
+  - Rings glow brighter ("powered") when power output reaches corresponding level
+  - Glow intensity scales with current power output (1-27 range, 5 glow levels)
+  - Inner core brightness also scales with power
+  - At max power (27), reactor pulses with intense glow animation
+- **Reactor system info moved into Reactor Core panel:**
+  - Power display shows Allocated / Output
+  - Max Potential indicator (27 power)
+  - Integrity bar with locked section
+  - Status indicator (CRITICAL/STRESSED/ONLINE)
+  - Repairing indicator when drones target reactor
+
+#### Removed
+- Reactor Core entry from Systems panel (consolidated into new panel)
+
+#### Notes
+- Ring thresholds: Ring 1 at 20%, Ring 2 at 40%, Ring 3 at 60%, Ring 4 at 80%, Ring 5 at 100%
+- Reactor core sizes: 30px (20%), 50px (40%), 70px (60%), 90px (80%), 110px (100%)
+- Glow levels: 0 (dim) at 1-5 power, up to 5 (intense pulsing) at 23-27 power
+- Rings become "powered" when power reaches 5, 10, 15, 20, 25 respectively
+- Inner core opacity ranges from 20% to 100% based on power
+
+---
+
 ### 2026-01-20 - Intro Sequence Overhaul
 **Author:** Claude (AI Assistant)
 
@@ -27,10 +181,16 @@ This document tracks all changes made to the project.
 - New story paragraphs expanding the narrative (6 total, user-authored)
 - Continue button with fade-in animation
 - Scrollable story container for longer text
+- Bright green pulse animation on reactor button clicks during startup
+  - Massive pulses expand to 2500% size (10x larger than original)
+  - Pulse intensity scales from 30% to 100% as clicks progress
+  - Final click has special slower pulse (1.2s) that expands to 4000% with white-hot center
+  - Final pulse ripples out, then triggers full-screen flash that fades to reveal the game UI
 
 #### Notes
-- Story timing: 4s, 14s, 24s, 34s, 44s, 54s for each paragraph
-- Continue button appears at 60s
+- Story timing: P1 at 1.5s, P2 at 10s, P3 at 32s, P4 at 47s, P5 at 59s, P6 at 71s
+- Gaps: P1 fast, then 8.5s, 22s, 15s, 12s, 12s between paragraphs
+- Continue button appears at 76s (5s after final paragraph)
 - All timers cleared properly on skip/continue/restart
 
 ---
