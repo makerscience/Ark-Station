@@ -30,7 +30,12 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Initial setup of governance-only memory system
+- Added game clock display showing "Month Day, HH:MM, Year" format
+- Game starts at October 17, 00:00, 3326
+- Ticks every 10 seconds, advancing 10 minutes of game time per tick
+- All rates (decay, damage, repair, deaths) reduced by 6x to maintain same real-time pace
+- Added fractional death accumulator for sub-integer death calculations
+- Clock resets properly on game restart
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

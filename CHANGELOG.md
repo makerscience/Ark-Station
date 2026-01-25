@@ -6,6 +6,44 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-24 - Game Clock and Slower Tick Rate
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Game clock display in top-left corner:**
+  - Shows "Month Day, HH:MM, Year" format (e.g., "October 17, 00:00, 3326")
+  - Game starts at October 17, 00:00, 3326
+  - Each tick advances 10 minutes of game time
+  - Clock rolls over correctly (23:50 → 00:00, day increments)
+  - Uses 30-day months for simplicity
+  - Clock resets on game restart
+
+#### Changed
+- **Game tick rate slowed from 1 second to 10 seconds:**
+  - Creates more deliberate, strategic pacing
+  - Each tick now represents 10 minutes of in-game time
+  - All decay/damage/repair rates reduced by 6x to maintain same real-time gameplay speed
+- **Rate adjustments (all ÷6 to match 6x fewer ticks per game-hour):**
+  - Reactor decay: 0.1% → 0.0167%
+  - Stasis decay: 0.15% → 0.025%
+  - Thrusters decay: 0.07% → 0.0117%
+  - Shield decay: 0.07% → 0.0117%
+  - Flare damage: 3% → 0.5%
+  - Shield extra flare damage: 2% → 0.333%
+  - Orbital decay: 0.15 → 0.025
+  - Thruster effect: 0.06 → 0.01
+  - Repair rate: 0.8 → 0.133
+  - Base deaths: 5 → 0.833 (with fractional accumulation)
+  - Drone Efficiency upgrade boost: 0.5 → 0.067
+
+#### Notes
+- Clock positioned absolutely in top-left of container
+- Uses monospace font with green glow to match terminal aesthetic
+- gameState now includes gameTime object tracking minute, hour, day, month, year
+- Added fractionalDeaths accumulator to handle sub-integer death calculations
+
+---
+
 ### 2026-01-20 - Repair Drones Panel Redesign
 **Author:** Claude (AI Assistant)
 

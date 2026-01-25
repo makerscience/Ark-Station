@@ -20,6 +20,16 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+        }
+        .game-clock {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #00ff88;
+            text-shadow: 0 0 5px #00ff8855;
         }
         .main-layout {
             display: grid;
@@ -1973,6 +1983,7 @@
     </div>
 
     <div class="container">
+        <div class="game-clock" id="gameClock">October 17, 00:00, 3326</div>
         <h1>ARK STATION</h1>
 
         <div class="main-layout">
@@ -2298,7 +2309,7 @@
 
             // Level 5 upgrades (require auth_5)
             { id: 'power_2', name: 'Reactor Upgrade II', desc: 'Increase max power output to 7', cost: 25, level: 5, powerBonus: 1 },
-            { id: 'repair_boost', name: 'Drone Efficiency', desc: 'Drones repair 50% faster', cost: 20, level: 5, repairBoost: 0.5 },
+            { id: 'repair_boost', name: 'Drone Efficiency', desc: 'Drones repair 50% faster', cost: 20, level: 5, repairBoost: 0.067 },
 
             // Level 5 -> 6 gate
             { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 25, level: 5, unlocksLevel: 6, isGate: true },
@@ -2323,7 +2334,7 @@
                 stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
                 thrusters: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
                 shield: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
-                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.8 }
+                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.133 }
             },
             orbital: {
                 distance: 100, // 100 = far, 66 = near, 33 = critical, 0 = destruction
@@ -2354,7 +2365,15 @@
             gameOver: false,
             victory: false,
             paused: true,
-            lastDeaths: 0
+            lastDeaths: 0,
+            gameTime: {
+                minute: 0,    // Start at 00:00 (midnight)
+                hour: 0,
+                day: 17,
+                month: 9,     // 0-indexed (October = 9)
+                year: 3326
+            },
+            fractionalDeaths: 0  // Accumulator for sub-integer deaths
         };
 
         // Death messages for cryo-log
@@ -2371,6 +2390,7 @@
 
         // DOM Elements
         const els = {
+            gameClock: document.getElementById('gameClock'),
             powerAllocated: document.getElementById('powerAllocated'),
             powerTotal: document.getElementById('powerTotal'),
             survivors: document.getElementById('survivors'),
@@ -2616,7 +2636,7 @@
             gameState.systems.shield.powerAllocated = 0;
             gameState.systems.drones.powerAllocated = 0;
             gameState.systems.drones.target = 'reactor';
-            gameState.systems.drones.repairRate = 0.8;
+            gameState.systems.drones.repairRate = 0.133;
             gameState.orbital.distance = 100;
             gameState.orbital.decayRate = 0;
             gameState.solar.nextFlare = 90 + Math.floor(Math.random() * 630);
@@ -2638,8 +2658,11 @@
             gameState.victory = false;
             gameState.paused = true;
             gameState.lastDeaths = 0;
+            gameState.fractionalDeaths = 0;
+            gameState.gameTime = { minute: 0, hour: 0, day: 17, month: 9, year: 3326 };
 
             // Reset UI
+            els.gameClock.textContent = formatGameTime();
             els.startPause.textContent = 'START';
             els.startPause.disabled = false;
             els.endingOverlay.classList.remove('active');
@@ -3002,9 +3025,46 @@
             updateArkShipVisual();
         }
 
+        // Game time constants and functions
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+                        'July', 'August', 'September', 'October', 'November', 'December'];
+
+        function updateGameTime() {
+            const time = gameState.gameTime;
+            time.minute += 10;  // Advance 10 minutes per tick
+            if (time.minute >= 60) {
+                time.minute = 0;
+                time.hour++;
+                if (time.hour >= 24) {
+                    time.hour = 0;
+                    time.day++;
+                    // Simple 30-day months
+                    if (time.day > 30) {
+                        time.day = 1;
+                        time.month++;
+                        if (time.month >= 12) {
+                            time.month = 0;
+                            time.year++;
+                        }
+                    }
+                }
+            }
+        }
+
+        function formatGameTime() {
+            const time = gameState.gameTime;
+            const hourStr = time.hour.toString().padStart(2, '0');
+            const minStr = time.minute.toString().padStart(2, '0');
+            return `${MONTHS[time.month]} ${time.day}, ${hourStr}:${minStr}, ${time.year}`;
+        }
+
         // Game loop tick
         function gameTick() {
             if (gameState.paused) return;
+
+            // Update game time (1 tick = 10 minutes)
+            updateGameTime();
+            els.gameClock.textContent = formatGameTime();
 
             const reactor = gameState.systems.reactor;
             const stasis = gameState.systems.stasis;
@@ -3057,12 +3117,12 @@
             // Solar flare damage (affects all systems)
             let flareDamage = 0;
             if (solar.flareActive) {
-                flareDamage = 3 * (1 - flareReduction); // Base 3% damage, reduced by shield
+                flareDamage = 0.5 * (1 - flareReduction); // Base 0.5% damage per tick (3%/6), reduced by shield
                 solar.lastDamage = flareDamage;
             }
 
-            // Reactor decays (0.1% per tick base, affected by radiation and flares)
-            reactor.integrity = Math.max(0, reactor.integrity - 0.1 * radiationMult - flareDamage);
+            // Reactor decays (0.0167% per tick base = 0.1%/6, affected by radiation and flares)
+            reactor.integrity = Math.max(0, reactor.integrity - 0.0167 * radiationMult - flareDamage);
 
             // Calculate total power based on reactor integrity
             // Every 20% integrity = 5 base power, plus bonus from upgrades
@@ -3100,24 +3160,24 @@
             }
             gameState.power.total = newPower;
 
-            // Stasis integrity decays (0.15% per tick base, affected by radiation and flares)
-            stasis.integrity = Math.max(0, stasis.integrity - 0.15 * radiationMult - flareDamage);
+            // Stasis integrity decays (0.025% per tick base = 0.15%/6, affected by radiation and flares)
+            stasis.integrity = Math.max(0, stasis.integrity - 0.025 * radiationMult - flareDamage);
 
-            // Thrusters decay (0.07% per tick base, affected by radiation and flares)
-            thrusters.integrity = Math.max(0, thrusters.integrity - 0.07 * radiationMult - flareDamage);
+            // Thrusters decay (0.0117% per tick base = 0.07%/6, affected by radiation and flares)
+            thrusters.integrity = Math.max(0, thrusters.integrity - 0.0117 * radiationMult - flareDamage);
 
-            // Shield decay (0.07% per tick base, affected by radiation and takes extra flare damage)
-            const shieldFlareDamage = solar.flareActive ? 2 : 0; // Shield takes extra damage during flares
-            shield.integrity = Math.max(0, shield.integrity - 0.07 * radiationMult - shieldFlareDamage);
+            // Shield decay (0.0117% per tick base = 0.07%/6, affected by radiation and takes extra flare damage)
+            const shieldFlareDamage = solar.flareActive ? 0.333 : 0; // Shield takes extra damage during flares (2%/6)
+            shield.integrity = Math.max(0, shield.integrity - 0.0117 * radiationMult - shieldFlareDamage);
 
             // Orbital decay calculation
-            // Base decay of 0.15 per tick, reduced by thruster power and integrity
+            // Base decay of 0.025 per tick (0.15/6), reduced by thruster power and integrity
             // Scale thrust with integrity (every 20% = 1x effectiveness)
             const thrusterEffectiveness = thrusters.integrity / 20;
-            const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.06;
-            // At 20%: 1 * power * 0.06 = 0.06 per power (same as old 0.3 * 0.2)
-            // At 100%: 5 * power * 0.06 = 0.3 per power (5x stronger)
-            orbital.decayRate = Math.max(0, 0.15 - thrusterEffect);
+            const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.01;
+            // At 20%: 1 * power * 0.01 = 0.01 per power (0.06/6)
+            // At 100%: 5 * power * 0.01 = 0.05 per power (5x stronger)
+            orbital.decayRate = Math.max(0, 0.025 - thrusterEffect);
             orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
 
             // Repair drones: restore integrity to target system
@@ -3142,9 +3202,14 @@
             const stasisEffectiveness = stasis.integrity / 20; // 1.0 at 20%, 5.0 at 100%
             const integrityFactor = 1 - Math.min(1, stasisEffectiveness * 0.1); // up to 50% reduction
 
-            // Base deaths per tick, modified by factors
-            const baseDeaths = 5;
-            const deaths = Math.floor(baseDeaths * powerFactor * integrityFactor);
+            // Base deaths per tick, modified by factors (0.833 = 5/6 for 6x slower ticks)
+            const baseDeaths = 0.833;
+            const fractionalDeaths = baseDeaths * powerFactor * integrityFactor;
+
+            // Accumulate fractional deaths and apply when >= 1
+            gameState.fractionalDeaths += fractionalDeaths;
+            const deaths = Math.floor(gameState.fractionalDeaths);
+            gameState.fractionalDeaths -= deaths;
 
             gameState.lastDeaths = deaths;
             gameState.survivors = Math.max(0, gameState.survivors - deaths);
@@ -3408,8 +3473,8 @@
         // Start the intro story sequence
         startStorySequence();
 
-        // Game loop - runs every second
-        setInterval(gameTick, 1000);
+        // Game loop - runs every 3 seconds (1 tick = 10 minutes of game time)
+        setInterval(gameTick, 3000);
     </script>
 </body>
 </html>
