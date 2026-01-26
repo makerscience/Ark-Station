@@ -8,13 +8,13 @@
 2. (add more as needed)
 
 ## Next Actions
-- [x] Remove unused DEATH_MESSAGES constant (dead code cleanup)
-- [x] Change tick rate to 5 ticks/sec with same overall pacing
-- [ ] Test game end-to-end with new tick rate
-- [ ] Consider adding cause-of-death variety beyond "Pod failure"
+- [ ] Test game end-to-end with new phase progression system
+- [ ] Verify panels appear/hide correctly at each CA level
+- [ ] Balance solar flare timing and damage values
+- [ ] Consider adding display power cost mechanic (solar/orbital panels costing 1 power each)
 
 ## Open Loops / Blockers
-- None
+- Display power cost not yet implemented (plan mentioned it but skipped for now)
 
 ## How to Resume in 30 Seconds
 - **Open:** `.memory/CURRENT_FOCUS.md`
@@ -32,13 +32,14 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Changed tick rate from 3000ms to 200ms (5 ticks/second)
-- Divided all per-tick rates by 15 to maintain same real-time pacing
-- Multiplied all tick counts by 15 (solar flare timing, research costs)
-- Added MAX_STASIS_POWER cap of 5 for life support system
-- Death rate display now always visible, shows "−X.X/sec" format
-- Adjusted baseDeaths to 0.741 so 5 power + 20% integrity = 1 death/sec
-- Death rate calculated in updateUI so it updates even when paused
+- Implemented 5-phase game progression system tied to Command Authorization levels
+- Solar flare timing reduced to 2-4 minutes (was 4.5-36 minutes)
+- Added power caps of 5 to all systems (stasis, drones, shield, thrusters)
+- Restructured research tree from 16 to 32 upgrades with system unlock gates
+- Added orbital movement indicator showing direction (climbing/falling/stable) and speed
+- Implemented UI visibility system - panels hidden until researched
+- Made solar flares only active after CA Level 2, orbital decay after CA Level 3
+- Power progression now 5→8→11→14→17→20 via 5 reactor upgrades
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

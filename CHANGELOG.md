@@ -6,6 +6,45 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-26 - Phase-Based Game Progression System
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **5-phase progression system tied to Command Authorization levels:**
+  - Phase 1 (CA1): Stasis pods only - players learn death rate management
+  - Phase 2 (CA2): Repair Drones unlocked - solar flares begin dealing hidden damage
+  - Phase 3 (CA3): Solar Forecast & Shield unlocked - orbital decay begins (hidden)
+  - Phase 4 (CA4): Orbital Status & Thrusters unlocked - players discover station falling
+  - Phase 5 (CA5+): All systems visible, race to Emergency Override victory
+
+- **32 research upgrades (up from 16):**
+  - System unlock upgrades: Repair Drones, Solar Forecast, Solar Shield Matrix, Orbital Status, Orbital Thrusters
+  - Power progression: 5→8→11→14→17→20 via 5 reactor upgrades (+3 each)
+  - 4-tier reinforcement for each system (20%→40%→60%→80%→100%)
+
+- **Orbital movement indicator:**
+  - Shows direction: ↑ climbing, ↓ falling, — STABLE
+  - Shows speed in units per second
+  - Color-coded: green for climbing, red for falling
+
+- **UI visibility system:**
+  - Panels hidden until researched with `.locked` CSS class
+  - Drones panel, Solar panel, Shield controls, Orbital panel, Thruster controls all gated
+
+#### Changed
+- **Solar flare timing reduced to 2-4 minutes (was 4.5-36 minutes)**
+- **Power caps added to all systems (5 each):** drones, shield, thrusters now capped like stasis
+- **Solar flares only deal damage after CA Level 2**
+- **Orbital decay only active after CA Level 3**
+- **Renamed "Orbital Decay" display to "Movement" with directional indicators**
+
+#### Notes
+- Hidden mechanics create dramatic tension - players see damage before they understand the source
+- Discovery moments when unlocking Solar Forecast (see flares) and Orbital Status (see station falling)
+- Plan mentioned display power costs (1 power each for Solar/Orbital panels) - not yet implemented
+
+---
+
 ### 2026-01-26 - Tick Rate Increase for Smoother Gameplay
 **Author:** Claude (AI Assistant)
 

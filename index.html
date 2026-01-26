@@ -125,6 +125,9 @@
             margin-bottom: 15px;
             border-radius: 4px;
         }
+        .panel.locked, .section.locked {
+            display: none;
+        }
         .panel-title {
             color: #888;
             font-size: 12px;
@@ -432,6 +435,8 @@
         .distance.far { color: #00ff88; }
         .distance.near { color: #ffaa00; }
         .distance.critical { color: #ff4444; }
+        .climbing { color: #00ff88; }
+        .falling { color: #ff4444; }
         .radiation-warning {
             font-size: 11px;
             color: #ff4444;
@@ -2122,7 +2127,7 @@
                     </div>
                 </div>
 
-                <div class="panel">
+                <div class="panel locked" id="dronesPanel">
                     <div class="panel-title">Repair Drones</div>
                     <div class="drone-visual-container" id="droneVisualContainer">
                         <div class="drone-targets">
@@ -2192,7 +2197,7 @@
             </div>
 
             <div class="right-column">
-                <div class="panel">
+                <div class="panel locked" id="orbitalPanel">
                     <div class="panel-title">Orbital Status</div>
                     <div class="orbital-visual">
                         <div class="sun-glow"></div>
@@ -2207,13 +2212,13 @@
                             <div class="distance far" id="orbitalDistance">FAR</div>
                         </div>
                         <div style="text-align: right;">
-                            <div class="stat-label">Orbital Decay</div>
-                            <div id="orbitalDecay">0.0</div>
+                            <div class="stat-label">Movement</div>
+                            <div id="orbitalMovement">— STABLE</div>
                         </div>
                     </div>
                     <div class="radiation-warning" id="radiationWarning"></div>
 
-                    <div class="thruster-section">
+                    <div class="thruster-section section locked" id="thrusterSection">
                         <div class="thruster-header">
                             <div class="thruster-title">Orbital Thrusters</div>
                             <div class="thruster-power-display">
@@ -2241,7 +2246,7 @@
                     </div>
                 </div>
 
-                <div class="panel">
+                <div class="panel locked" id="solarPanel">
                     <div class="panel-title">Solar Forecast</div>
                     <div class="solar-visual-container">
                         <div class="solar-graphic clear" id="solarGraphic">
@@ -2288,7 +2293,7 @@
                     </div>
                     <div class="flare-damage" id="flareDamage"></div>
 
-                    <div class="shield-controls">
+                    <div class="shield-controls section locked" id="shieldSection">
                         <div class="shield-header">
                             <span class="system-name">Solar Shield Matrix</span>
                             <span class="system-status critical" id="shieldStatus">CRITICAL</span>
@@ -2331,50 +2336,56 @@
     </div>
 
     <script>
-        // Upgrade definitions - structured as a tech tree
+        // Upgrade definitions - structured as a tech tree with 5 phases
         // Command Authorization upgrades gate each tier
+        // Phase 1: Intro (stasis only) | Phase 2: Drones | Phase 3: Solar | Phase 4: Orbital | Phase 5: Endgame
         const UPGRADES = [
-            // Level 1 -> 2 gate
+            // Level 1 -> 2 gate (Phase 1 - Intro)
             { id: 'auth_2', name: 'Command Authorization 2', desc: 'Unlock Level 2 system upgrades', cost: 75, level: 1, unlocksLevel: 2, isGate: true },
 
-            // Level 2 upgrades (require auth_2)
-            { id: 'reactor_cap_1', name: 'Reactor Reinforcement I', desc: 'Unlock reactor potential (60% max integrity)', cost: 150, level: 2, system: 'reactor', capBonus: 40 },
-            { id: 'stasis_cap_1', name: 'Stasis Hardening I', desc: 'Unlock stasis potential (60% max integrity)', cost: 150, level: 2, system: 'stasis', capBonus: 40 },
-
-            // Level 2 -> 3 gate
+            // Level 2 upgrades (Phase 2 - Drones)
+            { id: 'unlock_drones', name: 'Repair Drones System', desc: 'Activate repair drone bay', cost: 100, level: 2, unlocksDrones: true },
+            { id: 'power_1', name: 'Reactor Power Upgrade I', desc: 'Increase max power output to 8', cost: 120, level: 2, powerBonus: 3 },
+            { id: 'stasis_cap_1', name: 'Stasis Hardening I', desc: 'Unlock stasis potential (40% max integrity)', cost: 150, level: 2, system: 'stasis', capBonus: 20 },
+            { id: 'reactor_cap_1', name: 'Reactor Reinforcement I', desc: 'Unlock reactor potential (40% max integrity)', cost: 150, level: 2, system: 'reactor', capBonus: 20 },
             { id: 'auth_3', name: 'Command Authorization 3', desc: 'Unlock Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
 
-            // Level 3 upgrades (require auth_3)
-            { id: 'power_1', name: 'Reactor Upgrade I', desc: 'Increase max power output to 6', cost: 225, level: 3, powerBonus: 1 },
-            { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (60% max integrity)', cost: 180, level: 3, system: 'thrusters', capBonus: 40 },
-            { id: 'shield_cap_1', name: 'Shield Reinforcement I', desc: 'Unlock shield potential (60% max integrity)', cost: 180, level: 3, system: 'shield', capBonus: 40 },
+            // Level 3 upgrades (Phase 3 - Solar)
+            { id: 'unlock_solar', name: 'Solar Forecast System', desc: 'Activate solar monitoring array (1 power)', cost: 100, level: 3, unlocksSolar: true },
+            { id: 'unlock_shield', name: 'Solar Shield Matrix', desc: 'Activate solar shield controls', cost: 120, level: 3, unlocksShield: true },
+            { id: 'power_2', name: 'Reactor Power Upgrade II', desc: 'Increase max power output to 11', cost: 150, level: 3, powerBonus: 3 },
+            { id: 'shield_cap_1', name: 'Shield Reinforcement I', desc: 'Unlock shield potential (40% max integrity)', cost: 150, level: 3, system: 'shield', capBonus: 20 },
+            { id: 'reactor_cap_2', name: 'Reactor Reinforcement II', desc: 'Unlock reactor potential (60% max integrity)', cost: 180, level: 3, system: 'reactor', capBonus: 20 },
+            { id: 'stasis_cap_2', name: 'Stasis Hardening II', desc: 'Unlock stasis potential (60% max integrity)', cost: 180, level: 3, system: 'stasis', capBonus: 20 },
+            { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 200, level: 3, unlocksLevel: 4, isGate: true },
 
-            // Level 3 -> 4 gate
-            { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 225, level: 3, unlocksLevel: 4, isGate: true },
+            // Level 4 upgrades (Phase 4 - Orbital)
+            { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 4, unlocksOrbital: true },
+            { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls', cost: 120, level: 4, unlocksThrusters: true },
+            { id: 'power_3', name: 'Reactor Power Upgrade III', desc: 'Increase max power output to 14', cost: 180, level: 4, powerBonus: 3 },
+            { id: 'shield_cap_2', name: 'Shield Reinforcement II', desc: 'Unlock shield potential (60% max integrity)', cost: 200, level: 4, system: 'shield', capBonus: 20 },
+            { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (40% max integrity)', cost: 180, level: 4, system: 'thrusters', capBonus: 20 },
+            { id: 'stasis_cap_3', name: 'Stasis Hardening III', desc: 'Unlock stasis potential (80% max integrity)', cost: 220, level: 4, system: 'stasis', capBonus: 20 },
+            { id: 'reactor_cap_3', name: 'Reactor Reinforcement III', desc: 'Unlock reactor potential (80% max integrity)', cost: 220, level: 4, system: 'reactor', capBonus: 20 },
+            { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
 
-            // Level 4 upgrades (require auth_4)
-            { id: 'reactor_cap_2', name: 'Reactor Reinforcement II', desc: 'Maximize reactor potential (100% max integrity)', cost: 300, level: 4, system: 'reactor', capBonus: 40 },
-            { id: 'stasis_cap_2', name: 'Stasis Hardening II', desc: 'Maximize stasis potential (100% max integrity)', cost: 300, level: 4, system: 'stasis', capBonus: 40 },
+            // Level 5 upgrades (Phase 5 begins)
+            { id: 'power_4', name: 'Reactor Power Upgrade IV', desc: 'Increase max power output to 17', cost: 220, level: 5, powerBonus: 3 },
+            { id: 'stasis_cap_4', name: 'Stasis Hardening IV', desc: 'Maximize stasis potential (100% max integrity)', cost: 280, level: 5, system: 'stasis', capBonus: 20 },
+            { id: 'shield_cap_3', name: 'Shield Reinforcement III', desc: 'Unlock shield potential (80% max integrity)', cost: 250, level: 5, system: 'shield', capBonus: 20 },
+            { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Unlock thruster potential (60% max integrity)', cost: 220, level: 5, system: 'thrusters', capBonus: 20 },
+            { id: 'reactor_cap_4', name: 'Reactor Reinforcement IV', desc: 'Maximize reactor potential (100% max integrity)', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
+            { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
-            // Level 4 -> 5 gate
-            { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 300, level: 4, unlocksLevel: 5, isGate: true },
+            // Level 6 upgrades
+            { id: 'power_5', name: 'Reactor Power Upgrade V', desc: 'Maximize power output to 20', cost: 280, level: 6, powerBonus: 3 },
+            { id: 'shield_cap_4', name: 'Shield Reinforcement IV', desc: 'Maximize shield potential (100% max integrity)', cost: 300, level: 6, system: 'shield', capBonus: 20 },
+            { id: 'thrusters_cap_3', name: 'Thruster Reinforcement III', desc: 'Unlock thruster potential (80% max integrity)', cost: 280, level: 6, system: 'thrusters', capBonus: 20 },
+            { id: 'thrusters_cap_4', name: 'Thruster Reinforcement IV', desc: 'Maximize thruster potential (100% max integrity)', cost: 300, level: 6, system: 'thrusters', capBonus: 20 },
+            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
 
-            // Level 5 upgrades (require auth_5)
-            { id: 'power_2', name: 'Reactor Upgrade II', desc: 'Increase max power output to 7', cost: 375, level: 5, powerBonus: 1 },
-            { id: 'repair_boost', name: 'Drone Efficiency', desc: 'Drones repair 50% faster', cost: 300, level: 5, repairBoost: 0.00447 },
-
-            // Level 5 -> 6 gate
-            { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 375, level: 5, unlocksLevel: 6, isGate: true },
-
-            // Level 6 upgrades (require auth_6)
-            { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Maximize thruster potential (100% max integrity)', cost: 375, level: 6, system: 'thrusters', capBonus: 40 },
-            { id: 'shield_cap_2', name: 'Shield Reinforcement II', desc: 'Maximize shield potential (100% max integrity)', cost: 375, level: 6, system: 'shield', capBonus: 40 },
-
-            // Level 6 -> 7 gate
-            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 450, level: 6, unlocksLevel: 7, isGate: true },
-
-            // Level 7 upgrade (require auth_7)
-            { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 450, level: 7, unlocksFinal: true }
+            // Level 7 upgrade
+            { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 400, level: 7, unlocksFinal: true }
         ];
 
         // Stasis grid constants
@@ -2383,6 +2394,9 @@
         const CELLS_PER_BAY = 10;    // Colonists per bay (2x5 arrangement)
         const TOTAL_COLONISTS = STASIS_COLS * STASIS_ROWS * CELLS_PER_BAY; // 10,000
         const MAX_STASIS_POWER = 5;  // Max power that can be allocated to stasis
+        const MAX_DRONE_POWER = 5;   // Max power that can be allocated to drones
+        const MAX_SHIELD_POWER = 5;  // Max power that can be allocated to shield
+        const MAX_THRUSTER_POWER = 5; // Max power that can be allocated to thrusters
 
         // Passenger death records database
         const PASSENGER_DATABASE = [
@@ -3594,7 +3608,7 @@
                 decayRate: 0
             },
             solar: {
-                nextFlare: 1350 + Math.floor(Math.random() * 9450), // 1350-10800 ticks (4.5-36 min at 5 ticks/sec)
+                nextFlare: 600 + Math.floor(Math.random() * 600), // 600-1200 ticks (2-4 min at 5 ticks/sec)
                 flareActive: false,
                 flareDuration: 0,
                 lastDamage: 0
@@ -3604,6 +3618,13 @@
                 purchased: [],
                 inProgress: null,
                 timeRemaining: 0
+            },
+            unlockedSystems: {
+                drones: false,      // Unlocked by "Repair Drones System"
+                solar: false,       // Unlocked by "Solar Forecast System"
+                shield: false,      // Unlocked by "Solar Shield Matrix"
+                orbital: false,     // Unlocked by "Orbital Status System"
+                thrusters: false    // Unlocked by "Orbital Thrusters"
             },
             intro: {
                 active: true,
@@ -3648,7 +3669,7 @@
             survivors: document.getElementById('survivors'),
             deathRate: document.getElementById('deathRate'),
             orbitalDistance: document.getElementById('orbitalDistance'),
-            orbitalDecay: document.getElementById('orbitalDecay'),
+            orbitalMovement: document.getElementById('orbitalMovement'),
             radiationWarning: document.getElementById('radiationWarning'),
             solarStatus: document.getElementById('solarStatus'),
             solarGraphic: document.getElementById('solarGraphic'),
@@ -3732,7 +3753,13 @@
             endingStats: document.getElementById('endingStats'),
             endingMessage: document.getElementById('endingMessage'),
             restartBtn: document.getElementById('restartBtn'),
-            arkStation: document.getElementById('arkStation')
+            arkStation: document.getElementById('arkStation'),
+            // Lockable panels and sections
+            dronesPanel: document.getElementById('dronesPanel'),
+            orbitalPanel: document.getElementById('orbitalPanel'),
+            thrusterSection: document.getElementById('thrusterSection'),
+            solarPanel: document.getElementById('solarPanel'),
+            shieldSection: document.getElementById('shieldSection')
         };
 
         // Get total allocated power
@@ -4176,7 +4203,7 @@
             gameState.systems.drones.repairRate = 0.00887;
             gameState.orbital.distance = 100;
             gameState.orbital.decayRate = 0;
-            gameState.solar.nextFlare = 1350 + Math.floor(Math.random() * 9450);
+            gameState.solar.nextFlare = 600 + Math.floor(Math.random() * 600);
             gameState.solar.flareActive = false;
             gameState.solar.flareDuration = 0;
             gameState.solar.lastDamage = 0;
@@ -4184,6 +4211,11 @@
             gameState.research.purchased = [];
             gameState.research.inProgress = null;
             gameState.research.timeRemaining = 0;
+            gameState.unlockedSystems.drones = false;
+            gameState.unlockedSystems.solar = false;
+            gameState.unlockedSystems.shield = false;
+            gameState.unlockedSystems.orbital = false;
+            gameState.unlockedSystems.thrusters = false;
             gameState.intro.active = true;
             gameState.intro.phase = 'story';
             gameState.intro.storyStep = 0;
@@ -4342,6 +4374,23 @@
                 gameState.systems.drones.repairRate += upgrade.repairBoost;
             }
 
+            // System unlock upgrades
+            if (upgrade.unlocksDrones) {
+                gameState.unlockedSystems.drones = true;
+            }
+            if (upgrade.unlocksSolar) {
+                gameState.unlockedSystems.solar = true;
+            }
+            if (upgrade.unlocksShield) {
+                gameState.unlockedSystems.shield = true;
+            }
+            if (upgrade.unlocksOrbital) {
+                gameState.unlockedSystems.orbital = true;
+            }
+            if (upgrade.unlocksThrusters) {
+                gameState.unlockedSystems.thrusters = true;
+            }
+
             // Gate upgrades unlock the next command level
             if (upgrade.unlocksLevel) {
                 gameState.research.commandLevel = upgrade.unlocksLevel;
@@ -4360,7 +4409,26 @@
             const distInfo = getDistanceInfo(orbital.distance);
             els.orbitalDistance.textContent = distInfo.label;
             els.orbitalDistance.className = 'distance ' + distInfo.class;
-            els.orbitalDecay.textContent = orbital.decayRate.toFixed(1);
+
+            // Calculate orbital velocity for display (per second at 5 ticks/sec)
+            const thrusterSys = gameState.systems.thrusters;
+            const thrusterEffectiveness = thrusterSys.integrity / 20;
+            const thrusterEffect = thrusterSys.powerAllocated * thrusterEffectiveness * 0.000667;
+            const baseDecay = 0.00167;
+            const velocityPerTick = thrusterEffect - baseDecay;
+            const velocityPerSec = velocityPerTick * 5; // 5 ticks per second
+
+            // Display movement with direction
+            if (Math.abs(velocityPerSec) < 0.001) {
+                els.orbitalMovement.textContent = '— STABLE';
+                els.orbitalMovement.className = '';
+            } else if (velocityPerSec > 0) {
+                els.orbitalMovement.textContent = `↑ ${velocityPerSec.toFixed(2)}/sec`;
+                els.orbitalMovement.className = 'climbing';
+            } else {
+                els.orbitalMovement.textContent = `↓ ${Math.abs(velocityPerSec).toFixed(2)}/sec`;
+                els.orbitalMovement.className = 'falling';
+            }
 
             // Update ark station position in visualization
             // Distance 100 = left (safe), Distance 0 = right (destroyed)
@@ -4539,11 +4607,11 @@
             els.stasisMinus.disabled = stasis.powerAllocated <= 0;
             els.stasisPlus.disabled = totalAllocated >= gameState.power.total || stasis.powerAllocated >= MAX_STASIS_POWER;
             els.thrustersMinus.disabled = thrusters.powerAllocated <= 0;
-            els.thrustersPlus.disabled = totalAllocated >= gameState.power.total;
+            els.thrustersPlus.disabled = totalAllocated >= gameState.power.total || thrusters.powerAllocated >= MAX_THRUSTER_POWER;
             els.shieldMinus.disabled = shield.powerAllocated <= 0;
-            els.shieldPlus.disabled = totalAllocated >= gameState.power.total;
+            els.shieldPlus.disabled = totalAllocated >= gameState.power.total || shield.powerAllocated >= MAX_SHIELD_POWER;
             els.dronesMinus.disabled = drones.powerAllocated <= 0;
-            els.dronesPlus.disabled = totalAllocated >= gameState.power.total;
+            els.dronesPlus.disabled = totalAllocated >= gameState.power.total || drones.powerAllocated >= MAX_DRONE_POWER;
 
             // Death rate display (always visible, shows deaths per second)
             const dps = gameState.deathsPerSecond;
@@ -4580,6 +4648,14 @@
             const shieldStatusInfo = getSystemStatus(shield.integrity);
             els.shieldStatus.textContent = shieldStatusInfo.text;
             els.shieldStatus.className = 'system-status ' + shieldStatusInfo.class;
+
+            // Panel visibility based on unlocked systems
+            const unlocked = gameState.unlockedSystems;
+            els.dronesPanel.classList.toggle('locked', !unlocked.drones);
+            els.solarPanel.classList.toggle('locked', !unlocked.solar);
+            els.shieldSection.classList.toggle('locked', !unlocked.shield);
+            els.orbitalPanel.classList.toggle('locked', !unlocked.orbital);
+            els.thrusterSection.classList.toggle('locked', !unlocked.thrusters);
 
             // Update Ark Ship visual
             updateArkShipVisual();
@@ -4643,19 +4719,21 @@
                 }
             }
 
-            // Solar flare mechanics
-            if (solar.flareActive) {
-                solar.flareDuration--;
-                if (solar.flareDuration <= 0) {
-                    solar.flareActive = false;
-                    solar.nextFlare = 450 + Math.floor(Math.random() * 3150); // 450-3600 ticks (1.5-12 min at 5 ticks/sec)
-                    solar.lastDamage = 0;
-                }
-            } else {
-                solar.nextFlare--;
-                if (solar.nextFlare <= 0) {
-                    solar.flareActive = true;
-                    solar.flareDuration = 75 + Math.floor(Math.random() * 75); // 75-150 ticks duration (15-30 sec at 5 ticks/sec)
+            // Solar flare mechanics - only active after CA Level 2 (drones unlocked)
+            if (research.commandLevel >= 2) {
+                if (solar.flareActive) {
+                    solar.flareDuration--;
+                    if (solar.flareDuration <= 0) {
+                        solar.flareActive = false;
+                        solar.nextFlare = 600 + Math.floor(Math.random() * 600); // 600-1200 ticks (2-4 min at 5 ticks/sec)
+                        solar.lastDamage = 0;
+                    }
+                } else {
+                    solar.nextFlare--;
+                    if (solar.nextFlare <= 0) {
+                        solar.flareActive = true;
+                        solar.flareDuration = 75 + Math.floor(Math.random() * 75); // 75-150 ticks duration (15-30 sec at 5 ticks/sec)
+                    }
                 }
             }
 
@@ -4674,9 +4752,9 @@
                 radiationMult = 1.5; // Near - 50% more decay
             }
 
-            // Solar flare damage (affects all systems)
+            // Solar flare damage (affects all systems) - only after CA Level 2
             let flareDamage = 0;
-            if (solar.flareActive) {
+            if (research.commandLevel >= 2 && solar.flareActive) {
                 flareDamage = 0.0333 * (1 - flareReduction); // Base 0.0333% damage per tick, reduced by shield
                 solar.lastDamage = flareDamage;
             }
@@ -4727,18 +4805,22 @@
             thrusters.integrity = Math.max(0, thrusters.integrity - 0.00078 * radiationMult - flareDamage);
 
             // Shield decay (0.00078% per tick base at 5 ticks/sec, affected by radiation and takes extra flare damage)
-            const shieldFlareDamage = solar.flareActive ? 0.0222 : 0; // Shield takes extra damage during flares
+            const shieldFlareDamage = (research.commandLevel >= 2 && solar.flareActive) ? 0.0222 : 0; // Shield takes extra damage during flares
             shield.integrity = Math.max(0, shield.integrity - 0.00078 * radiationMult - shieldFlareDamage);
 
-            // Orbital decay calculation
-            // Base decay of 0.00167 per tick at 5 ticks/sec, reduced by thruster power and integrity
-            // Scale thrust with integrity (every 20% = 1x effectiveness)
-            const thrusterEffectiveness = thrusters.integrity / 20;
-            const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.000667;
-            // At 20%: 1 * power * 0.000667 per power
-            // At 100%: 5 * power * 0.000667 per power (5x stronger)
-            orbital.decayRate = Math.max(0, 0.00167 - thrusterEffect);
-            orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
+            // Orbital decay calculation - only active after CA Level 3
+            if (research.commandLevel >= 3) {
+                // Base decay of 0.00167 per tick at 5 ticks/sec, reduced by thruster power and integrity
+                // Scale thrust with integrity (every 20% = 1x effectiveness)
+                const thrusterEffectiveness = thrusters.integrity / 20;
+                const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.000667;
+                // At 20%: 1 * power * 0.000667 per power
+                // At 100%: 5 * power * 0.000667 per power (5x stronger)
+                orbital.decayRate = Math.max(0, 0.00167 - thrusterEffect);
+                orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
+            } else {
+                orbital.decayRate = 0;
+            }
 
             // Repair drones: restore integrity to target system
             if (drones.powerAllocated > 0) {
@@ -4835,7 +4917,7 @@
         });
 
         els.thrustersPlus.addEventListener('click', () => {
-            if (getTotalAllocated() < gameState.power.total) {
+            if (getTotalAllocated() < gameState.power.total && gameState.systems.thrusters.powerAllocated < MAX_THRUSTER_POWER) {
                 gameState.systems.thrusters.powerAllocated++;
                 gameState.power.allocated.thrusters++;
                 updateUI();
@@ -4852,7 +4934,7 @@
         });
 
         els.shieldPlus.addEventListener('click', () => {
-            if (getTotalAllocated() < gameState.power.total) {
+            if (getTotalAllocated() < gameState.power.total && gameState.systems.shield.powerAllocated < MAX_SHIELD_POWER) {
                 gameState.systems.shield.powerAllocated++;
                 gameState.power.allocated.shield++;
                 updateUI();
@@ -4869,7 +4951,7 @@
         });
 
         els.dronesPlus.addEventListener('click', () => {
-            if (getTotalAllocated() < gameState.power.total) {
+            if (getTotalAllocated() < gameState.power.total && gameState.systems.drones.powerAllocated < MAX_DRONE_POWER) {
                 gameState.systems.drones.powerAllocated++;
                 gameState.power.allocated.drones++;
                 updateUI();
