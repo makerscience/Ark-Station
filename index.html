@@ -4330,7 +4330,7 @@
                             <div class="upgrade-name">${upgrade.isGate ? '🔓 ' : ''}${upgrade.name}</div>
                             <div class="upgrade-desc">${upgrade.desc}</div>
                         </div>
-                        <div class="upgrade-cost">${upgrade.cost}s</div>
+                        <div class="upgrade-cost">${upgrade.cost / 5}s</div>
                         ${isPurchased ? '<span style="color:#00ff88">✓</span>' :
                           !isAvailable ? `<span style="color:#666">Locked</span>` :
                           `<button class="upgrade-btn" onclick="startResearch('${upgrade.id}')">HACK</button>`}
