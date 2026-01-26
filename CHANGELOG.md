@@ -6,6 +6,45 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-25 - Passenger Death Records Integration
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **PASSENGER_DATABASE constant with 1200+ unique passengers:**
+  - Each entry has name, age, and specialization
+  - Data sourced from "Ark Station death record.csv"
+  - Wide variety of sci-fi job titles (Quantum Consciousness Researcher, Void Meditation Instructor, etc.)
+  - Includes children (age 2-14) with "Child" specialization
+  - Ages range from 2 to 95
+
+- **Passenger queue system for death messages:**
+  - `passengerQueue` array stores shuffled indices
+  - `passengerIndex` tracks current position
+  - Fisher-Yates shuffle ensures random order each game
+  - Queue wraps around if exhausted (unlikely with 1200+ passengers)
+
+- **`initPassengerQueue()` function:**
+  - Creates and shuffles passenger index array
+  - Called from `initStasisGrid()` on new game and restart
+
+#### Changed
+- **Cryo-log death messages now show real passenger data:**
+  - Format: "Name (Age), Specialization - Pod failure"
+  - Example: "Eduardo Chávez (59), Shuttle Pilot - Pod failure"
+  - Every tick with deaths shows one passenger (was 30% chance)
+  - Replaced generic `generateDeathMessage()` with `getNextPassengerDeath()`
+
+- **Cryo-log CSS adjustments:**
+  - Increased max-height from 120px to 180px for vertical layout
+  - Added word-wrap: break-word for long specialization names
+
+#### Notes
+- Old `DEATH_MESSAGES` constant and `generateDeathMessage()` removed
+- Each game session shows passengers in different random order
+- Adds emotional weight to deaths - they're no longer just numbers
+
+---
+
 ### 2026-01-24 - Game Clock and Slower Tick Rate
 **Author:** Claude (AI Assistant)
 

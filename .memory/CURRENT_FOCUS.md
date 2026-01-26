@@ -30,12 +30,13 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Added game clock display showing "Month Day, HH:MM, Year" format
-- Game starts at October 17, 00:00, 3326
-- Ticks every 10 seconds, advancing 10 minutes of game time per tick
-- All rates (decay, damage, repair, deaths) reduced by 6x to maintain same real-time pace
-- Added fractional death accumulator for sub-integer death calculations
-- Clock resets properly on game restart
+- Integrated 1200+ passenger death records from CSV into cryo-log
+- PASSENGER_DATABASE constant added with names, ages, specializations
+- Deaths now display: "Name (Age), Specialization - Pod failure"
+- Every tick with deaths shows one passenger name (100% rate, was 30%)
+- Passenger queue shuffled per game for varied order
+- Increased cryo-log max-height to 180px for longer names
+- Added word-wrap for long specialization titles
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

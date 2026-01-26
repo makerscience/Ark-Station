@@ -22,14 +22,62 @@
             margin: 0 auto;
             position: relative;
         }
-        .game-clock {
+        .time-control-bar {
             position: absolute;
             top: 20px;
             left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .game-clock {
             font-family: monospace;
             font-size: 14px;
             color: #00ff88;
             text-shadow: 0 0 5px #00ff8855;
+        }
+        .speed-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .speed-btn {
+            width: 32px;
+            height: 24px;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #888;
+            font-size: 11px;
+            font-family: monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speed-btn:hover {
+            background: #2a2a4e;
+            border-color: #555;
+            color: #aaa;
+        }
+        .speed-btn.active {
+            background: #2a4a3e;
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 8px #00ff8844;
+        }
+        .speed-btn.paused {
+            background: #4a2a2a;
+            border-color: #ff6666;
+            color: #ff6666;
+        }
+        .speed-indicator {
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+            min-width: 35px;
+            text-align: center;
+        }
+        .speed-indicator.paused {
+            color: #ff6666;
         }
         .main-layout {
             display: grid;
@@ -1664,6 +1712,7 @@
             margin-top: 10px;
             padding-top: 10px;
             border-top: 1px solid #222;
+            word-wrap: break-word;
         }
         .log-entry {
             margin-bottom: 4px;
@@ -1755,21 +1804,24 @@
         }
         .ark-ship-container {
             position: relative;
-            width: 100px;
-            height: 180px;
+            width: 120px;
+            height: 320px;
         }
-        /* Ark Ship SVG-like structure using CSS */
+        /* Ark Ship structure - ship-shaped outline */
         .ark-ship-hull {
             position: absolute;
-            top: 20px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 140px;
-            background: linear-gradient(90deg, #1a1a2e 0%, #2a2a4e 30%, #2a2a4e 70%, #1a1a2e 100%);
-            border-radius: 30px 30px 10px 10px;
+            width: 90px;
+            height: 290px;
+            background: linear-gradient(90deg, #0a0a15 0%, #1a1a2e 20%, #1a1a2e 80%, #0a0a15 100%);
+            border-radius: 45px 45px 15px 15px;
             border: 1px solid #3a3a5e;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .ark-ship-hull::before {
             content: '';
@@ -1777,53 +1829,43 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 25px;
+            width: 40px;
+            height: 30px;
             background: linear-gradient(180deg, #4a4a6e 0%, #2a2a4e 100%);
-            border-radius: 15px 15px 0 0;
+            border-radius: 20px 20px 0 0;
         }
-        .ark-pod-grid {
+        /* Stasis bay canvas container */
+        .stasis-canvas-container {
             position: absolute;
-            top: 30px;
+            top: 35px;
             left: 50%;
             transform: translateX(-50%);
-            width: 44px;
-            height: 100px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            gap: 2px;
-            padding: 4px;
+            width: 72px;
+            height: 240px;
         }
-        .ark-pod {
-            background: #00ff8855;
-            border-radius: 1px;
-            transition: background 0.3s, box-shadow 0.3s;
-        }
-        .ark-pod.active {
-            background: #00ff88;
-            box-shadow: 0 0 4px #00ff8888;
-        }
-        .ark-pod.dead {
-            background: #331111;
+        #stasisCanvas {
+            width: 72px;
+            height: 240px;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
         .ark-ship-engine {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
-            height: 20px;
+            width: 50px;
+            height: 25px;
             background: linear-gradient(180deg, #2a2a4e 0%, #1a1a2e 100%);
-            border-radius: 0 0 8px 8px;
+            border-radius: 0 0 10px 10px;
         }
         .ark-engine-glow {
             position: absolute;
-            bottom: -5px;
+            bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 15px;
+            width: 40px;
+            height: 20px;
             background: radial-gradient(ellipse at center top, #00aaff44 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.5s;
@@ -1883,7 +1925,7 @@
             gap: 8px;
         }
         .survivors-info-vertical .cryo-log {
-            max-height: 120px;
+            max-height: 180px;
             text-align: left;
             width: 100%;
             margin-top: 10px;
@@ -1983,7 +2025,17 @@
     </div>
 
     <div class="container">
-        <div class="game-clock" id="gameClock">October 17, 00:00, 3326</div>
+        <div class="time-control-bar">
+            <div class="game-clock" id="gameClock">October 17, 00:00, 3326</div>
+            <div class="speed-controls">
+                <button class="speed-btn" id="speedPause" title="Pause">| |</button>
+                <button class="speed-btn" id="speedSlow" title="Slow (0.5x)">½</button>
+                <button class="speed-btn active" id="speedNormal" title="Normal (1x)">1x</button>
+                <button class="speed-btn" id="speedFast" title="Fast (2x)">2x</button>
+                <button class="speed-btn" id="speedVeryFast" title="Very Fast (4x)">4x</button>
+            </div>
+            <div class="speed-indicator" id="speedIndicator">1x</div>
+        </div>
         <h1>ARK STATION</h1>
 
         <div class="main-layout">
@@ -1994,8 +2046,8 @@
                         <div class="ark-ship-visual">
                             <div class="ark-ship-container">
                                 <div class="ark-ship-hull">
-                                    <div class="ark-pod-grid" id="arkPodGrid">
-                                        <!-- 32 pods will be generated by JS -->
+                                    <div class="stasis-canvas-container">
+                                        <canvas id="stasisCanvas" width="144" height="480"></canvas>
                                     </div>
                                 </div>
                                 <div class="ark-ship-engine"></div>
@@ -2009,7 +2061,7 @@
                             </div>
                         </div>
                         <div class="survivors-info-vertical">
-                            <div class="survivor-count" id="survivors">1,347</div>
+                            <div class="survivor-count" id="survivors">---</div>
                             <div class="survivor-label">Souls in Stasis</div>
                             <div class="death-rate" id="deathRate"></div>
                             <div class="stasis-controls-section">
@@ -2325,10 +2377,1210 @@
             { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 30, level: 7, unlocksFinal: true }
         ];
 
+        // Stasis grid constants
+        const STASIS_COLS = 20;      // Bay columns
+        const STASIS_ROWS = 50;      // Bay rows
+        const CELLS_PER_BAY = 10;    // Colonists per bay (2x5 arrangement)
+        const TOTAL_COLONISTS = STASIS_COLS * STASIS_ROWS * CELLS_PER_BAY; // 10,000
+
+        // Passenger death records database
+        const PASSENGER_DATABASE = [
+            { name: "Eduardo Chávez", age: 59, specialization: "Shuttle Pilot" },
+            { name: "Mikhail Orlov", age: 83, specialization: "Emergency Protocol Author" },
+            { name: "Sigrid Johansen", age: 72, specialization: "Ship Archivist" },
+            { name: "Miriam Goldstein", age: 74, specialization: "Cultural Liaison Officer" },
+            { name: "Anselm Becker", age: 79, specialization: "Reactor Decommissioning Planner" },
+            { name: "Beatriz Monteiro", age: 73, specialization: "Botanical Seed Vault Keeper" },
+            { name: "Jean-Luc Moreau", age: 67, specialization: "Navigation Instructor" },
+            { name: "Ahmed Zaki", age: 65, specialization: "Waste Heat Recovery Engineer" },
+            { name: "Sergei Petrov", age: 64, specialization: "Radiation Shielding Engineer" },
+            { name: "Abdulrahman Al-Sabah", age: 63, specialization: "Power Grid Supervisor" },
+            { name: "Iván Marković", age: 62, specialization: "Supply Chain Quartermaster" },
+            { name: "Nguyen Thi Mai", age: 62, specialization: "Water Quality Analyst" },
+            { name: "Nandini Iyer", age: 61, specialization: "Medical Bay Surgeon" },
+            { name: "Yelena Kuznetsova", age: 60, specialization: "Orbital Mechanics Analyst" },
+            { name: "Chen Wei", age: 40, specialization: "Quantum Communications Analyst" },
+            { name: "Zahra Nouri", age: 46, specialization: "Structural Integrity Officer" },
+            { name: "Erik Lindström", age: 47, specialization: "Thermal Control Engineer" },
+            { name: "Nóra Szabó", age: 47, specialization: "Food Storage Auditor" },
+            { name: "Laila Hassan", age: 48, specialization: "Communications Security Analyst" },
+            { name: "Marek Nowak", age: 48, specialization: "Astrodynamics Navigator" },
+            { name: "Mustafa Demir", age: 49, specialization: "Reaction Mass Accountant" },
+            { name: "László Horváth", age: 71, specialization: "Materials Failure Analyst" },
+            { name: "Isabella Rossi", age: 55, specialization: "Life Support Systems Engineer" },
+            { name: "Seamus Byrne", age: 56, specialization: "Maintenance Scheduler" },
+            { name: "Dalia Ben-Ari", age: 57, specialization: "Epidemiology Officer" },
+            { name: "Anwar Qureshi", age: 57, specialization: "Nanofabrication Engineer" },
+            { name: "Pilar Ortega", age: 58, specialization: "Education Coordinator" },
+            { name: "Tendai Moyo", age: 58, specialization: "Propellant Chemist" },
+            { name: "Hélène Bernard", age: 66, specialization: "Civic Mediation Officer" },
+            { name: "Helena Kowalska", age: 59, specialization: "Pharmacology Officer" },
+            { name: "Fatou Diop", age: 19, specialization: "Drone Maintenance Tech" },
+            { name: "Asha Mwangi", age: 18, specialization: "Recreation Coordinator" },
+            { name: "Aroha Ngata", age: 21, specialization: "Library Systems Technician" },
+            { name: "Anya Volkov", age: 22, specialization: "Comms Relay Operator" },
+            { name: "Sahana Reddy", age: 23, specialization: "Microbial Ecology Researcher" },
+            { name: "Salma Abdelrahim", age: 28, specialization: "Cryosleep Nurse" },
+            { name: "Marta Sánchez", age: 28, specialization: "Galley Cook" },
+            { name: "Naima Boukhalfa", age: 29, specialization: "Docking Port Specialist" },
+            { name: "Diego Álvarez", age: 29, specialization: "EVA Suit Fabricator" },
+            { name: "Tomasz Zieliński", age: 30, specialization: "3D Printer Operator" },
+            { name: "Camila Ferreira", age: 31, specialization: "Bioprinting Lab Technician" },
+            { name: "Eszter Varga", age: 31, specialization: "Bioreactor Operator" },
+            { name: "Rakesh Patel", age: 32, specialization: "Soil Substrate Engineer" },
+            { name: "Nur Aisyah Rahman", age: 32, specialization: "Nursery Habitat Technician" },
+            { name: "Chukwuemeka Okafor", age: 35, specialization: "Cargo Routing Coordinator" },
+            { name: "Arjun Singh", age: 35, specialization: "Dark Matter Sensor Specialist" },
+            { name: "Amina El-Sayed", age: 37, specialization: "Exoplanet Geologist" },
+            { name: "Karim Benali", age: 37, specialization: "Fire Suppression Engineer" },
+            { name: "Jin Soo-yeon", age: 38, specialization: "Language Translation Specialist" },
+            { name: "Aoife O'Connell", age: 38, specialization: "Psychological Counselor" },
+            { name: "Sunita Kaur", age: 39, specialization: "Microgravity Physiotherapist" },
+            { name: "Oksana Hrytsenko", age: 40, specialization: "Optical Systems Engineer" },
+            { name: "Farid Rahmani", age: 36, specialization: "Sensor Array Calibrator" },
+            { name: "Katerina Papadopoulos", age: 36, specialization: "Hydroponics Nutrient Chemist" },
+            { name: "Celeste Dubois", age: 45, specialization: "Habitat Interior Designer" },
+            { name: "Tane Mahuta", age: 45, specialization: "Meteor Shield Technician" },
+            { name: "Luca Bianchi", age: 46, specialization: "Medical Imaging Specialist" },
+            { name: "Roman Koval", age: 33, specialization: "Vacuum Pump Technician" },
+            { name: "Grace Okoye", age: 26, specialization: "Sanitation Technician" },
+            { name: "Linh Trần", age: 26, specialization: "Waste Management Operator" },
+            { name: "Marisol Reyes", age: 27, specialization: "Emergency Medical Technician" },
+            { name: "Park Min-jun", age: 27, specialization: "Airlock Seal Inspector" },
+            { name: "Keiko Watanabe", age: 24, specialization: "Cryo-Alarm Technician" },
+            { name: "Sofia Dimitrova", age: 24, specialization: "Gene Therapy Nurse" },
+            { name: "Chen Yuting", age: 20, specialization: "Robotics Operator" },
+            { name: "Yusuf Al-Khalil", age: 23, specialization: "Water Recycling Attendant" },
+            { name: "Pedro Lima", age: 25, specialization: "Laundry Specialist" },
+            { name: "Jonas Richter", age: 69, specialization: "Star Chart Historian" },
+            { name: "Noah Kearns", age: 4, specialization: "Child" },
+            { name: "Musa Abdullahi", age: 5, specialization: "Child" },
+            { name: "Yara Souza", age: 6, specialization: "Child" },
+            { name: "Priya Shah", age: 7, specialization: "Child" },
+            { name: "Hana Sato", age: 8, specialization: "Child" },
+            { name: "Matteo Rojas", age: 9, specialization: "Child" },
+            { name: "Bao Nguyen", age: 10, specialization: "Child" },
+            { name: "Leilani Kealoha", age: 11, specialization: "Child" },
+            { name: "Svetlana Ivanenko", age: 12, specialization: "Child" },
+            { name: "Omar Farouk", age: 13, specialization: "Child" },
+            { name: "Rania Haddad", age: 14, specialization: "Child" },
+            { name: "Aarav Sharma", age: 34, specialization: "Fusion Reactor Tech" },
+            { name: "Elena Rodriguez", age: 28, specialization: "Exoplanet Geologist" },
+            { name: "Kaito Tanaka", age: 9, specialization: "Child" },
+            { name: "Fatima Al-Sayed", age: 45, specialization: "Hydroponic Gardener" },
+            { name: "Lars Eriksen", age: 52, specialization: "Structural Engineer" },
+            { name: "Chidi Okoro", age: 31, specialization: "Waste Management" },
+            { name: "Svetlana Volkov", age: 67, specialization: "Cryo-Stasis Medic" },
+            { name: "Mateo Silva", age: 12, specialization: "Child" },
+            { name: "Mei Ling Chen", age: 24, specialization: "Laundry Specialist" },
+            { name: "Amara Diop", age: 39, specialization: "Astrobiologist" },
+            { name: "Hans Müller", age: 82, specialization: "Senior Archivist" },
+            { name: "Isabella Rossi", age: 5, specialization: "Child" },
+            { name: "Liam O'Connor", age: 41, specialization: "Atmospheric Processor" },
+            { name: "Ananya Iyer", age: 27, specialization: "Quantum Cryptographer" },
+            { name: "Jean-Baptiste Dupont", age: 58, specialization: "Culinary Logistics" },
+            { name: "Yuki Sato", age: 73, specialization: "Cyberneticist" },
+            { name: "Sofia Fernandez", age: 14, specialization: "Child" },
+            { name: "Kwame Mensah", age: 36, specialization: "Security Officer" },
+            { name: "Natasha Romanova", age: 30, specialization: "Navigation Officer" },
+            { name: "Arjun Das", age: 48, specialization: "Electrician" },
+            { name: "Birgit Nielsen", age: 91, specialization: "Retired Educator" },
+            { name: "Diego Morales", age: 22, specialization: "Janitorial Services" },
+            { name: "Zara Khan", age: 7, specialization: "Child" },
+            { name: "Oliver Smith", age: 33, specialization: "Water Reclamation Specialist" },
+            { name: "Min-ho Kim", age: 44, specialization: "Communications Liaison" },
+            { name: "Priya Bakshi", age: 29, specialization: "Genetic Diversity Officer" },
+            { name: "Lucas Wagner", age: 11, specialization: "Child" },
+            { name: "Ines Ferreira", age: 55, specialization: "Emergency Response Lead" },
+            { name: "Tariq Aziz", age: 42, specialization: "Propulsion Engineer" },
+            { name: "Chloe Lefebvre", age: 26, specialization: "Data Miner" },
+            { name: "Kenji Yamamoto", age: 88, specialization: "Cultural Historian" },
+            { name: "Nia Tadesse", age: 4, specialization: "Child" },
+            { name: "Ravi Malhotra", age: 37, specialization: "Internal Systems Repair" },
+            { name: "Siobhan Murphy", age: 32, specialization: "Vermin Control" },
+            { name: "Aleksandr Ivanov", age: 61, specialization: "Radiation Shielding Tech" },
+            { name: "Gabriela Santos", age: 13, specialization: "Child" },
+            { name: "Omar Al-Farsi", age: 49, specialization: "Deck Maintenance" },
+            { name: "Hina Nakamura", age: 25, specialization: "Bio-Waste Technician" },
+            { name: "Thomas Brown", age: 50, specialization: "Fabrication Specialist" },
+            { name: "Eshe Mwangi", age: 35, specialization: "Xenobotanist" },
+            { name: "Dimitri Petrov", age: 6, specialization: "Child" },
+            { name: "Aisling Byrne", age: 43, specialization: "Hydration Tech" },
+            { name: "Carlos Ruiz", age: 57, specialization: "Heavy Machinery Operator" },
+            { name: "Sunita Rao", age: 30, specialization: "Nutritional Chemist" },
+            { name: "Leopold Meyer", age: 95, specialization: "Philosophy Consultant" },
+            { name: "Ji-won Park", age: 21, specialization: "Apprentice Welder" },
+            { name: "Moussa Traoré", age: 40, specialization: "Security Detail" },
+            { name: "Emilia Conti", age: 8, specialization: "Child" },
+            { name: "Rahul Verma", age: 46, specialization: "Thermal Control Engineer" },
+            { name: "Ingrid Bergman", age: 70, specialization: "Library Curator" },
+            { name: "Javier Gomez", age: 23, specialization: "Mess Hall Attendant" },
+            { name: "Noor Hassan", age: 38, specialization: "Structural Integrity Monitor" },
+            { name: "Soren Holm", age: 3, specialization: "Child" },
+            { name: "Xavier Dubois", age: 53, specialization: "Oxygen Scrubbing Specialist" },
+            { name: "Lin Xiao", age: 27, specialization: "Sublight Pilot" },
+            { name: "Amina Jollof", age: 44, specialization: "Fungal Cultivator" },
+            { name: "Bjorn Ironside", age: 66, specialization: "Cargo Loader" },
+            { name: "Yara Haddad", age: 10, specialization: "Child" },
+            { name: "Viktor Reznov", age: 59, specialization: "Ammunition Specialist" },
+            { name: "Seraphina Vance", age: 31, specialization: "Neuro-Psych Liaison" },
+            { name: "Devon Miller", age: 47, specialization: "Plumbing & Sanitation" },
+            { name: "Kaya Sato", age: 14, specialization: "Child" },
+            { name: "Felipe Vega", age: 33, specialization: "Satellite Technician" },
+            { name: "Nadia Belinsky", age: 29, specialization: "Chemical Analyst" },
+            { name: "Elias Thorne", age: 77, specialization: "Retired Navigator" },
+            { name: "Fatoumata Keïta", age: 42, specialization: "Medical Diagnostic Tech" },
+            { name: "Hiroshi Tanaka", age: 51, specialization: "Internal Comms Repair" },
+            { name: "Saanvi Reddy", age: 5, specialization: "Child" },
+            { name: "Marco Polo", age: 35, specialization: "Logistics Coordinator" },
+            { name: "Teresa Mendoza", age: 62, specialization: "Textile Repair" },
+            { name: "Aleksei Sokolov", age: 39, specialization: "Plasma Containment Tech" },
+            { name: "Camila Ortega", age: 24, specialization: "Hydroponic Harvester" },
+            { name: "Zayd Al-Rashid", age: 12, specialization: "Child" },
+            { name: "Freja Svendsen", age: 28, specialization: "Robotics Maintenance" },
+            { name: "Ibrahim Diallo", age: 45, specialization: "Gravity Well Engineer" },
+            { name: "Keiko Ishii", age: 84, specialization: "Calligrapher" },
+            { name: "Malik Jones", age: 31, specialization: "Air Quality Monitor" },
+            { name: "Rosa Hernandez", age: 7, specialization: "Child" },
+            { name: "Simon Petrikov", age: 54, specialization: "Ice Miner" },
+            { name: "Yuna Kim", age: 22, specialization: "Inventory Clerk" },
+            { name: "Anders Lindholm", age: 41, specialization: "Pest Control" },
+            { name: "Leila Mansour", age: 36, specialization: "Solar Array Tech" },
+            { name: "Tenzin Gyatso", age: 9, specialization: "Child" },
+            { name: "Mikhail Volkov", age: 60, specialization: "Shipwright" },
+            { name: "Heidi Klum", age: 48, specialization: "Wardrobe Maintenance" },
+            { name: "Chen Wei", age: 33, specialization: "Soil Scientist" },
+            { name: "Sofia Kovalev", age: 13, specialization: "Child" },
+            { name: "Ozan Demir", age: 26, specialization: "Signal Analyst" },
+            { name: "Amelia Earhart", age: 92, specialization: "Historical Consultant" },
+            { name: "Sanjay Gupta", age: 44, specialization: "Surgery Specialist" },
+            { name: "Yasmine Larue", age: 30, specialization: "Baker" },
+            { name: "Igor Drago", age: 56, specialization: "Bulkhead Welder" },
+            { name: "Maya Angelou", age: 4, specialization: "Child" },
+            { name: "Oskar Schindler", age: 68, specialization: "Manufacturing Lead" },
+            { name: "Rina Sawayama", age: 27, specialization: "Recycling Tech" },
+            { name: "Ali Hassan", age: 38, specialization: "Drill Operator" },
+            { name: "Beatriz Silva", age: 11, specialization: "Child" },
+            { name: "Klaus Schmidt", age: 72, specialization: "Clockmaker" },
+            { name: "Isabelle Adjani", age: 35, specialization: "Bio-Ethics Officer" },
+            { name: "Wang Fang", age: 40, specialization: "Lithium Battery Specialist" },
+            { name: "Jiro Akimoto", age: 44, specialization: "Fusion Reactor Tech" },
+            { name: "Elena Vance", age: 32, specialization: "Exoplanet Geologist" },
+            { name: "Kofi Boateng", age: 11, specialization: "Child" },
+            { name: "Maria Costa", age: 39, specialization: "Hydroponic Gardener" },
+            { name: "Sergei Petrovich", age: 55, specialization: "Waste Management" },
+            { name: "Amélie Lefèvre", age: 28, specialization: "Laundry Specialist" },
+            { name: "Ibrahim Al-Kouri", age: 50, specialization: "Atmospheric Scrubbing Tech" },
+            { name: "Yuki Tanaka", age: 6, specialization: "Child" },
+            { name: "Lars Nilsson", age: 62, specialization: "Heavy Lift Operator" },
+            { name: "Fatimah Binte-Zaid", age: 35, specialization: "Geneticist" },
+            { name: "Chen Li", age: 41, specialization: "Hull Integrity Monitor" },
+            { name: "Santiago Ruiz", age: 14, specialization: "Child" },
+            { name: "Ingrid Sorensen", age: 88, specialization: "Cultural Archivist" },
+            { name: "Marcus Thorne", age: 27, specialization: "Sublight Navigator" },
+            { name: "Priya Deshmukh", age: 33, specialization: "Mycology Technician" },
+            { name: "Oliver Schmidt", age: 46, specialization: "Cryogenic Maintenance" },
+            { name: "Noa Cohen", age: 4, specialization: "Child" },
+            { name: "Thabo Mbeki", age: 58, specialization: "Structural Welder" },
+            { name: "Isabella Rossi", age: 24, specialization: "Mess Hall Steward" },
+            { name: "Mikhail Bakunin", age: 72, specialization: "Systems Philosopher" },
+            { name: "Zahra Mansour", age: 31, specialization: "Radiation Shield Specialist" },
+            { name: "Leonardo Silva", age: 9, specialization: "Child" },
+            { name: "Bridget O'Malley", age: 43, specialization: "Water Purification Lead" },
+            { name: "Kenji Sato", age: 37, specialization: "Robotics Mechanic" },
+            { name: "Ananya Rao", age: 29, specialization: "Bio-Safety Officer" },
+            { name: "Dimitri Volkov", age: 52, specialization: "Security Chief" },
+            { name: "Sophie Dubois", age: 7, specialization: "Child" },
+            { name: "Kwame Addo", age: 48, specialization: "Power Grid Controller" },
+            { name: "Beatriz Ortega", age: 30, specialization: "Nutrient Paste Processor" },
+            { name: "Hans Weber", age: 65, specialization: "Fabrication Lead" },
+            { name: "Min-Jee Park", age: 22, specialization: "Communications Relay Tech" },
+            { name: "Arjun Nair", age: 13, specialization: "Child" },
+            { name: "Svetlana Ivanova", age: 36, specialization: "Neuro-Linguistic Programmer" },
+            { name: "Diego Morales", age: 40, specialization: "Cargo Bay Supervisor" },
+            { name: "Chloe Whittaker", age: 25, specialization: "Soil Chemist" },
+            { name: "Tariq Al-Fayed", age: 54, specialization: "Plasma Manifold Tech" },
+            { name: "Luca Moretti", age: 5, specialization: "Child" },
+            { name: "Ines Ferreira", age: 34, specialization: "Emergency Medical Tech" },
+            { name: "Vladimir Sokolov", age: 91, specialization: "Retired Deck Officer" },
+            { name: "Aisha Bello", age: 42, specialization: "Seed Vault Curator" },
+            { name: "Finn Donnelly", age: 26, specialization: "Sanitation Drone Operator" },
+            { name: "Yuna Kim", age: 10, specialization: "Child" },
+            { name: "Raoul Gaspard", age: 47, specialization: "Internal Logistics Specialist" },
+            { name: "Sunita Williams", age: 38, specialization: "Orbital Mechanics Analyst" },
+            { name: "Boris Jovic", age: 59, specialization: "Turbine Repairman" },
+            { name: "Clara Barton", age: 31, specialization: "Triage Nurse" },
+            { name: "Hugo Jensen", age: 3, specialization: "Child" },
+            { name: "Mei-Ling Zhao", age: 45, specialization: "Hydroponics Lead" },
+            { name: "Pierre Durand", age: 60, specialization: "Maintenance Plumber" },
+            { name: "Saanvi Patel", age: 23, specialization: "Apprentice Electrician" },
+            { name: "Omar Sharif", age: 68, specialization: "Historical Records Officer" },
+            { name: "Emily Watson", age: 12, specialization: "Child" },
+            { name: "Xavier Hernandez", age: 33, specialization: "Security Patrol" },
+            { name: "Natalia Romanov", age: 29, specialization: "Cyber-Security Tech" },
+            { name: "Fritz Lang", age: 84, specialization: "Visual Media Preservation" },
+            { name: "Amara Okecke", age: 37, specialization: "Geothermal Specialist" },
+            { name: "Toby Miller", age: 8, specialization: "Child" },
+            { name: "Gita Sahni", age: 44, specialization: "Pharmaceutical Chemist" },
+            { name: "Alexei Leonov", age: 51, specialization: "Extra-Vehicular Repair" },
+            { name: "Rose Tyler", age: 21, specialization: "Retail Inventory Clerk" },
+            { name: "Katsumi Watanabe", age: 56, specialization: "High-Pressure Systems Tech" },
+            { name: "Leo Fischer", age: 11, specialization: "Child" },
+            { name: "Fatima Al-Zahrani", age: 32, specialization: "Bio-Waste Recycler" },
+            { name: "Erik Visser", age: 49, specialization: "Deck Plate Welder" },
+            { name: "Siobhan Kelly", age: 27, specialization: "Hydration Logistics" },
+            { name: "Wei Zhang", age: 43, specialization: "Particle Physicist" },
+            { name: "Mateo Garcia", age: 9, specialization: "Child" },
+            { name: "Nadia Kurylyuk", age: 35, specialization: "Airflow Dynamics Engineer" },
+            { name: "Ishaan Gupta", age: 30, specialization: "Database Manager" },
+            { name: "Brigitte Nielsen", age: 77, specialization: "Physical Therapist" },
+            { name: "Kareem Abdul", age: 41, specialization: "Gravity Plate Calibration" },
+            { name: "Alice Cooper", age: 6, specialization: "Child" },
+            { name: "Piotr Zielinski", age: 34, specialization: "Cooling Systems Tech" },
+            { name: "Hanna Lindberg", age: 28, specialization: "Algae Cultivator" },
+            { name: "Carlos Fuentes", age: 53, specialization: "Heavy Equipment Mechanic" },
+            { name: "Julia Roberts", age: 46, specialization: "Trauma Surgeon" },
+            { name: "Samwise Gamgee", age: 5, specialization: "Child" },
+            { name: "Farrah Fawzi", age: 31, specialization: "Botanical Pathologist" },
+            { name: "Ivan Drago", age: 48, specialization: "Structural Stress Analyst" },
+            { name: "Sakura Haruno", age: 25, specialization: "Medical Lab Assistant" },
+            { name: "Leopold Bloom", age: 63, specialization: "Inventory Auditor" },
+            { name: "Zara Phillips", age: 14, specialization: "Child" },
+            { name: "Arthur Dent", age: 42, specialization: "Emergency Evacuation Guide" },
+            { name: "Valentina Tereshkova", age: 36, specialization: "Flight Path Calculator" },
+            { name: "Ngô Bảo Châu", age: 39, specialization: "Mathematics Consultant" },
+            { name: "Winston Smith", age: 57, specialization: "Record Clerk" },
+            { name: "Bobby Fischer", age: 10, specialization: "Child" },
+            { name: "Indira Gandhi", age: 44, specialization: "Resource Distribution" },
+            { name: "Pablo Picasso", age: 95, specialization: "Ship Aesthetician" },
+            { name: "Grace Hopper", age: 29, specialization: "Compiler Engineer" },
+            { name: "Nelson Mandela", age: 81, specialization: "Mediation Liaison" },
+            { name: "Simona Halep", age: 8, specialization: "Child" },
+            { name: "Usain Bolt", age: 33, specialization: "Courier Service" },
+            { name: "Marie Curie", age: 52, specialization: "Radiological Safety Officer" },
+            { name: "Leonardo DiCaprio", age: 40, specialization: "Entertainment Coordinator" },
+            { name: "Catherine Great", age: 66, specialization: "Senior Administrator" },
+            { name: "David Attenborough", age: 3, specialization: "Child" },
+            { name: "Malala Yousafzai", age: 24, specialization: "Education Facilitator" },
+            { name: "Albert Einstein", age: 70, specialization: "Theoretical Consultant" },
+            { name: "Serena Williams", age: 38, specialization: "Kinetic Energy Specialist" },
+            { name: "Eshe Mwangi", age: 35, specialization: "Xenobotanist" },
+            { name: "Dimitri Petrov", age: 6, specialization: "Child" },
+            { name: "Aisling Byrne", age: 43, specialization: "Hydration Technician" },
+            { name: "Carlos Ruiz", age: 57, specialization: "Heavy Machinery Operator" },
+            { name: "Sunita Rao", age: 30, specialization: "Nutritional Chemist" },
+            { name: "Leopold Meyer", age: 95, specialization: "Philosophy Consultant" },
+            { name: "Ji-won Park", age: 21, specialization: "Satellite Technician" },
+            { name: "Moussa Traoré", age: 40, specialization: "Security Detail" },
+            { name: "Henrik Larsson", age: 52, specialization: "Fusion Reactor Engineer" },
+            { name: "Yuki Tanaka", age: 28, specialization: "Cryogenics Specialist" },
+            { name: "Margaret Chen", age: 67, specialization: "Chief Medical Officer" },
+            { name: "Tobias Richter", age: 44, specialization: "Atmospheric Processor Tech" },
+            { name: "Priya Sharma", age: 33, specialization: "Genetic Archivist" },
+            { name: "William O'Brien", age: 71, specialization: "Colonial Historian" },
+            { name: "Mei-Lin Wu", age: 25, specialization: "Comm Systems Analyst" },
+            { name: "Aleksandr Volkov", age: 38, specialization: "Structural Welder" },
+            { name: "Sarah Mitchell", age: 4, specialization: "Child" },
+            { name: "Kenji Nakamura", age: 61, specialization: "Water Reclamation Lead" },
+            { name: "Elena Vasquez", age: 29, specialization: "Epidemiologist" },
+            { name: "Thomas Andersson", age: 84, specialization: "Retired Astrophysicist" },
+            { name: "Hana Kim", age: 19, specialization: "Agricultural Apprentice" },
+            { name: "Friedrich Weber", age: 47, specialization: "Waste Management Supervisor" },
+            { name: "Liu Wei", age: 36, specialization: "Exoplanet Geologist" },
+            { name: "Catherine Dubois", age: 55, specialization: "Textile Manufacturing Lead" },
+            { name: "Raj Patel", age: 42, specialization: "Solar Array Technician" },
+            { name: "Emma Lindqvist", age: 8, specialization: "Child" },
+            { name: "Hiroshi Yamamoto", age: 63, specialization: "Propulsion Systems Chief" },
+            { name: "Isabella Torres", age: 31, specialization: "Veterinary Specialist" },
+            { name: "Michael Thompson", age: 49, specialization: "Mining Operations Foreman" },
+            { name: "Aiko Sato", age: 23, specialization: "Laboratory Assistant" },
+            { name: "Johannes Schmidt", age: 76, specialization: "Seed Vault Curator" },
+            { name: "Linh Nguyen", age: 34, specialization: "Pharmacologist" },
+            { name: "Patrick Brennan", age: 58, specialization: "HVAC Specialist" },
+            { name: "Xiu Huang", age: 27, specialization: "Data Integrity Officer" },
+            { name: "Anders Johansson", age: 41, specialization: "Hull Maintenance Tech" },
+            { name: "Grace Okonkwo", age: 3, specialization: "Child" },
+            { name: "Takeshi Mori", age: 53, specialization: "Navigation Officer" },
+            { name: "Rebecca Foster", age: 39, specialization: "Midwife" },
+            { name: "Chen Xiaoming", age: 72, specialization: "Aquaculture Manager" },
+            { name: "Ingrid Dahl", age: 26, specialization: "Soil Scientist" },
+            { name: "David Kowalski", age: 45, specialization: "Electrical Systems Engineer" },
+            { name: "Min-ji Lee", age: 11, specialization: "Child" },
+            { name: "Oscar Lindgren", age: 88, specialization: "Elder Council Member" },
+            { name: "Fatima Al-Hassan", age: 37, specialization: "Trauma Surgeon" },
+            { name: "James Reilly", age: 50, specialization: "Security Chief" },
+            { name: "Yuna Choi", age: 22, specialization: "Protein Synthesis Tech" },
+            { name: "Martin Schulz", age: 64, specialization: "Ceramics Fabricator" },
+            { name: "Anna Petrova", age: 32, specialization: "Climate Modeling Specialist" },
+            { name: "Benjamin Clarke", age: 7, specialization: "Child" },
+            { name: "Sakura Ito", age: 46, specialization: "Psychologist" },
+            { name: "Erik Magnusson", age: 59, specialization: "Blacksmith" },
+            { name: "Wei Zhang", age: 24, specialization: "Drone Pilot" },
+            { name: "Charlotte Williams", age: 81, specialization: "Archival Librarian" },
+            { name: "Daisuke Fujita", age: 35, specialization: "Radiation Safety Officer" },
+            { name: "Olivia Hansen", age: 48, specialization: "Livestock Geneticist" },
+            { name: "Soo-yeon Kang", age: 13, specialization: "Child" },
+            { name: "Robert MacLeod", age: 69, specialization: "Carpentry Foreman" },
+            { name: "Ayumi Kobayashi", age: 29, specialization: "Immunologist" },
+            { name: "Stefan Eriksson", age: 43, specialization: "Plumbing Systems Tech" },
+            { name: "Jun Li", age: 56, specialization: "Electronics Fabrication Lead" },
+            { name: "Victoria Adams", age: 20, specialization: "Laundry Specialist" },
+            { name: "Kazuki Watanabe", age: 77, specialization: "Calligraphy Instructor" },
+            { name: "Natasha Sokolova", age: 38, specialization: "Botanist" },
+            { name: "Daniel Morrison", age: 5, specialization: "Child" },
+            { name: "Hyun-woo Shin", age: 51, specialization: "Power Grid Manager" },
+            { name: "Emily Watson", age: 33, specialization: "Dental Surgeon" },
+            { name: "Tao Chen", age: 62, specialization: "Metallurgist" },
+            { name: "Julia Bergström", age: 9, specialization: "Child" },
+            { name: "Masahiro Endo", age: 44, specialization: "Robotics Technician" },
+            { name: "Claire Fitzgerald", age: 73, specialization: "Textile Artisan" },
+            { name: "Bo-ram Jung", age: 28, specialization: "Microbiologist" },
+            { name: "Alexander Nilsson", age: 54, specialization: "Cargo Logistics Coordinator" },
+            { name: "Ruth Gallagher", age: 91, specialization: "Oral Historian" },
+            { name: "Yuto Hashimoto", age: 40, specialization: "Sanitation Engineer" },
+            { name: "Helen Mackenzie", age: 36, specialization: "Anesthesiologist" },
+            { name: "Sung-ho Lim", age: 66, specialization: "Tool & Die Maker" },
+            { name: "Kaori Miyamoto", age: 17, specialization: "Engineering Cadet" },
+            { name: "Peter Johannsen", age: 47, specialization: "Brewery Technician" },
+            { name: "Jia Lin", age: 12, specialization: "Child" },
+            { name: "Marcus Bauer", age: 60, specialization: "Glass Blower" },
+            { name: "Evelyn Cross", age: 34, specialization: "Embryologist" },
+            { name: "Ryu Suzuki", age: 83, specialization: "Master Gardener" },
+            { name: "Lena Hedberg", age: 25, specialization: "Nutrient Cycling Specialist" },
+            { name: "Connor Walsh", age: 52, specialization: "Life Support Technician" },
+            { name: "Mi-young Oh", age: 31, specialization: "Pathologist" },
+            { name: "Theodore Jameson", age: 78, specialization: "Ethicist" },
+            { name: "Akiko Harada", age: 45, specialization: "Shuttle Pilot" },
+            { name: "Samuel Lindberg", age: 10, specialization: "Child" },
+            { name: "Qiang Zhou", age: 37, specialization: "3D Printing Specialist" },
+            { name: "Nora Svensson", age: 68, specialization: "Beekeeping Manager" },
+            { name: "Jin-soo Yoon", age: 23, specialization: "Oxygen Generation Tech" },
+            { name: "Walter Gruber", age: 56, specialization: "Distillation Technician" },
+            { name: "Haruki Ogawa", age: 41, specialization: "Seismologist" },
+            { name: "Marie Larsen", age: 93, specialization: "Cultural Preservation Elder" },
+            { name: "Shu-fen Wang", age: 18, specialization: "Hydroponic Gardener" },
+            { name: "George Patterson", age: 49, specialization: "Chief Cook" },
+            { name: "Emi Kato", age: 14, specialization: "Child" },
+            { name: "Lars Henriksen", age: 65, specialization: "Carpentry Instructor" },
+            { name: "Soon-hee Baek", age: 39, specialization: "Neurologist" },
+            { name: "Richard Graves", age: 70, specialization: "Funeral Services Director" },
+            { name: "Naomi Ishikawa", age: 26, specialization: "Cartographer" },
+            { name: "Aaron Vance", age: 42, specialization: "Soil Nutrient Chemist" },
+            { name: "Kenji Hirano", age: 38, specialization: "Modular Habitat Architect" },
+            { name: "Siti Nur Aini", age: 11, specialization: "Child" },
+            { name: "Elena Morozova", age: 31, specialization: "Survey Drone Pilot" },
+            { name: "Mark Turner", age: 45, specialization: "Heavy Excavation Lead" },
+            { name: "Amara Okafor", age: 29, specialization: "Xeno-Agriculturalist" },
+            { name: "Milo Vaughn", age: 7, specialization: "Child" },
+            { name: "Ingrid Sorensen", age: 52, specialization: "Seismic Activity Analyst" },
+            { name: "Tariq Al-Bashir", age: 36, specialization: "Well-Drilling Specialist" },
+            { name: "Lucia Mendez", age: 27, specialization: "Civil Surveyor" },
+            { name: "Callum O'Shea", age: 9, specialization: "Child" },
+            { name: "Hiroshi Tanaka", age: 61, specialization: "Site Planning Engineer" },
+            { name: "Nadia Volkov", age: 34, specialization: "Atmospheric Hardening Expert" },
+            { name: "Kofi Mensah", age: 40, specialization: "Irrigation Infrastructure Lead" },
+            { name: "Sun-Hi Park", age: 25, specialization: "Cartographer" },
+            { name: "Bram van der Berg", age: 14, specialization: "Child" },
+            { name: "Fatima Zahra", age: 33, specialization: "Livestock Geneticist" },
+            { name: "Alexei Morozov", age: 47, specialization: "Deep-Crust Miner" },
+            { name: "Siobhan Byrne", age: 30, specialization: "Planetary Pathologist" },
+            { name: "Rafael Silva", age: 5, specialization: "Child" },
+            { name: "Chloe Dupont", age: 28, specialization: "Resource Prospector" },
+            { name: "Jakob Fischer", age: 55, specialization: "Prefabricated Structural Tech" },
+            { name: "Meera Iyer", age: 41, specialization: "Frontier Law Arbitrator" },
+            { name: "Toby Higgins", age: 3, specialization: "Child" },
+            { name: "Lars Eriksen", age: 39, specialization: "Geothermal Tap Technician" },
+            { name: "Yuna Sato", age: 26, specialization: "Biodiversity Cataloguer" },
+            { name: "Dimitri Sokolov", age: 48, specialization: "Perimeter Security Lead" },
+            { name: "Amelie Girard", age: 12, specialization: "Child" },
+            { name: "Zayd Al-Masri", age: 37, specialization: "Off-World Brick Mason" },
+            { name: "Beatriz Santos", age: 44, specialization: "Water Table Ecologist" },
+            { name: "Walter Meyer", age: 68, specialization: "Senior Settlement Planner" },
+            { name: "Leo Valdez", age: 8, specialization: "Child" },
+            { name: "Priya Sharma", age: 32, specialization: "Pollination Drone Tech" },
+            { name: "Omar Farooq", age: 50, specialization: "Micro-Grid Electrician" },
+            { name: "Sarah Jenkins", age: 24, specialization: "Tentative Biology Lab Assistant" },
+            { name: "Ming Zhao", age: 10, specialization: "Child" },
+            { name: "Ravi Das", age: 35, specialization: "Heavy Lift Crane Operator" },
+            { name: "Eshe Mwangi", age: 43, specialization: "Frontier Medical Officer" },
+            { name: "Viktor Kuzmin", age: 57, specialization: "Blast & Demolition Expert" },
+            { name: "Sophie Muller", age: 6, specialization: "Child" },
+            { name: "Carlos Ruiz", age: 31, specialization: "High-Wind Turbine Tech" },
+            { name: "Ananya Reddy", age: 29, specialization: "Seed Germination Specialist" },
+            { name: "Hugo Nilsson", age: 54, specialization: "Land Clearing Specialist" },
+            { name: "Isabella Conti", age: 4, specialization: "Child" },
+            { name: "Thabo Dlamini", age: 38, specialization: "Sub-Surface Hydrologist" },
+            { name: "Karin Holm", age: 33, specialization: "Communication Array Rigger" },
+            { name: "Javier Gomez", age: 46, specialization: "Concrete Polymer Chemist" },
+            { name: "Nina Krawczyk", age: 13, specialization: "Child" },
+            { name: "Liam Walker", age: 28, specialization: "All-Terrain Vehicle Mechanic" },
+            { name: "Fatima Al-Farsi", age: 36, specialization: "Xeno-Entomologist" },
+            { name: "Hans Becker", age: 63, specialization: "Acoustic Environment Mapper" },
+            { name: "Ruby Johnson", age: 7, specialization: "Child" },
+            { name: "Sanjay Mehta", age: 42, specialization: "Colony Sanitation Lead" },
+            { name: "Ella Thornton", age: 30, specialization: "Meteorologist" },
+            { name: "Mikhail Petrov", age: 51, specialization: "Industrial Foundryman" },
+            { name: "Noa Ben-Ari", age: 9, specialization: "Child" },
+            { name: "Pierre Lefebvre", age: 37, specialization: "Urban Layout Draftsman" },
+            { name: "Jasmine Kaur", age: 25, specialization: "Fiber Optic Cable Layer" },
+            { name: "Erik Visser", age: 49, specialization: "Bridge Structural Engineer" },
+            { name: "Kaya Ito", age: 5, specialization: "Child" },
+            { name: "Rahul Verma", age: 34, specialization: "Solar Field Installer" },
+            { name: "Ines Ferreira", age: 32, specialization: "Topographical Surveyor" },
+            { name: "Brian Stinson", age: 40, specialization: "Community morale Officer" },
+            { name: "Oliver Watts", age: 11, specialization: "Child" },
+            { name: "Svetlana Ivanova", age: 39, specialization: "Radiation Safety Inspector" },
+            { name: "Diego Morales", age: 27, specialization: "Pipe Welder" },
+            { name: "Amara Diop", age: 45, specialization: "Sustainable Forestry Lead" },
+            { name: "Finn McCarthy", age: 14, specialization: "Child" },
+            { name: "Chandra Basu", age: 56, specialization: "High-Voltage Distribution" },
+            { name: "Rosa Hernandez", age: 31, specialization: "Waste-to-Fuel Specialist" },
+            { name: "Keiko Tanaka", age: 60, specialization: "Hydroponic System Designer" },
+            { name: "Samuel Gagne", age: 6, specialization: "Child" },
+            { name: "Ali Al-Sayed", age: 43, specialization: "Bulk Storage Manager" },
+            { name: "Brigitte Bernard", age: 35, specialization: "Wildlife Management" },
+            { name: "Arthur Davis", age: 38, specialization: "Disaster Relief Coordinator" },
+            { name: "Heidi Klein", age: 12, specialization: "Child" },
+            { name: "Yusuf Ismail", age: 53, specialization: "Water Desalination Lead" },
+            { name: "Zhang Wei", age: 26, specialization: "Soil Stabilization Tech" },
+            { name: "Margo Robinson", age: 30, specialization: "Colony Outreach Liaison" },
+            { name: "Peter Palmer", age: 8, specialization: "Child" },
+            { name: "Simon Petrov", age: 58, specialization: "Glaciologist" },
+            { name: "Laura Crawford", age: 33, specialization: "Archaeological Site Preservation" },
+            { name: "Bruce Watkins", age: 47, specialization: "Settlement Funding Auditor" },
+            { name: "Matilda Wood", age: 4, specialization: "Child" },
+            { name: "Ellen Riley", age: 36, specialization: "Xenomorph Safety Protocolist" },
+            { name: "Winston Stone", age: 41, specialization: "Records & Census Clerk" },
+            { name: "Nelson Mbeki", age: 72, specialization: "Reconciliation Advisor" },
+            { name: "Greta Svensson", age: 13, specialization: "Child" },
+            { name: "Steve Irving", age: 44, specialization: "Native Fauna Handler" },
+            { name: "Maria Kowalska", age: 50, specialization: "Mineral Isotope Analyst" },
+            { name: "Pablo Esparza", age: 48, specialization: "Underground Tunnel Engineer" },
+            { name: "Aria Stark", age: 14, specialization: "Child" },
+            { name: "Leonard Davis", age: 65, specialization: "Master Cartographer" },
+            { name: "Serena Wilson", age: 32, specialization: "Physical Conditioning Coach" },
+            { name: "Nikolai Tesic", age: 59, specialization: "Wireless Power Researcher" },
+            { name: "Katie Everett", age: 9, specialization: "Child" },
+            { name: "Janet Goodwin", age: 67, specialization: "Primate Behavioralist" },
+            { name: "Simon Freed", age: 70, specialization: "Isolation Psychologist" },
+            { name: "Neil Anderson", age: 54, specialization: "First-Contact Landing Pilot" },
+            { name: "Amelia Edwards", age: 3, specialization: "Child" },
+            { name: "Astrid Lindqvist", age: 42, specialization: "Circadian Rhythm Calibrator" },
+            { name: "Feng Zhao", age: 58, specialization: "Ancestral Memory Curator" },
+            { name: "Niamh Callahan", age: 33, specialization: "Bioluminescence Artist" },
+            { name: "Soren Madsen", age: 67, specialization: "Void Psychology Counselor" },
+            { name: "Yue Fang", age: 29, specialization: "Synthetic Pheromone Chemist" },
+            { name: "Marek Kowalczyk", age: 51, specialization: "Acoustic Archaeology Specialist" },
+            { name: "Chiyo Nishimura", age: 7, specialization: "Child" },
+            { name: "Theodore Ashworth", age: 84, specialization: "Oral Tradition Keeper" },
+            { name: "Seung-min Hwang", age: 36, specialization: "Quantum Entanglement Observer" },
+            { name: "Fiona Gallagher", age: 44, specialization: "Grief Ecology Therapist" },
+            { name: "Ren Hayashi", age: 23, specialization: "Zero-G Movement Choreographer" },
+            { name: "Wilhelm Braun", age: 72, specialization: "Extinct Dialect Resurrectionist" },
+            { name: "Lan Pham", age: 31, specialization: "Mycoremediation Alchemist" },
+            { name: "Callum Stewart", age: 4, specialization: "Child" },
+            { name: "Akemi Ueda", age: 55, specialization: "Sensory Deprivation Guide" },
+            { name: "Viktor Lindström", age: 39, specialization: "Biomimetic Systems Philosopher" },
+            { name: "Isabelle Moreau", age: 62, specialization: "Olfactory Memory Archivist" },
+            { name: "Dong-hyun Cho", age: 27, specialization: "Phantom Limb Cartographer" },
+            { name: "Moira Brennan", age: 48, specialization: "Death Transition Doula" },
+            { name: "Tatsuya Kimura", age: 19, specialization: "Resonance Frequency Apprentice" },
+            { name: "Elsa Bergqvist", age: 91, specialization: "Dream Interpretation Elder" },
+            { name: "Jin Xu", age: 45, specialization: "Chrono-perception Researcher" },
+            { name: "Cormac Doyle", age: 11, specialization: "Child" },
+            { name: "Hanako Morita", age: 34, specialization: "Symbiont Relationship Mediator" },
+            { name: "Lukas Zimmermann", age: 53, specialization: "Liminal Space Architect" },
+            { name: "Ying-shan Tsai", age: 28, specialization: "Collective Unconscious Analyst" },
+            { name: "Declan Murphy", age: 76, specialization: "Ceremony Design Emeritus" },
+            { name: "Koharu Shimizu", age: 40, specialization: "Tactile Language Developer" },
+            { name: "Arvid Holmgren", age: 66, specialization: "Deep Time Historian" },
+            { name: "Natsuki Arai", age: 3, specialization: "Child" },
+            { name: "Frances Whitmore", age: 57, specialization: "Nostalgia Curation Specialist" },
+            { name: "Hyun-jun Kwon", age: 32, specialization: "Artificial Aurora Engineer" },
+            { name: "Brigid Connolly", age: 49, specialization: "Ritual Object Consecrator" },
+            { name: "Shota Matsuoka", age: 81, specialization: "Silence Cultivation Master" },
+            { name: "Linnea Sjögren", age: 25, specialization: "Emotional Contagion Analyst" },
+            { name: "Zhi-wei Gao", age: 43, specialization: "Entropy Mitigation Philosopher" },
+            { name: "Eamon Tierney", age: 9, specialization: "Child" },
+            { name: "Mariko Kawaguchi", age: 37, specialization: "Umami Optimization Chemist" },
+            { name: "Henrik Strömberg", age: 64, specialization: "Solitude Management Counselor" },
+            { name: "Minji Son", age: 21, specialization: "Haptic Poetry Composer" },
+            { name: "Oskar Fredriksson", age: 70, specialization: "Threshold Guardian" },
+            { name: "Noriko Kuroda", age: 46, specialization: "Proprioception Calibrator" },
+            { name: "Seamus Hennessy", age: 38, specialization: "Echo Location Trainer" },
+            { name: "Xiao-ling Deng", age: 14, specialization: "Child" },
+            { name: "Greta Holmberg", age: 59, specialization: "Placebo Engineering Specialist" },
+            { name: "Takumi Okada", age: 26, specialization: "Bio-acoustic Harmonist" },
+            { name: "Siobhan Maguire", age: 83, specialization: "Ancestral Lineage Weaver" },
+            { name: "Ryota Nagai", age: 50, specialization: "Synthetic Starlight Designer" },
+            { name: "Astrid Nyström", age: 35, specialization: "Vestibular Poetry Therapist" },
+            { name: "Han-sol Im", age: 6, specialization: "Child" },
+            { name: "Pádraig Flynn", age: 68, specialization: "Communal Dreaming Facilitator" },
+            { name: "Chihiro Yamaguchi", age: 41, specialization: "Xenolinguistic Archaeologist" },
+            { name: "Lars Dahlberg", age: 55, specialization: "Phantom Sensation Researcher" },
+            { name: "Mio Sakamoto", age: 30, specialization: "Interstitial Ecosystem Designer" },
+            { name: "Connor O'Sullivan", age: 47, specialization: "Void Meditation Instructor" },
+            { name: "Yoshiko Fujiwara", age: 88, specialization: "Generational Trauma Archivist" },
+            { name: "Stefan Eklund", age: 22, specialization: "Micro-gravity Calligrapher" },
+            { name: "Eun-bi Kang", age: 5, specialization: "Child" },
+            { name: "Ronan Fitzgerald", age: 63, specialization: "Social Fabric Theorist" },
+            { name: "Ayaka Inoue", age: 33, specialization: "Cellular Memory Therapist" },
+            { name: "Magnus Persson", age: 74, specialization: "Mythogenesis Consultant" },
+            { name: "Saki Ota", age: 18, specialization: "Bioluminescent Tattoo Apprentice" },
+            { name: "Cillian Hayes", age: 52, specialization: "Psycho-acoustic Architect" },
+            { name: "Tomoko Sugiyama", age: 44, specialization: "Taste Memory Reconstructionist" },
+            { name: "Nils Bergman", age: 12, specialization: "Child" },
+            { name: "Reiko Yoshida", age: 61, specialization: "Synthetic Nostalgia Engineer" },
+            { name: "Lorcan Duffy", age: 29, specialization: "Empathy Calibration Technician" },
+            { name: "Haru Kikuchi", age: 78, specialization: "Ceremonial Silence Keeper" },
+            { name: "Ingrid Söderberg", age: 36, specialization: "Interspecies Semiotics Researcher" },
+            { name: "Dae-jung Ryu", age: 48, specialization: "Holographic Memorial Sculptor" },
+            { name: "Caoimhe Ryan", age: 8, specialization: "Child" },
+            { name: "Junichi Tsukamoto", age: 54, specialization: "Existential Dread Counselor" },
+            { name: "Elise Forsberg", age: 27, specialization: "Circadian Light Painter" },
+            { name: "Shun Aoki", age: 69, specialization: "Archive of Scents Curator" },
+            { name: "Orla Kavanagh", age: 40, specialization: "Birth Rite Choreographer" },
+            { name: "Kazuhiro Maruyama", age: 93, specialization: "Oral Cosmology Elder" },
+            { name: "Vera Hedström", age: 31, specialization: "Sensory Translation Specialist" },
+            { name: "Tae-woo Jang", age: 56, specialization: "Vacuum Exposure Philosopher" },
+            { name: "Aoife Nolan", age: 10, specialization: "Child" },
+            { name: "Masato Ogura", age: 45, specialization: "Kinetic Memory Sculptor" },
+            { name: "Clara Sundberg", age: 65, specialization: "Phantom Architecture Designer" },
+            { name: "Jae-hyuk Moon", age: 24, specialization: "Synthetic Gravity Composer" },
+            { name: "Una McCarthy", age: 79, specialization: "Linguistic Drift Historian" },
+            { name: "Riku Takeuchi", age: 38, specialization: "Colony Mythos Inscriber" },
+            { name: "Erik Löfgren", age: 13, specialization: "Child" },
+            { name: "Sayuri Kondo", age: 51, specialization: "Somatic Grief Practitioner" },
+            { name: "Brendan Foley", age: 60, specialization: "Isolation Echo Analyst" },
+            { name: "Momoka Hirata", age: 20, specialization: "Ambient Memory Designer" },
+            { name: "Axel Wikström", age: 73, specialization: "Temporal Dissonance Counselor" },
+            { name: "Ji-yeon Han", age: 42, specialization: "Synthetic Dawn Calibrator" },
+            { name: "Oisín Byrne", age: 34, specialization: "Cultural Osmosis Facilitator" },
+            { name: "Rika Murakami", age: 86, specialization: "Ephemera Preservation Elder" },
+            { name: "Noel Dempsey", age: 49, specialization: "Narrative Archaeology Specialist" },
+            { name: "Sora Adachi", age: 2, specialization: "Child" },
+            { name: "Gunnar Nordin", age: 58, specialization: "Resonant Frequency Diviner" },
+            { name: "Fumiko Noguchi", age: 37, specialization: "Micro-expression Linguist" },
+            { name: "Eoin Cleary", age: 71, specialization: "Psychogeography Cartographer" },
+            { name: "Yuki Komatsu", age: 46, specialization: "Chromatic Therapy Alchemist" },
+            { name: "Maja Lindahl", age: 28, specialization: "Bio-rhythmic Dream Weaver" },
+            { name: "Kenta Sakai", age: 82, specialization: "Ancestral Voice Preservationist" },
+            { name: "Isolde Wren", age: 47, specialization: "Phantom Earth Syndrome Counselor" },
+            { name: "Kyo Murasaki", age: 33, specialization: "Inherited Nightmare Extractor" },
+            { name: "Stellan Voss", age: 71, specialization: "Cosmic Indifference Acclimation Guide" },
+            { name: "Fumihiro Kageura", age: 29, specialization: "Shadow Puppet Grief Ritualist" },
+            { name: "Ailbhe Crowe", age: 52, specialization: "Unborn Generation Advocate" },
+            { name: "Zhen-yi Bai", age: 8, specialization: "Child" },
+            { name: "Thorsten Nebel", age: 64, specialization: "Vessel Sentience Liaison" },
+            { name: "Kasumi Shirokane", age: 41, specialization: "Bottled Atmosphere Sommelier" },
+            { name: "Fintan Holloway", age: 85, specialization: "Last Witness to Oceans" },
+            { name: "Min-seo Gu", age: 36, specialization: "Involuntary Memory Surgeon" },
+            { name: "Dagny Silén", age: 23, specialization: "Pre-Nostalgia Inoculation Tech" },
+            { name: "Wataru Tsukiyomi", age: 55, specialization: "Moon Absence Grief Therapist" },
+            { name: "Róisín Blackwood", age: 3, specialization: "Child" },
+            { name: "Ernst Lichtenberg", age: 78, specialization: "Ontological Drift Stabilizer" },
+            { name: "Nanami Hoshino", age: 44, specialization: "Stellar Radiation Taste Mapper" },
+            { name: "Colm Ashford", age: 60, specialization: "Forgetting Ceremony Officiant" },
+            { name: "Xiulan Shen", age: 31, specialization: "Phantom Season Simulator" },
+            { name: "Birger Ström", age: 49, specialization: "Hull Whisper Interpreter" },
+            { name: "Chisato Tsukuda", age: 12, specialization: "Child" },
+            { name: "Malachy Vane", age: 67, specialization: "Conceptual Horizon Maintainer" },
+            { name: "Suzu Amemiya", age: 26, specialization: "Extinction Memory Librarian" },
+            { name: "Hedda Myrberg", age: 53, specialization: "Accumulated Dread Ventilation Specialist" },
+            { name: "Genji Kuroiwa", age: 38, specialization: "Last Rainfall Recording Curator" },
+            { name: "Sorcha Hemlock", age: 90, specialization: "Keeper of Forgotten Winds" },
+            { name: "Dae-ho Shim", age: 45, specialization: "Existential Vertigo Technician" },
+            { name: "Anneli Falk", age: 7, specialization: "Child" },
+            { name: "Renzo Mikami", age: 62, specialization: "Borrowed Instinct Calibrator" },
+            { name: "Grainne Yew", age: 34, specialization: "Collective Hallucination Moderator" },
+            { name: "Noboru Kageyama", age: 81, specialization: "Darkness Texture Consultant" },
+            { name: "Signe Djupström", age: 28, specialization: "Parasocial Earth Relationship Therapist" },
+            { name: "Cian Ashenwood", age: 50, specialization: "Terminal Velocity Meditation Guide" },
+            { name: "Hotaru Yorimitsu", age: 19, specialization: "Bioluminescent Mourning Apprentice" },
+            { name: "Alaric Steinberg", age: 73, specialization: "Archive of Abandoned Prayers" },
+            { name: "Megumi Shiroyuki", age: 43, specialization: "Synthetic Déjà Vu Engineer" },
+            { name: "Tadhg Morrow", age: 5, specialization: "Child" },
+            { name: "Io Mizushima", age: 57, specialization: "Gravitational Melancholy Researcher" },
+            { name: "Ylva Djärv", age: 39, specialization: "Phantom Limb Ecosystem Designer" },
+            { name: "Shiro Mugetsu", age: 66, specialization: "Void Stare Acclimation Trainer" },
+            { name: "Niall Thornwood", age: 25, specialization: "Homesickness Fermentation Specialist" },
+            { name: "Kohana Shiranui", age: 48, specialization: "Ancestral Guilt Metabolizer" },
+            { name: "Viggo Eld", age: 11, specialization: "Child" },
+            { name: "Rei Kurogane", age: 35, specialization: "Synthetic Childhood Memory Weaver" },
+            { name: "Eithne Ashling", age: 83, specialization: "Keeper of the Last Thunderstorm" },
+            { name: "Saburo Yozakura", age: 54, specialization: "Temporal Homesickness Cartographer" },
+            { name: "Freya Dimma", age: 30, specialization: "Unwitnessed Death Documentarian" },
+            { name: "Hyeon-jun Wolmae", age: 69, specialization: "Absence of Birds Grief Counselor" },
+            { name: "Áine Ravenscar", age: 42, specialization: "Imaginary Weather Conductor" },
+            { name: "Goro Shingetsu", age: 4, specialization: "Child" },
+            { name: "Liv Vintermörk", age: 61, specialization: "Cryogenic Dream Harvester" },
+            { name: "Tadashi Kagerō", age: 37, specialization: "Ship-Womb Dysphoria Therapist" },
+            { name: "Caoilfhinn Haze", age: 76, specialization: "Oral History of Lost Colors" },
+            { name: "Nao Kurohana", age: 22, specialization: "Synthetic Rainfall Grief Tech" },
+            { name: "Ragnar Fjäll", age: 58, specialization: "Mountain Memory Projection Specialist" },
+            { name: "Tsubaki Yamiyo", age: 46, specialization: "Collective Unconscious Janitor" },
+            { name: "Lorcán Cindervale", age: 9, specialization: "Child" },
+            { name: "Misaki Uzumaki", age: 70, specialization: "Spiral Thought Untangler" },
+            { name: "Oona Mistwood", age: 32, specialization: "Phantom Ecosystem Grief Guide" },
+            { name: "Haruto Nowaki", age: 87, specialization: "Archive of Extinct Silences" },
+            { name: "Dagmar Ås", age: 40, specialization: "Pre-Emptive Regret Analyst" },
+            { name: "Jiro Shigaraki", age: 51, specialization: "Ceramic Memory Fossilization Tech" },
+            { name: "Síofra Gloomhollow", age: 6, specialization: "Child" },
+            { name: "Akira Mugenshi", age: 63, specialization: "Infinite Corridor Perception Guide" },
+            { name: "Turid Skyggeberg", age: 29, specialization: "Shadow Length Nostalgia Researcher" },
+            { name: "Kaede Aozora", age: 75, specialization: "Last Clear Sky Remembrancer" },
+            { name: "Rónán Dustfall", age: 44, specialization: "Settled Particle Divination Specialist" },
+            { name: "Mana Uzumigawa", age: 18, specialization: "Eddy Current Dream Apprentice" },
+            { name: "Stig Töckenfors", age: 56, specialization: "Hull Echo Emotional Translator" },
+            { name: "Hikaru Kuyō", age: 13, specialization: "Child" },
+            { name: "Bláthnaid Ashveil", age: 68, specialization: "Smoke Memory Preservationist" },
+            { name: "Yukio Kageochi", age: 41, specialization: "Falling Shadow Catcher" },
+            { name: "Frode Isklar", age: 33, specialization: "Frozen Moment Thawing Specialist" },
+            { name: "Tomoe Mayoiga", age: 80, specialization: "Lost Village Dream Keeper" },
+            { name: "Odhrán Stillwater", age: 47, specialization: "Stagnation Psychology Curator" },
+            { name: "Kanna Oboro", age: 2, specialization: "Child" },
+            { name: "Halvar Gråsten", age: 59, specialization: "Grey Stone Grief Lithographer" },
+            { name: "Sakuya Yumeji", age: 36, specialization: "Dream Residue Sanitation Engineer" },
+            { name: "Méabh Coldlight", age: 72, specialization: "Dying Star Emotional Proxy" },
+            { name: "Itsuki Mugon", age: 49, specialization: "Silence Dialect Preservation Officer" },
+            { name: "Eirik Rimfrost", age: 24, specialization: "Frost Pattern Memory Decoder" },
+            { name: "Shinobu Kuchiki", age: 65, specialization: "Decaying Name Arborist" },
+            { name: "Ciarán Hollowbone", age: 10, specialization: "Child" },
+            { name: "Yuzuki Tomoshibi", age: 38, specialization: "Candlelight Extinction Mourner" },
+            { name: "Solveig Dvala", age: 52, specialization: "Dormancy Awakening Ritualist" },
+            { name: "Keisuke Mugendai", age: 77, specialization: "Infinity Vertigo Counselor" },
+            { name: "Nuala Withershadow", age: 27, specialization: "Shadow Decay Documentation Specialist" },
+            { name: "Haruka Kyōmu", age: 45, specialization: "Void Reflection Therapist" },
+            { name: "Ásgeir Dimmfrost", age: 84, specialization: "Dim Light Habituation Elder" },
+            { name: "Hinata Utsusemi", age: 14, specialization: "Child" },
+            { name: "Ruairí Ashmist", age: 60, specialization: "Ash Particle Emotional Resonance Tech" },
+            { name: "Nazuna Yūgure", age: 31, specialization: "Twilight Permanence Grief Curator" },
+            { name: "Torvald Djupnatt", age: 55, specialization: "Deep Night Texture Analyst" },
+            { name: "Mayu Kagehime", age: 43, specialization: "Shadow Princess Impersonation Therapist" },
+            { name: "Bláithín Emberglow", age: 8, specialization: "Child" },
+            { name: "Sōma Fukaikiri", age: 69, specialization: "Deep Fog Emotional Navigator" },
+            { name: "Elva Svartnatt", age: 35, specialization: "Black Night Quality Assessor" },
+            { name: "Ryūnosuke Maboroshi", age: 92, specialization: "Phantom Sensation Grand Archivist" },
+            { name: "Orlaith Dewfall", age: 50, specialization: "Morning Dew Extinction Curator" },
+            { name: "Arata Shinikage", age: 21, specialization: "Death Shadow Apprentice Documentarian" },
+            { name: "Brynjar Ökenvind", age: 74, specialization: "Desert Wind Memory Keeper" },
+            { name: "Utako Kanashimi", age: 40, specialization: "Sorrow Distillation Specialist" },
+            { name: "Pádraigín Glimmerfall", age: 7, specialization: "Child" },
+            { name: "Masumi Kusubana", age: 58, specialization: "Smoldering Flower Grief Alchemist" },
+            { name: "Garrett Nilsen", age: 47, specialization: "Secondary Coolant Loop Backflow Valve Technician" },
+            { name: "Yumi Takahashi", age: 33, specialization: "Atmospheric Scrubber Filter Mesh Calibrator" },
+            { name: "Roland Becker", age: 58, specialization: "Tertiary Hull Stress Fracture Monitoring Engineer" },
+            { name: "Hye-jin Gong", age: 29, specialization: "Cryogenic Seal Thermal Expansion Compensator" },
+            { name: "Magnus Dahl", age: 64, specialization: "Redundant Power Bus Isolation Switch Specialist" },
+            { name: "Aoi Matsuda", age: 41, specialization: "Waste Processing Centrifuge Bearing Alignment Tech" },
+            { name: "Trevor Holt", age: 8, specialization: "Child" },
+            { name: "Soo-jin Noh", age: 52, specialization: "Backup Life Support Solenoid Valve Inspector" },
+            { name: "Werner Krause", age: 36, specialization: "Primary Reactor Neutron Flux Dampener Calibrator" },
+            { name: "Misato Ueno", age: 71, specialization: "Airlock Gasket Compression Ratio Analyst" },
+            { name: "Derek Sundqvist", age: 25, specialization: "Auxiliary Thruster Gimbal Servo Lubricator" },
+            { name: "Eri Nakata", age: 44, specialization: "Potable Water UV Sterilization Wavelength Tuner" },
+            { name: "Karl-Johan Lund", age: 67, specialization: "Emergency Bulkhead Hydraulic Cylinder Bleeder" },
+            { name: "Natsumi Okamoto", age: 3, specialization: "Child" },
+            { name: "Philip Wexler", age: 55, specialization: "Tertiary Oxygen Generation Electrode Replacement Tech" },
+            { name: "Miki Saito", age: 38, specialization: "Docking Clamp Torque Limiter Calibration Engineer" },
+            { name: "Oskar Hedlund", age: 79, specialization: "Fuel Line Micro-Leak Acoustic Detection Specialist" },
+            { name: "Ji-hye Kwak", age: 31, specialization: "Centrifugal Gravity Ring Bearing Preload Adjuster" },
+            { name: "Rupert Engström", age: 48, specialization: "Secondary Water Reclamation Membrane Pore Inspector" },
+            { name: "Satomi Endo", age: 22, specialization: "Navigation Gyroscope Drift Correction Firmware Tech" },
+            { name: "Walter Granlund", age: 62, specialization: "Emergency Battery Bank Cell Balancing Specialist" },
+            { name: "Yoko Mizuno", age: 11, specialization: "Child" },
+            { name: "Leonard Fisk", age: 43, specialization: "Atmospheric Humidity Condenser Fin Spacing Optimizer" },
+            { name: "Chika Kawamoto", age: 56, specialization: "Cryopod Lid Hinge Micro-Tension Calibrator" },
+            { name: "Henrik Blom", age: 34, specialization: "Reactor Control Rod Insertion Speed Governor Tech" },
+            { name: "Mai Tsujimoto", age: 69, specialization: "Hull Panel Thermal Gap Filler Viscosity Analyst" },
+            { name: "Stuart Oakes", age: 50, specialization: "Primary Coolant Pump Impeller Cavitation Monitor" },
+            { name: "Rina Komori", age: 6, specialization: "Child" },
+            { name: "Anton Löfqvist", age: 73, specialization: "Emergency Lighting Ballast Replacement Scheduler" },
+            { name: "Kanako Iwasaki", age: 40, specialization: "Habitation Module Air Duct Damper Actuator Tech" },
+            { name: "Douglas Rendell", age: 28, specialization: "Attitude Control Thruster Nozzle Erosion Inspector" },
+            { name: "Shiori Hayashida", age: 54, specialization: "Cargo Bay Pressure Equalization Valve Seat Grinder" },
+            { name: "Nils-Erik Sandberg", age: 81, specialization: "Backup Generator Fuel Injector Timing Specialist" },
+            { name: "Yuka Morimoto", age: 35, specialization: "Cryogenic Storage Tank Boil-Off Rate Calculator" },
+            { name: "Craig Ashburn", age: 46, specialization: "Secondary Hull Micrometeorite Impact Patch Welder" },
+            { name: "Asuka Kitano", age: 9, specialization: "Child" },
+            { name: "Marcus Lindholm", age: 59, specialization: "Water Recycling Activated Carbon Filter Bed Analyst" },
+            { name: "Kyoko Nagano", age: 27, specialization: "Solar Panel Tracking Motor Gear Backlash Adjuster" },
+            { name: "Gerald Thornberg", age: 65, specialization: "Pressurized Corridor Expansion Joint Sealant Tech" },
+            { name: "Eriko Kubo", age: 42, specialization: "Oxygen Tank Regulator Diaphragm Fatigue Tester" },
+            { name: "Sven-Olof Mård", age: 77, specialization: "Primary Power Conduit Junction Box Thermographer" },
+            { name: "Wakana Nishida", age: 14, specialization: "Child" },
+            { name: "Howard Craine", age: 51, specialization: "Artificial Gravity Centrifuge Counterweight Balancer" },
+            { name: "Maiko Horie", age: 33, specialization: "Thruster Propellant Feed Line Check Valve Rebuilder" },
+            { name: "Per-Anders Vikström", age: 68, specialization: "Emergency Hatch Explosive Bolt Integrity Inspector" },
+            { name: "Chiharu Katō", age: 24, specialization: "Atmospheric Nitrogen Ratio Fine-Tuning Technician" },
+            { name: "Lloyd Bancroft", age: 45, specialization: "Coolant System Air Pocket Purge Valve Operator" },
+            { name: "Rui Shimada", age: 5, specialization: "Child" },
+            { name: "Kenneth Malmqvist", age: 57, specialization: "Reactor Shielding Neutron Absorption Rate Tester" },
+            { name: "Nanako Otsuka", age: 39, specialization: "Cryopod Defrost Heating Element Resistance Checker" },
+            { name: "Rolf Jansson", age: 83, specialization: "Hull Breach Emergency Foam Dispenser Calibrator" },
+            { name: "Fumie Yanagi", age: 30, specialization: "Water Reclamation Reverse Osmosis Pressure Optimizer" },
+            { name: "Bradley Whitcomb", age: 53, specialization: "Secondary Life Support Carbon Dioxide Sensor Drift Adjuster" },
+            { name: "Kana Washio", age: 66, specialization: "Docking Port Magnetic Alignment Coil Degausser" },
+            { name: "Ernst-Hugo Ågren", age: 37, specialization: "Backup Thruster Fuel Crossfeed Valve Exerciser" },
+            { name: "Mitsuko Terada", age: 7, specialization: "Child" },
+            { name: "Raymond Hedberg", age: 72, specialization: "Primary Power Inverter Harmonic Distortion Analyst" },
+            { name: "Sachiko Kawakami", age: 48, specialization: "Habitation HVAC Blower Motor Brush Replacement Tech" },
+            { name: "Gunnar Ödman", age: 26, specialization: "Reactor Coolant Pipe Elbow Erosion Thickness Gauge" },
+            { name: "Izumi Nojima", age: 61, specialization: "Emergency Oxygen Candle Ignition Reliability Tester" },
+            { name: "Mitchell Carver", age: 44, specialization: "Tertiary Hull Section Rivet Stress Distribution Mapper" },
+            { name: "Yumiko Uchiyama", age: 12, specialization: "Child" },
+            { name: "Jan-Erik Norberg", age: 58, specialization: "Atmospheric Processor Molecular Sieve Regeneration Timer" },
+            { name: "Haruna Sekiguchi", age: 32, specialization: "Cryogenic Valve Stem Packing Gland Torque Specialist" },
+            { name: "Russell Greer", age: 75, specialization: "Solar Array Junction Box Bypass Diode Tester" },
+            { name: "Tamami Fujita", age: 41, specialization: "Potable Water Chlorination Injection Rate Calibrator" },
+            { name: "Ulf Stenmark", age: 49, specialization: "Emergency Battery Thermal Runaway Prevention Circuit Tech" },
+            { name: "Chizuru Nakano", age: 4, specialization: "Child" },
+            { name: "Norman Ashford", age: 63, specialization: "Waste Processing Anaerobic Digester pH Buffer Tech" },
+            { name: "Kimiko Yamane", age: 36, specialization: "Navigation Computer Clock Crystal Oscillator Trimmer" },
+            { name: "Bengt Hällgren", age: 85, specialization: "Primary Coolant Heat Exchanger Tube Bundle Inspector" },
+            { name: "Erina Hirota", age: 23, specialization: "Hull Stress Sensor Signal Amplifier Gain Calibrator" },
+            { name: "Clayton Mercer", age: 55, specialization: "Backup Generator Governor Linkage Bushing Replacer" },
+            { name: "Manami Furukawa", age: 70, specialization: "Airlock Inner Door Seal Compression Set Tester" },
+            { name: "Göran Åkerström", age: 38, specialization: "Reactor Moderator Rod Guide Tube Wear Inspector" },
+            { name: "Sayaka Baba", age: 10, specialization: "Child" },
+            { name: "Warren Caldecott", age: 67, specialization: "Tertiary Power Distribution Breaker Trip Curve Analyst" },
+            { name: "Hitomi Miyazawa", age: 29, specialization: "Cryopod Biometric Lock Fingerprint Sensor Cleaner" },
+            { name: "Leif Söderström", age: 52, specialization: "Emergency Thrust Vector Control Hydraulic Accumulator Tech" },
+            { name: "Yukari Tezuka", age: 46, specialization: "Water Recycling Ultraviolet Lamp Hour Meter Reader" },
+            { name: "Donald Whitfield", age: 79, specialization: "Atmospheric Leak Detection Mass Spectrometer Calibrator" },
+            { name: "Nobuko Kikukawa", age: 34, specialization: "Docking Mechanism Soft Capture Ring Buffer Spring Tester" },
+            { name: "Håkan Nyqvist", age: 60, specialization: "Primary Power Bus Voltage Sag Compensation Specialist" },
+            { name: "Ami Sakakibara", age: 8, specialization: "Child" },
+            { name: "Victor Malmberg", age: 43, specialization: "Hull Thermal Insulation Vacuum Jacket Leak Checker" },
+            { name: "Mariko Shinohara", age: 57, specialization: "Cryogenic Tank Level Sensor Capacitance Calibrator" },
+            { name: "Bo Lindkvist", age: 74, specialization: "Reactor Emergency Shutdown Rod Drop Time Verifier" },
+            { name: "Kaori Anzai", age: 21, specialization: "Atmospheric Oxygen Partial Pressure Fine Tuner" },
+            { name: "Staffan Öberg", age: 50, specialization: "Backup Navigation Inertial Measurement Unit Drift Logger" },
+            { name: "Noriko Kubota", age: 13, specialization: "Child" },
+            { name: "Glenn Westerlund", age: 66, specialization: "Coolant System Expansion Tank Bladder Integrity Tester" },
+            { name: "Tomoko Hasegawa", age: 39, specialization: "Habitation Module Floor Panel Vibration Isolator Tech" },
+            { name: "Ragnar Thunberg", age: 82, specialization: "Emergency Airlock Pressure Equalization Orifice Sizer" },
+            { name: "Kiyomi Shiraishi", age: 28, specialization: "Propellant Tank Ullage Pressure Regulator Diaphragm Tech" },
+            { name: "Eric Molander", age: 54, specialization: "Primary Hull Section Weld Seam Ultrasonic Inspector" },
+            { name: "Satoko Machida", age: 2, specialization: "Child" },
+            { name: "Mats Fagerberg", age: 61, specialization: "Waste Gas Incinerator Combustion Chamber Liner Measurer" },
+            { name: "Naomi Yasuda", age: 45, specialization: "Cryogenic Pipe Support Bracket Thermal Contraction Calculator" },
+            { name: "Torbjörn Hellström", age: 88, specialization: "Solar Array Deployment Motor Current Limiting Fuse Selector" },
+            { name: "Takako Ikeda", age: 35, specialization: "Emergency Beacon Battery Terminal Corrosion Prevention Specialist" },
+            { name: "Ingrid Solheim", age: 47, specialization: "Cryogenic Revival Aphasia Rehabilitation Specialist" },
+            { name: "Takeshi Murata", age: 33, specialization: "Zero-Gravity Cerebrospinal Fluid Accumulation Neurologist" },
+            { name: "Fionnuala Kirwan", age: 58, specialization: "Generational Bone Density Regression Therapist" },
+            { name: "Joon-ho Baek", age: 29, specialization: "Artificial Gravity Transition Vertigo Specialist" },
+            { name: "Astrid Ekholm", age: 64, specialization: "Phantom Sunlight Deficiency Dermatologist" },
+            { name: "Kenji Horiguchi", age: 8, specialization: "Child" },
+            { name: "Maeve Sheridan", age: 41, specialization: "Closed-System Microbiome Drift Gastroenterologist" },
+            { name: "Shunsuke Yoneda", age: 52, specialization: "Long-Duration Spaceflight Ocular Hypertension Surgeon" },
+            { name: "Brigitte Wahlström", age: 36, specialization: "Post-Cryogenic Emotional Blunting Psychiatrist" },
+            { name: "Min-gyu Jeong", age: 71, specialization: "Radiation-Induced Premature Cellular Senescence Oncologist" },
+            { name: "Clodagh Feeney", age: 25, specialization: "Ship-Born Agoraphobia Exposure Therapist" },
+            { name: "Daiki Ozawa", age: 44, specialization: "Centrifugal Habitat Inner Ear Recalibration Specialist" },
+            { name: "Helene Dahlgren", age: 6, specialization: "Child" },
+            { name: "Rory Dunne", age: 67, specialization: "Multi-Generational Genetic Bottleneck Counselor" },
+            { name: "Ayano Tanimoto", age: 55, specialization: "Artificial Daylight Circadian Disorder Somnologist" },
+            { name: "Kristoffer Holm", age: 38, specialization: "Chronic Low-Gravity Lymphatic Stagnation Specialist" },
+            { name: "Seung-yeon Bae", age: 79, specialization: "Deep Space Radiation Cataract Microsurgeon" },
+            { name: "Deirdre Gannon", age: 31, specialization: "Earth Bereavement Complex Grief Psychiatrist" },
+            { name: "Yoshiaki Hamada", age: 48, specialization: "Cryogenic Sleep Muscle Atrophy Physiatrist" },
+            { name: "Tuva Hellström", age: 3, specialization: "Child" },
+            { name: "Padraig Corcoran", age: 62, specialization: "Recycled Atmosphere Chronic Rhinitis Specialist" },
+            { name: "Mao Kurosawa", age: 27, specialization: "Post-Thaw Proprioceptive Dysfunction Neurologist" },
+            { name: "Anders Kihlberg", age: 84, specialization: "Generational Ship Claustrophobia Emeritus Psychiatrist" },
+            { name: "Hana Yoshioka", age: 43, specialization: "Synthetic Food Intolerance Allergist" },
+            { name: "Cillian Madden", age: 56, specialization: "Zero-G Spinal Elongation Pain Management Specialist" },
+            { name: "Minori Konishi", age: 11, specialization: "Child" },
+            { name: "Sigrún Björnsdóttir", age: 34, specialization: "Hibernation Emergence Identity Dissociation Therapist" },
+            { name: "Yosuke Imamura", age: 69, specialization: "Cosmic Ray Neural Microlesion Neuroimaging Specialist" },
+            { name: "Aisling Quinlan", age: 50, specialization: "Artificial Gravity Dependent Hypertension Cardiologist" },
+            { name: "Kazuya Hattori", age: 22, specialization: "Closed Environment Fungal Lung Colonization Pulmonologist" },
+            { name: "Maja Nordin", age: 65, specialization: "Multi-Generation Epigenetic Trauma Specialist" },
+            { name: "Eoin Doherty", age: 9, specialization: "Child" },
+            { name: "Sachie Nishikawa", age: 40, specialization: "Post-Cryogenic Taste Receptor Regeneration Specialist" },
+            { name: "Bjørn Haugen", age: 57, specialization: "Microgravity Kidney Stone Fragmentation Urologist" },
+            { name: "Ji-won Yeo", age: 35, specialization: "Ship-Born Horizon Absence Anxiety Therapist" },
+            { name: "Catriona Boyle", age: 73, specialization: "Radiation Shelter Confinement Syndrome Psychiatrist" },
+            { name: "Takuya Sugimoto", age: 46, specialization: "Artificial Atmosphere Vocal Cord Adaptation Laryngologist" },
+            { name: "Elin Gustafsson", age: 7, specialization: "Child" },
+            { name: "Lorcan Phelan", age: 61, specialization: "Cryogenic Neuropathy Peripheral Nerve Specialist" },
+            { name: "Rieko Ogata", age: 28, specialization: "Zero-Gravity Menstrual Retrograde Flow Gynecologist" },
+            { name: "Henrik Almqvist", age: 53, specialization: "Long-Duration Mission Immune Dysregulation Immunologist" },
+            { name: "Soon-young Ahn", age: 81, specialization: "Post-Thaw Rapid Aging Syndrome Gerontologist" },
+            { name: "Niamh Costello", age: 39, specialization: "Generational Vitamin D Synthesis Deficiency Endocrinologist" },
+            { name: "Hayato Fujimoto", age: 4, specialization: "Child" },
+            { name: "Solveig Andersen", age: 66, specialization: "Chronic Recycled Water Trace Mineral Imbalance Nephrologist" },
+            { name: "Masanori Kawashima", age: 32, specialization: "Space-Adaptation Syndrome Vestibular Neurologist" },
+            { name: "Orlaith Whelan", age: 49, specialization: "Closed Population Autoimmune Emergence Rheumatologist" },
+            { name: "Sho Hosokawa", age: 75, specialization: "Multi-Generational Myopia Progression Specialist" },
+            { name: "Greta Månsson", age: 24, specialization: "Post-Cryogenic Hormonal Desynchronization Endocrinologist" },
+            { name: "Ciarán Brosnan", age: 59, specialization: "Hull Breach Survivor Decompression Injury Specialist" },
+            { name: "Yui Nagata", age: 13, specialization: "Child" },
+            { name: "Pål Sørensen", age: 42, specialization: "Low-Gravity Cardiac Output Redistribution Cardiologist" },
+            { name: "Mutsumi Fukuda", age: 68, specialization: "Cryogenic Sleep Cognitive Defragmentation Neuropsychologist" },
+            { name: "Aoibhín Molloy", age: 36, specialization: "Synthetic Light Seasonal Affective Disorder Psychiatrist" },
+            { name: "Ryoichi Shibuya", age: 51, specialization: "Interstellar Particle Dermal Embedding Specialist" },
+            { name: "Karin Lindberg", age: 83, specialization: "Generational Telomere Shortening Longevity Specialist" },
+            { name: "Féilim Regan", age: 5, specialization: "Child" },
+            { name: "Chie Minami", age: 45, specialization: "Post-Hibernation Circadian Phase Shift Chronobiologist" },
+            { name: "Morten Berge", age: 70, specialization: "Zero-Gravity Bone Marrow Fat Infiltration Hematologist" },
+            { name: "Sung-min Go", age: 29, specialization: "Artificial Gravity Gradient Differential Blood Pressure Specialist" },
+            { name: "Alva Eriksson", age: 54, specialization: "Closed-System Pathogen Evolution Epidemiologist" },
+            { name: "Takanori Maeda", age: 37, specialization: "Cosmic Radiation Thyroid Microcarcinoma Specialist" },
+            { name: "Bláithín Crowley", age: 10, specialization: "Child" },
+            { name: "Etsuko Nagai", age: 63, specialization: "Post-Thaw Declarative Memory Reconstruction Therapist" },
+            { name: "Kristian Haugli", age: 26, specialization: "Spacecraft Vibration-Induced Neuropathy Specialist" },
+            { name: "Yeon-seo Jo", age: 47, specialization: "Multi-Generation Recessive Gene Expression Counselor" },
+            { name: "Lena Fröberg", age: 86, specialization: "Ship-Born Elderly Gravity Intolerance Geriatrician" },
+            { name: "Tatsuji Okumura", age: 41, specialization: "Cryogenic Cardiac Rhythm Reset Electrophysiologist" },
+            { name: "Róisín Kinahan", age: 6, specialization: "Child" },
+            { name: "Hiroyuki Katayama", age: 58, specialization: "Zero-G Intervertebral Disc Rehydration Spine Specialist" },
+            { name: "Svea Löfgren", age: 33, specialization: "Post-Cryogenic Phantom Limb Emergence Neurologist" },
+            { name: "Donnacha Mulligan", age: 72, specialization: "Long-Duration Mission Prostate Tissue Migration Urologist" },
+            { name: "Naoko Shibata", age: 49, specialization: "Closed Ecosystem Antibiotic Resistance Management Specialist" },
+            { name: "Frode Bakken", age: 23, specialization: "Artificial Gravity Sickness Adaptation Failure Specialist" },
+            { name: "Yu-jin Oh", age: 77, specialization: "Generational Auditory Processing Decline Specialist" },
+            { name: "Clíodhna Hartley", age: 38, specialization: "Space-Born Immune Naivety Vaccination Designer" },
+            { name: "Kōhei Nishiyama", age: 12, specialization: "Child" },
+            { name: "Marianne Sjöblom", age: 55, specialization: "Post-Hibernation Existential Discontinuity Therapist" },
+            { name: "Cathal Lonergan", age: 64, specialization: "Recycled Atmosphere Carbon Dioxide Sensitivity Specialist" },
+            { name: "Aya Doi", age: 30, specialization: "Zero-Gravity Pregnancy Placental Attachment Specialist" },
+            { name: "Erik Hovland", age: 46, specialization: "Cryogenic Tissue Microcrystallization Damage Pathologist" },
+            { name: "Seon-woo Nam", age: 88, specialization: "Deep Space Isolation Psychosis Prevention Elder" },
+            { name: "Ciara Moroney", age: 2, specialization: "Child" },
+            { name: "Toshiyuki Mochizuki", age: 52, specialization: "Ship-Bound Agoraphobic Paradox Resolution Therapist" },
+            { name: "Annika Fält", age: 67, specialization: "Generational Skeletal Gracilization Orthopedist" },
+            { name: "Breandán Dowling", age: 35, specialization: "Post-Thaw Autobiographical Memory Disorder Specialist" },
+            { name: "Kaoru Umeda", age: 60, specialization: "Artificial Light Retinal Pigment Adaptation Ophthalmologist" },
+            { name: "Sigrid Mjøs", age: 44, specialization: "Closed Population Founder Effect Genetic Counselor" },
+            { name: "Jun-seok Woo", age: 8, specialization: "Child" },
+            { name: "Nobuyuki Kishimoto", age: 74, specialization: "Zero-G Venous Pooling Chronic Management Specialist" },
+            { name: "Emer Lohan", age: 28, specialization: "Cryogenic Emergence Depersonalization Disorder Psychiatrist" },
+            { name: "Yurika Taniguchi", age: 53, specialization: "Microgravity Tear Film Instability Dry Eye Specialist" },
+            { name: "Torgeir Brekke", age: 40, specialization: "Multi-Generational Vestibular Baseline Drift Researcher" },
+            { name: "Mi-ran Yun", age: 91, specialization: "Post-Thaw Centenarian Cellular Rejuvenation Elder" },
+            { name: "Darragh Ennis", age: 57, specialization: "Chronic Low-Stimulation Sensory Atrophy Neurologist" },
+            { name: "Saori Asano", age: 14, specialization: "Child" },
+            { name: "Halvard Lien", age: 66, specialization: "Spacecraft Atmosphere Trace Toxin Accumulation Toxicologist" },
+            { name: "Gráinne Fagan", age: 31, specialization: "Zero-Gravity Pregnancy Fetal Positioning Specialist" },
+            { name: "Kensaku Morita", age: 48, specialization: "Cryogenic Preservation Cellular Autophagy Specialist" },
+            { name: "Anja Thorsen", age: 80, specialization: "Generational Ship Endemic Disease Historian" },
+            { name: "Tadhg Conneely", age: 43, specialization: "Post-Hibernation Gut Flora Recolonization Gastroenterologist" },
+            { name: "Sigrid Vaale", age: 47, specialization: "Involuntary Bioluminescence Suppression Specialist" },
+            { name: "Tetsuya Mizuno", age: 33, specialization: "Gill Vestige Reactivation Researcher" },
+            { name: "Orla Fenmore", age: 62, specialization: "Ancestral Tail Gene Counselor" },
+            { name: "Hyun-tae Seol", age: 28, specialization: "Synthetic Womb Microbiome Curator" },
+            { name: "Magnhild Kvist", age: 71, specialization: "Atavistic Claw Emergence Therapist" },
+            { name: "Shusuke Enokida", age: 5, specialization: "Child" },
+            { name: "Catriona Aldwell", age: 44, specialization: "Chimeric Twin Absorption Specialist" },
+            { name: "Wen-hao Xie", age: 56, specialization: "Vestigial Organ Reawakening Tech" },
+            { name: "Astrid Moln", age: 35, specialization: "Inherited Trauma Methylation Analyst" },
+            { name: "Kenji Shimabukuro", age: 79, specialization: "Horizontal Gene Transfer Archivist" },
+            { name: "Fiadh Dunlevy", age: 23, specialization: "Fetal Cell Microchimerism Tracker" },
+            { name: "Bo-hyun Yun", age: 41, specialization: "Cryptobiosis Induction Specialist" },
+            { name: "Torbjørn Helle", age: 8, specialization: "Child" },
+            { name: "Ume Tachikawa", age: 52, specialization: "Teratoma Differentiation Guide" },
+            { name: "Phelan Rafferty", age: 67, specialization: "Atrophied Organ Memory Researcher" },
+            { name: "Xia Rong-hui", age: 31, specialization: "Symbiont Rejection Grief Counselor" },
+            { name: "Annika Gräns", age: 48, specialization: "Ectopic Bone Formation Cartographer" },
+            { name: "Shunsuke Kozuki", age: 19, specialization: "Regressive Phenotype Apprentice" },
+            { name: "Deirdre Kinnane", age: 84, specialization: "Cellular Senescence Reversal Elder" },
+            { name: "Min-jun Baek", age: 37, specialization: "Parasitic Twin Consciousness Liaison" },
+            { name: "Halfdan Vik", age: 54, specialization: "Hibernation Organ Genesis Specialist" },
+            { name: "Kotone Usugi", age: 3, specialization: "Child" },
+            { name: "Iarla Comerford", age: 60, specialization: "Redundant Heart Development Tech" },
+            { name: "Qiu Meilin", age: 45, specialization: "Chimeric Blood Type Stabilizer" },
+            { name: "Eivor Lund", age: 29, specialization: "Spontaneous Limb Regeneration Monitor" },
+            { name: "Takahiro Iwagami", age: 73, specialization: "Junk DNA Resurrection Specialist" },
+            { name: "Clodagh Nestor", age: 40, specialization: "Fused Vertebrae Separation Researcher" },
+            { name: "Sang-wook Eom", age: 12, specialization: "Child" },
+            { name: "Ragnhild Blix", age: 58, specialization: "Teratogenic Memory Extraction Tech" },
+            { name: "Hayate Ukishima", age: 34, specialization: "Amphibious Lung Transition Specialist" },
+            { name: "Niamh Quirke", age: 77, specialization: "Vestigial Pouch Reactivation Guide" },
+            { name: "Cheng Zixin", age: 50, specialization: "Synthetic Placenta Ecosystem Designer" },
+            { name: "Sunniva Dahl", age: 26, specialization: "Ectopic Pregnancy Transplantation Tech" },
+            { name: "Genta Shimotsuki", age: 65, specialization: "Dormant Venom Gland Researcher" },
+            { name: "Cillian Aherne", age: 7, specialization: "Child" },
+            { name: "Misato Haibara", age: 43, specialization: "Parthenogenesis Induction Counselor" },
+            { name: "Erik Fjelstad", age: 69, specialization: "Ancestral Fur Gene Suppression Specialist" },
+            { name: "Yeon-hee Gong", age: 32, specialization: "Mitochondrial Eve Lineage Tracker" },
+            { name: "Baldur Kvam", age: 55, specialization: "Nictitating Membrane Restoration Tech" },
+            { name: "Shiori Nabeshima", age: 21, specialization: "Bioluminescent Organ Cultivation Apprentice" },
+            { name: "Aoibhín Mulcahy", age: 88, specialization: "Telomere Degradation Historian" },
+            { name: "Hideaki Kuze", age: 46, specialization: "Synthetic Amniotic Fluid Chemist" },
+            { name: "Tuva Granlund", age: 11, specialization: "Child" },
+            { name: "Conn Lonergan", age: 38, specialization: "Cryptic Pregnancy Detection Specialist" },
+            { name: "Lian Chenguang", age: 63, specialization: "Horizontal Womb Transfer Surgeon" },
+            { name: "Máire Garvey", age: 49, specialization: "Vestigial Wing Bud Researcher" },
+            { name: "Ryoichi Tsugumi", age: 82, specialization: "Ancient Retrovirus Reactivation Historian" },
+            { name: "Hjördis Ågren", age: 30, specialization: "Cellular Memory Engram Biologist" },
+            { name: "Dong-wook Sim", age: 6, specialization: "Child" },
+            { name: "Etsuko Karasawa", age: 57, specialization: "Transgenerational Trauma Epigeneticist" },
+            { name: "Lorcan Geraghty", age: 72, specialization: "Atavistic Webbing Manifestation Counselor" },
+            { name: "Shu-chen Luo", age: 39, specialization: "Synthetic Ovary Ecosystem Curator" },
+            { name: "Kåre Berntsen", age: 44, specialization: "Vestigial Gill Slit Surgeon" },
+            { name: "Nazuna Kisaragi", age: 24, specialization: "Parthenogenic Clone Identity Therapist" },
+            { name: "Bríd Shaughnessy", age: 4, specialization: "Child" },
+            { name: "Masanobu Sawada", age: 68, specialization: "Induced Pluripotency Grief Counselor" },
+            { name: "Ylva Sandström", age: 51, specialization: "Ectogenesis Tank Microbiome Specialist" },
+            { name: "Jae-sung Woo", age: 35, specialization: "Chimeric Immune System Architect" },
+            { name: "Gunhild Røvik", age: 80, specialization: "Cellular De-differentiation Elder" },
+            { name: "Sōta Takigawa", age: 42, specialization: "Vestigial Tail Nerve Mapping Tech" },
+            { name: "Caoimhín Broderick", age: 10, specialization: "Child" },
+            { name: "Hitomi Unno", age: 59, specialization: "Synthetic Gut Flora Archeologist" },
+            { name: "Leif Stokke", age: 27, specialization: "Induced Hibernation Metabolism Specialist" },
+            { name: "Yeon-su Pyo", age: 75, specialization: "Ancestral Beak Gene Suppression Researcher" },
+            { name: "Saoirse Devlin", age: 36, specialization: "Teratoma Consciousness Ethics Specialist" },
+            { name: "Nobuhiko Saruwatari", age: 53, specialization: "Redundant Organ Rejection Counselor" },
+            { name: "Märta Ekberg", age: 14, specialization: "Child" },
+            { name: "Tiernan Holohan", age: 64, specialization: "Vestigial Cloaca Research Specialist" },
+            { name: "Ru-ping Jiang", age: 41, specialization: "Synthetic Umbilical Ecosystem Designer" },
+            { name: "Sverre Hatlen", age: 33, specialization: "Induced Neoteny Stabilization Tech" },
+            { name: "Fumino Kagami", age: 91, specialization: "Cellular Immortality Failure Archivist" },
+            { name: "Diarmuid Cusack", age: 48, specialization: "Atavistic Scale Pattern Emergence Specialist" },
+            { name: "Bai Xuemei", age: 22, specialization: "Artificial Womb Bonding Facilitator" },
+            { name: "Oddny Haugen", age: 9, specialization: "Child" },
+            { name: "Ryūji Togawa", age: 56, specialization: "Vestigial Prehensile Muscle Reactivation Tech" },
+            { name: "Eilis Fearon", age: 70, specialization: "Horizontal Mitochondrial Transfer Historian" },
+            { name: "Kwan-ho Tak", age: 45, specialization: "Synthetic Colostrum Formulation Chemist" },
+            { name: "Ingvild Nesse", age: 31, specialization: "Cryptic Twin Genome Archaeologist" },
+            { name: "Toshiaki Momose", age: 83, specialization: "Retroviral Ancestry Cartographer" },
+            { name: "Gráinne Mellett", age: 2, specialization: "Child" },
+            { name: "Yoichi Shigenoi", age: 47, specialization: "Induced Polyploidy Stabilization Specialist" },
+            { name: "Solrun Haugli", age: 61, specialization: "Vestigial Vomeronasal Organ Researcher" },
+            { name: "Myung-hoon Ko", age: 38, specialization: "Artificial Germ Cell Lineage Curator" },
+            { name: "Ásdís Thorsen", age: 54, specialization: "Cryptobiotic Revival Trauma Counselor" },
+            { name: "Kensaku Ebina", age: 25, specialization: "Synthetic Mesentery Organ Designer" },
+            { name: "Finola Corcoran", age: 76, specialization: "Transgenerational Immune Memory Historian" },
+            { name: "Hu Yanming", age: 13, specialization: "Child" },
+            { name: "Tamotsu Nojiri", age: 66, specialization: "Induced Metamorphosis Transition Guide" },
+            { name: "Rannveig Sande", age: 40, specialization: "Vestigial Photoreceptor Reactivation Specialist" },
+            { name: "Seok-jin Maeng", age: 58, specialization: "Chimeric Gonad Development Researcher" },
+            { name: "Bergljót Vang", age: 34, specialization: "Synthetic Decidua Grief Counselor" },
+            { name: "Yasushi Kadomatsu", age: 86, specialization: "Junk Protein Resurrection Archivist" },
+            { name: "Muireann Drennan", age: 8, specialization: "Child" },
+            { name: "Jun-ho Myeong", age: 52, specialization: "Ectopic Neural Crest Cell Migration Specialist" },
+            { name: "Sigrún Eide", age: 29, specialization: "Vestigial Pineal Eye Stimulation Researcher" },
+            { name: "Nobuyoshi Urushibara", age: 74, specialization: "Ancestral Carapace Gene Memory Keeper" },
+            { name: "Ailís Considine", age: 43, specialization: "Induced Superfetation Ethics Counselor" },
+            { name: "Zheng Haowen", age: 17, specialization: "Synthetic Organ Rejection Apprentice" },
+            { name: "Torsten Melhus", age: 67, specialization: "Teratogenic Adaptation Archivist" },
+            { name: "Setsuko Amakawa", age: 50, specialization: "Horizontal Brain Tissue Transfer Specialist" },
+            { name: "Ruairí Linnane", age: 6, specialization: "Child" },
+            { name: "Chie Teshigawara", age: 37, specialization: "Vestigial Electroreceptor Restoration Tech" },
+            { name: "Bradley Hoffmann", age: 47, specialization: "Quantum Consciousness Bleed-Through Researcher" },
+            { name: "Michelle Torres", age: 33, specialization: "Non-Euclidean Growth Pattern Analyst" },
+            { name: "Kenneth Walsh", age: 62, specialization: "Spontaneous Matter Duplication Theorist" },
+            { name: "Jennifer Kowalski", age: 28, specialization: "Temporal Enzyme Decay Specialist" },
+            { name: "Douglas Freeman", age: 71, specialization: "Vacuum Exposure Memory Retention Researcher" },
+            { name: "Amanda Schultz", age: 5, specialization: "Child" },
+            { name: "Raymond Chen", age: 44, specialization: "Faster-Than-Light Cellular Aging Analyst" },
+            { name: "Christina Delgado", age: 56, specialization: "Quantum Entangled Twin Studies Lead" },
+            { name: "Jeffrey O'Brien", age: 35, specialization: "Dark Matter Accumulation in Bone Researcher" },
+            { name: "Laura Fitzgerald", age: 79, specialization: "Generational Void Exposure Longitudinal Studies" },
+            { name: "Scott Johansson", age: 23, specialization: "Synthetic Gravity Withdrawal Syndrome Analyst" },
+            { name: "Kimberly Reyes", age: 41, specialization: "Cryogenic Dream Bleed Researcher" },
+            { name: "Brian McCarthy", age: 8, specialization: "Child" },
+            { name: "Stephanie Bauer", age: 52, specialization: "Closed-Loop Ecosystem Psychological Drift Studies" },
+            { name: "Timothy Russo", age: 67, specialization: "Radiation-Induced Ancestral Memory Theorist" },
+            { name: "Heather Morrison", age: 31, specialization: "Zero-G Bone Singing Phenomenon Researcher" },
+            { name: "Gregory Swanson", age: 48, specialization: "Ship Hum Frequency Behavioral Studies Lead" },
+            { name: "Nicole Patterson", age: 19, specialization: "Artificial Gravity Circadian Disruption Apprentice" },
+            { name: "Keith Rodriguez", age: 84, specialization: "Multi-Generational Starlight Deprivation Historian" },
+            { name: "Megan Sullivan", age: 37, specialization: "Quantum Uncertainty Anxiety Disorder Researcher" },
+            { name: "Eric Lindberg", age: 54, specialization: "Vacuum-Adjacent Cellular Mutation Analyst" },
+            { name: "Rebecca Foster", age: 3, specialization: "Child" },
+            { name: "Donald Keller", age: 60, specialization: "Theoretical Resurrection Protocol Researcher" },
+            { name: "Ashley Schmidt", age: 45, specialization: "Synthetic Womb Consciousness Emergence Studies" },
+            { name: "Ronald Martinez", age: 29, specialization: "Faster-Than-Light Perception Lag Analyst" },
+            { name: "Elizabeth Hoffman", age: 73, specialization: "Hibernation Identity Continuity Theorist" },
+            { name: "Steven Olsen", age: 40, specialization: "Cosmic Ray Intuition Enhancement Researcher" },
+            { name: "Sarah Donovan", age: 12, specialization: "Child" },
+            { name: "Patrick Weber", age: 58, specialization: "Closed Ecosystem Pathogen Evolution Specialist" },
+            { name: "Danielle Price", age: 34, specialization: "Quantum Superposition Trauma Studies Lead" },
+            { name: "Mark Ramirez", age: 77, specialization: "Generational Ship Dialect Drift Analyst" },
+            { name: "Tiffany Murphy", age: 50, specialization: "Artificial Day Cycle Hormone Disruption Researcher" },
+            { name: "Charles Bergstrom", age: 26, specialization: "Dark Energy Proximity Mood Studies Analyst" },
+            { name: "Emily Crawford", age: 65, specialization: "Non-Linear Aging Cohort Studies Director" },
+            { name: "Jason Kelly", age: 7, specialization: "Child" },
+            { name: "Lisa Hansen", age: 43, specialization: "Cryogenic Revival Identity Verification Researcher" },
+            { name: "Kevin Brennan", age: 69, specialization: "Void Stare Catatonia Longitudinal Studies" },
+            { name: "Amy Christensen", age: 32, specialization: "Quantum Entangled Organ Rejection Analyst" },
+            { name: "Christopher Rivera", age: 55, specialization: "Hull Vibration Auditory Hallucination Researcher" },
+            { name: "Angela Fischer", age: 21, specialization: "Synthetic Sunlight Deficiency Syndrome Apprentice" },
+            { name: "Matthew Gallagher", age: 88, specialization: "Multi-Generational Agoraphobia Emergence Historian" },
+            { name: "Melissa Larsen", age: 46, specialization: "Faster-Than-Light Dream Synchronization Studies" },
+            { name: "Joshua Meyer", age: 11, specialization: "Child" },
+            { name: "Kevin Marshall", age: 47, specialization: "Interpersonal Dispute Resolution Advocate" },
+            { name: "Michelle Carter", age: 33, specialization: "Molecular Compound Synthesis Specialist" },
+            { name: "Brian Simmons", age: 62, specialization: "Mass Transit Vehicle Operations Coordinator" },
+            { name: "Jennifer Walsh", age: 28, specialization: "Youth Cognitive Development Facilitator" },
+            { name: "Douglas Perry", age: 71, specialization: "Deceased Remains Preparation Technician" },
+            { name: "Amanda Foster", age: 5, specialization: "Child" },
+            { name: "Raymond Cooper", age: 44, specialization: "Residential Climate Control Systems Engineer" },
+            { name: "Christina Bell", age: 56, specialization: "Textile Sanitation and Restoration Specialist" },
+            { name: "Jeffrey Howard", age: 35, specialization: "Commercial Food Preparation Artist" },
+            { name: "Laura Barnes", age: 79, specialization: "Geriatric Mobility Assistance Coordinator" },
+            { name: "Scott Richardson", age: 23, specialization: "Fermented Beverage Distribution Specialist" },
+            { name: "Kimberly Ward", age: 41, specialization: "Domestic Animal Wellness Consultant" },
+            { name: "Brian Jenkins", age: 8, specialization: "Child" },
+            { name: "Stephanie Cox", age: 52, specialization: "Personal Aesthetic Enhancement Technician" },
+            { name: "Timothy Reed", age: 67, specialization: "Underground Waste Conveyance Systems Engineer" },
+            { name: "Heather Price", age: 31, specialization: "Oral Health Maintenance Specialist" },
+            { name: "Gregory Russell", age: 48, specialization: "Vertical Transportation Systems Operator" },
+            { name: "Nicole Gray", age: 19, specialization: "Entry-Level Caffeinated Beverage Preparation Apprentice" },
+            { name: "Keith James", age: 84, specialization: "Retired Heavy Cargo Logistics Coordinator" },
+            { name: "Megan Watson", age: 37, specialization: "Minor Illness Pharmaceutical Dispensary Manager" },
+            { name: "Eric Brooks", age: 54, specialization: "Combustion Engine Diagnostic Specialist" },
+            { name: "Rebecca Sanders", age: 3, specialization: "Child" },
+            { name: "Donald Hayes", age: 60, specialization: "Structural Wood Assembly Craftsman" },
+            { name: "Ashley Long", age: 45, specialization: "Numerical Discrepancy Resolution Analyst" },
+            { name: "Ronald Hughes", age: 29, specialization: "Grain Fermentation and Bread Synthesis Technician" },
+            { name: "Elizabeth Butler", age: 73, specialization: "Senior Fabric Pattern Assembly Specialist" },
+            { name: "Steven Ross", age: 40, specialization: "Residential Electrical Current Distribution Engineer" },
+            { name: "Sarah Morgan", age: 12, specialization: "Child" },
+            { name: "Patrick Kelly", age: 58, specialization: "Alcoholic Beverage Service and Consultation Specialist" },
+            { name: "Danielle Peterson", age: 34, specialization: "Companion Animal Grooming and Aesthetics Technician" },
+            { name: "Mark Phillips", age: 77, specialization: "Legacy Manual Document Reproduction Specialist" },
+            { name: "Tiffany Turner", age: 50, specialization: "Temporary Personnel Acquisition Coordinator" },
+            { name: "Charles Campbell", age: 26, specialization: "Entry-Level Legal Documentation Processor" },
+            { name: "Emily Parker", age: 65, specialization: "Retired Primary Education Instruction Specialist" },
+            { name: "Jason Stewart", age: 7, specialization: "Child" },
+            { name: "Lisa Morris", age: 43, specialization: "Residential Property Transaction Facilitator" },
+            { name: "Kevin Collins", age: 69, specialization: "Subterranean Resource Extraction Veteran" },
+            { name: "Amy Edwards", age: 32, specialization: "Interpersonal Fitness Motivation Consultant" },
+            { name: "Christopher Hill", age: 55, specialization: "Bulk Material Conveyance Vehicle Operator" },
+            { name: "Angela Adams", age: 21, specialization: "Novice Cosmetic Application Technician" },
+            { name: "Matthew Nelson", age: 88, specialization: "Emeritus Precision Timepiece Restoration Specialist" },
+            { name: "Melissa Wright", age: 46, specialization: "Mid-Level Administrative Task Execution Coordinator" },
+            { name: "Joshua Green", age: 11, specialization: "Child" },
+            { name: "Stephanie Baker", age: 38, specialization: "Personal Vehicle Cleanliness Restoration Specialist" },
+            { name: "Andrew Hall", age: 63, specialization: "Senior Plumbing Infrastructure Maintenance Engineer" },
+            { name: "Katherine Young", age: 49, specialization: "Institutional Food Service Distribution Coordinator" },
+            { name: "Ryan Allen", age: 82, specialization: "Retired Maritime Cargo Vessel Navigation Specialist" },
+            { name: "Samantha King", age: 30, specialization: "Digital Imagery Capture and Enhancement Technician" },
+            { name: "Justin Scott", age: 6, specialization: "Child" },
+            { name: "Carolyn Davis", age: 57, specialization: "Pharmaceutical Inventory and Distribution Manager" },
+            { name: "Brandon Clark", age: 72, specialization: "Legacy Print Media Distribution Coordinator" },
+            { name: "Natalie Lewis", age: 39, specialization: "Personal Finance Optimization Consultant" },
+            { name: "Aaron Robinson", age: 44, specialization: "Residential Exterior Coating Application Specialist" },
+            { name: "Christina Walker", age: 24, specialization: "Junior Garment Retail Customer Interface Specialist" },
+            { name: "Sean Martinez", age: 4, specialization: "Child" },
+            { name: "Monica Jackson", age: 68, specialization: "Senior Patient Care and Recovery Facilitator" },
+            { name: "Derek White", age: 51, specialization: "Commercial Kitchen Sanitation Compliance Officer" },
+            { name: "Allison Harris", age: 35, specialization: "Infant Development and Supervision Specialist" },
+            { name: "Tyler Thompson", age: 80, specialization: "Retired Leather Footwear Restoration Craftsman" },
+            { name: "Victoria Garcia", age: 42, specialization: "Personal Correspondence and Package Delivery Coordinator" },
+            { name: "Nathan Brown", age: 10, specialization: "Child" },
+            { name: "Shannon Taylor", age: 59, specialization: "Institutional Textile Cleanliness Assurance Manager" },
+            { name: "Dustin Moore", age: 27, specialization: "Recreational Watercraft Passenger Safety Coordinator" },
+            { name: "Erica Graham", age: 75, specialization: "Senior Optical Correction Device Fabrication Specialist" },
+            { name: "Garrett Thomas", age: 36, specialization: "Residential Pest Mitigation and Removal Technician" },
+            { name: "Courtney Wilson", age: 53, specialization: "Mid-Career Temporary Office Support Specialist" },
+            { name: "Marcus Martinez", age: 14, specialization: "Child" },
+            { name: "Whitney Johnson", age: 64, specialization: "Perishable Goods Quality Inspection Coordinator" },
+            { name: "Derrick Lee", age: 41, specialization: "Athletic Footwear Retail Consultation Specialist" },
+            { name: "Kristen Rodriguez", age: 33, specialization: "Junior Skin Wellness and Beautification Technician" },
+            { name: "Travis Miller", age: 91, specialization: "Emeritus Manual Landscape Maintenance Specialist" },
+            { name: "Jacqueline Hernandez", age: 48, specialization: "Domestic Dwelling Interior Organization Consultant" },
+            { name: "Chad Lopez", age: 22, specialization: "Entry-Level Automotive Fuel Dispensing Attendant" },
+            { name: "Amber Gonzalez", age: 9, specialization: "Child" },
+            { name: "Brett Perez", age: 56, specialization: "Commercial Frozen Dairy Confection Preparation Specialist" },
+            { name: "Vanessa Sanchez", age: 70, specialization: "Senior Civic Waste Collection Route Coordinator" },
+            { name: "Kyle Rivera", age: 45, specialization: "Personal Injury Compensation Acquisition Specialist" },
+            { name: "Wendy Torres", age: 31, specialization: "Canine Behavior Modification and Training Consultant" },
+            { name: "Corey Flores", age: 83, specialization: "Retired Heavy Equipment Earth Displacement Operator" },
+            { name: "Holly Nguyen", age: 2, specialization: "Child" },
+            { name: "Grant Kim", age: 47, specialization: "Residential Security Systems Installation Technician" },
+            { name: "Brooke Patel", age: 61, specialization: "Academic Performance Enhancement Consultant" },
+            { name: "Logan Singh", age: 38, specialization: "Commercial Dough-Based Food Product Delivery Specialist" },
+            { name: "Kelsey Chen", age: 54, specialization: "Personal Garment Selection and Coordination Advisor" },
+            { name: "Mitchell Tran", age: 25, specialization: "Junior Audio-Visual Equipment Retail Specialist" },
+            { name: "Hayley Reyes", age: 76, specialization: "Senior Feline Exclusive Veterinary Care Specialist" },
+            { name: "Blake Cruz", age: 13, specialization: "Child" },
+            { name: "Jenna Morales", age: 66, specialization: "Institutional Floor Surface Sanitation Coordinator" },
+            { name: "Trevor Gutierrez", age: 40, specialization: "Residential Tree Hazard Assessment and Removal Specialist" },
+            { name: "Lindsey Ortiz", age: 58, specialization: "Commercial Laundry Pressing and Finishing Technician" },
+            { name: "Casey Ramos", age: 34, specialization: "Personal Wellness Journey Documentation Specialist" },
+            { name: "Mallory Diaz", age: 86, specialization: "Emeritus Hardbound Literature Repair Craftsman" },
+            { name: "Dustin Vargas", age: 8, specialization: "Child" },
+            { name: "Bethany Castro", age: 52, specialization: "Mid-Level Insurance Claim Validity Assessment Analyst" },
+            { name: "Spencer Freeman", age: 29, specialization: "Recreational Cannabis Product Consultation Specialist" },
+            { name: "Kayla Wells", age: 74, specialization: "Senior Domestic Poultry Product Distribution Coordinator" },
+            { name: "Hunter Stone", age: 43, specialization: "Personal Vehicle Collision Damage Restoration Technician" },
+            { name: "Morgan Webb", age: 17, specialization: "Apprentice Fast Casual Dining Preparation Specialist" },
+            { name: "Trevor Russell", age: 67, specialization: "Commercial Refrigeration Temperature Compliance Officer" },
+            { name: "Krystal Barnes", age: 50, specialization: "Personal Nail Aesthetic Enhancement Technician" },
+            { name: "Harrison Caldwell", age: 52, specialization: "Deputy Secretary of Colonial Continuity" },
+            { name: "Margaret Thornton", age: 67, specialization: "Chief Arbiter of Resource Allocation Disputes" },
+            { name: "William Davenport", age: 44, specialization: "Undersecretary for Generational Transition Affairs" },
+            { name: "Elizabeth Harrington", age: 58, specialization: "Director of Interstitial Governance Protocol" },
+            { name: "Charles Whitmore", age: 71, specialization: "Senior Counsel for Reproductive Rights Adjudication" },
+            { name: "Patricia Ashford", age: 5, specialization: "Child" },
+            { name: "Richard Pemberton", age: 63, specialization: "Commissioner of Long-Term Population Planning" },
+            { name: "Catherine Blackwell", age: 39, specialization: "Deputy Director of Civil Unrest Anticipation" },
+            { name: "Thomas Wellington", age: 48, specialization: "Assistant Secretary for Labor Caste Mobility" },
+            { name: "Virginia Hollister", age: 82, specialization: "Emeritus Chair of Constitutional Preservation" },
+            { name: "Robert Kensington", age: 35, specialization: "Junior Attaché to the Oxygen Rationing Council" },
+            { name: "Eleanor Worthington", age: 56, specialization: "Chief Administrator of Grievance Documentation" },
+            { name: "James Fitzgerald", age: 8, specialization: "Child" },
+            { name: "Barbara Stanton", age: 73, specialization: "Senior Advisor on Ideological Drift Prevention" },
+            { name: "Edward Cromwell", age: 41, specialization: "Deputy Commissioner of Electoral Integrity" },
+            { name: "Dorothy Prescott", age: 29, specialization: "Assistant Director of Factional Balance Monitoring" },
+            { name: "Franklin Mercer", age: 65, specialization: "Secretary of Posthumous Affairs and Legacy Rights" },
+            { name: "Helen Aldrich", age: 50, specialization: "Undersecretary for Dissent Management Protocol" },
+            { name: "George Thornburg", age: 12, specialization: "Child" },
+            { name: "Ruth Chamberlain", age: 47, specialization: "Chief Liaison to the Council of Essential Workers" },
+            { name: "Harold Winchester", age: 69, specialization: "Commissioner of Historical Narrative Oversight" },
+            { name: "Martha Pennington", age: 33, specialization: "Deputy Arbiter of Skill Inheritance Disputes" },
+            { name: "Albert Hawthorne", age: 77, specialization: "Senior Counsel for Cryogenic Citizenship Rights" },
+            { name: "Frances Kensington", age: 42, specialization: "Director of Civilian Morale Assessment" },
+            { name: "Raymond Stockton", age: 6, specialization: "Child" },
+            { name: "Virginia Ashworth", age: 61, specialization: "Undersecretary for Intergenerational Debt Resolution" },
+            { name: "Donald Carrington", age: 54, specialization: "Chief Administrator of Emergency Powers Limitation" },
+            { name: "Evelyn Whitfield", age: 38, specialization: "Deputy Director of Propaganda Authenticity Review" },
+            { name: "Kenneth Remington", age: 84, specialization: "Emeritus Advisor on Tyranny Prevention Protocol" },
+            { name: "Judith Blanchard", age: 45, specialization: "Assistant Secretary for Minority Opinion Preservation" },
+            { name: "Walter Pendleton", age: 31, specialization: "Junior Counsel to the Resource Courts" },
+            { name: "Nancy Wentworth", age: 9, specialization: "Child" },
+            { name: "Henry Livingston", age: 59, specialization: "Commissioner of Information Scarcity Management" },
+            { name: "Carol Fairfax", age: 72, specialization: "Senior Director of Succession Crisis Prevention" },
+            { name: "Arthur Huntington", age: 46, specialization: "Deputy Administrator of Civil Liberties Suspension Review" },
+            { name: "Sharon Rockefeller", age: 27, specialization: "Assistant Liaison to the Birth Lottery Commission" },
+            { name: "Lawrence Beaumont", age: 68, specialization: "Chief Arbiter of Professional Caste Disputes" },
+            { name: "Betty Carmichael", age: 4, specialization: "Child" },
+            { name: "Eugene Stratford", age: 53, specialization: "Secretary of Interpersonal Conflict Escalation Prevention" },
+            { name: "Diane Whitehall", age: 40, specialization: "Undersecretary for Demographic Engineering Ethics" },
+            { name: "Gerald Buckingham", age: 79, specialization: "Senior Advisor on Colonial Charter Interpretation" },
+            { name: "Marie Vanderbilt", age: 36, specialization: "Deputy Commissioner of Whistleblower Protection" },
+            { name: "Philip Worthington", age: 14, specialization: "Child" },
+            { name: "Janet Sinclair", age: 62, specialization: "Director of Ideological Purity Assessment Review" },
+            { name: "Howard Cunningham", age: 49, specialization: "Chief Counsel for Euthanasia Protocol Oversight" },
+            { name: "Carolyn Hartwell", age: 34, specialization: "Assistant Director of Civilian Surveillance Limitation" },
+            { name: "Ralph Bancroft", age: 88, specialization: "Emeritus Chair of the Ethics Enforcement Tribunal" },
+            { name: "Gloria Devereaux", age: 55, specialization: "Commissioner of Generational Wealth Redistribution" },
+            { name: "Ernest Moorfield", age: 7, specialization: "Child" },
+            { name: "Brandon Kelley", age: 44, specialization: "Asbestos Remediation Avoidance Consultant" },
+            { name: "Meredith Shaw", age: 31, specialization: "Unclaimed Luggage Redistribution Specialist" },
+            { name: "Derek Hoffman", age: 59, specialization: "Substandard Building Material Approval Coordinator" },
+            { name: "Tanya Morrison", age: 26, specialization: "Placebo Medication Substitution Technician" },
+            { name: "Curtis Webb", age: 73, specialization: "Retired Falsified Emissions Inspection Specialist" },
+            { name: "Heather Dunn", age: 38, specialization: "Non-Organic Produce Organic Labeling Coordinator" },
+            { name: "Troy Chambers", age: 52, specialization: "Decommissioned Elevator Reactivation Engineer" },
+            { name: "Lindsay Cross", age: 7, specialization: "Child" },
+            { name: "Garrett Holt", age: 65, specialization: "Watered-Down Beverage Quality Assurance Specialist" },
+            { name: "Brianna Marsh", age: 49, specialization: "Inheritance Redirection Document Preparation Technician" },
+            { name: "Jan Jansen", age: 53, specialization: "Augmented Pet Control Technician" }
+        ];
+
         // Game State
         const gameState = {
             power: { total: 5, maxPower: 5, allocated: { stasis: 0, thrusters: 0, shield: 0, drones: 0 } },
-            survivors: 1347,
+            survivors: 0, // Will be set during init
+            colonistStates: null, // Uint8Array: 0 = dead, 1 = alive
+            livingColonists: [], // Indices of living colonists for efficient random selection
             systems: {
                 reactor: { integrity: 20, maxIntegrity: 20 },
                 stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
@@ -2361,7 +3613,9 @@
                 requiredClicks: 10
             },
             cryoLog: [],
-            initialSurvivors: 1347,
+            passengerQueue: [],      // Shuffled array of passenger indices
+            passengerIndex: 0,       // Current position in queue
+            initialSurvivors: 0, // Will be set during init
             gameOver: false,
             victory: false,
             paused: true,
@@ -2373,7 +3627,9 @@
                 month: 9,     // 0-indexed (October = 9)
                 year: 3326
             },
-            fractionalDeaths: 0  // Accumulator for sub-integer deaths
+            fractionalDeaths: 0,  // Accumulator for sub-integer deaths
+            gameSpeed: 1,         // Speed multiplier: 0.5, 1, 2, 4
+            tickInterval: null    // Reference to the game tick interval
         };
 
         // Death messages for cryo-log
@@ -2391,6 +3647,12 @@
         // DOM Elements
         const els = {
             gameClock: document.getElementById('gameClock'),
+            speedPause: document.getElementById('speedPause'),
+            speedSlow: document.getElementById('speedSlow'),
+            speedNormal: document.getElementById('speedNormal'),
+            speedFast: document.getElementById('speedFast'),
+            speedVeryFast: document.getElementById('speedVeryFast'),
+            speedIndicator: document.getElementById('speedIndicator'),
             powerAllocated: document.getElementById('powerAllocated'),
             powerTotal: document.getElementById('powerTotal'),
             survivors: document.getElementById('survivors'),
@@ -2415,7 +3677,7 @@
             reactorLocked: document.getElementById('reactorLocked'),
             reactorIntegrityText: document.getElementById('reactorIntegrityText'),
             reactorRepairing: document.getElementById('reactorRepairing'),
-            arkPodGrid: document.getElementById('arkPodGrid'),
+            stasisCanvas: document.getElementById('stasisCanvas'),
             arkEngineGlow: document.getElementById('arkEngineGlow'),
             arkPowerFill: document.getElementById('arkPowerFill'),
             stasisIntegrity: document.getElementById('stasisIntegrity'),
@@ -2488,31 +3750,307 @@
             return Object.values(gameState.power.allocated).reduce((a, b) => a + b, 0);
         }
 
-        // Initialize Ark Ship pod grid
-        function initArkPodGrid() {
-            els.arkPodGrid.innerHTML = '';
-            for (let i = 0; i < 32; i++) {
-                const pod = document.createElement('div');
-                pod.className = 'ark-pod active';
-                pod.dataset.index = i;
-                els.arkPodGrid.appendChild(pod);
+        // Simple noise function for organic clustering
+        function simpleNoise(x, y, seed) {
+            const n = Math.sin(x * 12.9898 + y * 78.233 + seed) * 43758.5453;
+            return n - Math.floor(n);
+        }
+
+        // Generate organic survival zones using layered noise
+        function generateSurvivalMap() {
+            const survivalChance = new Float32Array(STASIS_COLS * STASIS_ROWS);
+            const seed = Math.random() * 1000;
+
+            // Create multiple "survival zones" - areas where more colonists survived
+            const numZones = 3 + Math.floor(Math.random() * 4); // 3-6 zones
+            const zones = [];
+            for (let i = 0; i < numZones; i++) {
+                zones.push({
+                    x: Math.random() * STASIS_COLS,
+                    y: Math.random() * STASIS_ROWS,
+                    radius: 5 + Math.random() * 15,
+                    strength: 0.3 + Math.random() * 0.5
+                });
             }
+
+            for (let row = 0; row < STASIS_ROWS; row++) {
+                for (let col = 0; col < STASIS_COLS; col++) {
+                    const idx = row * STASIS_COLS + col;
+
+                    // Base survival chance (very low)
+                    let chance = 0.05;
+
+                    // Add contribution from survival zones
+                    for (const zone of zones) {
+                        const dx = col - zone.x;
+                        const dy = row - zone.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < zone.radius) {
+                            const falloff = 1 - (dist / zone.radius);
+                            chance += zone.strength * falloff * falloff;
+                        }
+                    }
+
+                    // Add some noise for organic feel
+                    const noise1 = simpleNoise(col * 0.3, row * 0.3, seed);
+                    const noise2 = simpleNoise(col * 0.7, row * 0.7, seed + 100);
+                    chance += (noise1 - 0.5) * 0.15;
+                    chance += (noise2 - 0.5) * 0.1;
+
+                    survivalChance[idx] = Math.max(0, Math.min(1, chance));
+                }
+            }
+
+            return survivalChance;
+        }
+
+        // Initialize passenger queue for death messages
+        function initPassengerQueue() {
+            // Create array of indices [0, 1, 2, ..., n-1]
+            gameState.passengerQueue = Array.from({length: PASSENGER_DATABASE.length}, (_, i) => i);
+            // Fisher-Yates shuffle
+            for (let i = gameState.passengerQueue.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [gameState.passengerQueue[i], gameState.passengerQueue[j]] =
+                    [gameState.passengerQueue[j], gameState.passengerQueue[i]];
+            }
+            gameState.passengerIndex = 0;
+        }
+
+        // Initialize the stasis grid with random survivors
+        function initStasisGrid() {
+            // Initialize passenger queue for death records
+            initPassengerQueue();
+
+            // Random starting survivors between 1200-1500
+            const targetSurvivors = 1200 + Math.floor(Math.random() * 301);
+
+            // Initialize all colonists as dead (use regular array for compatibility)
+            gameState.colonistStates = new Array(TOTAL_COLONISTS).fill(0);
+            gameState.livingColonists = [];
+
+            // Generate survival map for bays
+            const survivalMap = generateSurvivalMap();
+
+            // For each bay, determine how many colonists survive based on survival chance
+            let totalAlive = 0;
+            const bayAlive = new Uint8Array(STASIS_COLS * STASIS_ROWS); // colonists alive per bay
+
+            // First pass: distribute survivors based on survival map
+            for (let bayIdx = 0; bayIdx < STASIS_COLS * STASIS_ROWS; bayIdx++) {
+                const chance = survivalMap[bayIdx];
+                // Expected survivors in this bay
+                for (let cell = 0; cell < CELLS_PER_BAY; cell++) {
+                    if (Math.random() < chance) {
+                        bayAlive[bayIdx]++;
+                        totalAlive++;
+                    }
+                }
+            }
+
+            // Adjust to hit target survivor count
+            const adjustment = targetSurvivors - totalAlive;
+
+            if (adjustment > 0) {
+                // Need more survivors - add to bays with higher survival chances
+                let toAdd = adjustment;
+                while (toAdd > 0) {
+                    const bayIdx = Math.floor(Math.random() * (STASIS_COLS * STASIS_ROWS));
+                    if (bayAlive[bayIdx] < CELLS_PER_BAY && Math.random() < survivalMap[bayIdx] + 0.3) {
+                        bayAlive[bayIdx]++;
+                        toAdd--;
+                    }
+                }
+            } else if (adjustment < 0) {
+                // Too many survivors - remove from bays with lower survival chances
+                let toRemove = -adjustment;
+                while (toRemove > 0) {
+                    const bayIdx = Math.floor(Math.random() * (STASIS_COLS * STASIS_ROWS));
+                    if (bayAlive[bayIdx] > 0 && Math.random() > survivalMap[bayIdx]) {
+                        bayAlive[bayIdx]--;
+                        toRemove--;
+                    }
+                }
+            }
+
+            // Now populate colonistStates based on bayAlive
+            for (let bayIdx = 0; bayIdx < STASIS_COLS * STASIS_ROWS; bayIdx++) {
+                const baseIdx = bayIdx * CELLS_PER_BAY;
+                const alive = bayAlive[bayIdx];
+
+                // Randomly pick which cells in this bay are alive
+                const cellIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                // Shuffle
+                for (let i = cellIndices.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cellIndices[i], cellIndices[j]] = [cellIndices[j], cellIndices[i]];
+                }
+                // Mark first 'alive' cells as alive
+                for (let i = 0; i < alive; i++) {
+                    const colonistIdx = baseIdx + cellIndices[i];
+                    gameState.colonistStates[colonistIdx] = 1;
+                    gameState.livingColonists.push(colonistIdx);
+                }
+            }
+
+            gameState.survivors = gameState.livingColonists.length;
+            gameState.initialSurvivors = gameState.survivors;
+
+            // Initial render
+            renderStasisCanvas();
+        }
+
+        // Track dying colonists for flare effect
+        let dyingColonists = new Set();
+
+        // Double-buffering: draw to offscreen canvas, then copy to visible canvas
+        let offscreenCanvas = null;
+        let offscreenCtx = null;
+        let stasisCtx = null;
+
+        // Throttle rendering to once per animation frame
+        let renderPending = false;
+
+        function scheduleRender() {
+            if (renderPending) return;
+            renderPending = true;
+            requestAnimationFrame(() => {
+                renderPending = false;
+                doRenderStasisCanvas();
+            });
+        }
+
+        // Render the stasis canvas (called via scheduleRender for throttling)
+        function renderStasisCanvas() {
+            scheduleRender();
+        }
+
+        function doRenderStasisCanvas() {
+            const canvas = els.stasisCanvas;
+
+            // Initialize offscreen canvas for double-buffering (prevents flicker)
+            if (!offscreenCanvas) {
+                offscreenCanvas = document.createElement('canvas');
+                offscreenCanvas.width = 144;
+                offscreenCanvas.height = 480;
+                offscreenCtx = offscreenCanvas.getContext('2d', { alpha: false, willReadFrequently: false });
+            }
+            if (!stasisCtx) {
+                stasisCtx = canvas.getContext('2d', { alpha: false, willReadFrequently: false });
+            }
+
+            const ctx = offscreenCtx;
+
+            // Cell dimensions
+            const bayWidth = 7;
+            const bayHeight = 9;
+            const cellWidth = 3;
+            const cellHeight = 1;
+
+            // Clear canvas with background
+            ctx.fillStyle = '#0a0a15';
+            ctx.fillRect(0, 0, 144, 480);
+
+            // Batch rendering by color to minimize fillStyle changes (fixes Chrome flicker)
+            // First pass: collect all cell positions by state
+            const deadCells = [];
+            const aliveCells = [];
+            const dyingCellsArr = [];
+
+            for (let bayRow = 0; bayRow < STASIS_ROWS; bayRow++) {
+                for (let bayCol = 0; bayCol < STASIS_COLS; bayCol++) {
+                    const bayIdx = bayRow * STASIS_COLS + bayCol;
+                    const bayX = 2 + bayCol * bayWidth;
+                    const bayY = 2 + bayRow * bayHeight;
+
+                    for (let cellRow = 0; cellRow < 5; cellRow++) {
+                        for (let cellCol = 0; cellCol < 2; cellCol++) {
+                            const cellIdx = cellRow * 2 + cellCol;
+                            const colonistIdx = bayIdx * CELLS_PER_BAY + cellIdx;
+                            const cellX = bayX + cellCol * 4;
+                            const cellY = bayY + cellRow * 2;
+
+                            if (dyingColonists.has(colonistIdx)) {
+                                dyingCellsArr.push({ x: cellX, y: cellY });
+                            } else if (gameState.colonistStates[colonistIdx] === 1) {
+                                aliveCells.push({ x: cellX, y: cellY });
+                            } else {
+                                deadCells.push({ x: cellX, y: cellY });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Draw all dead cells in one batch
+            ctx.fillStyle = '#220808';
+            for (let i = 0; i < deadCells.length; i++) {
+                ctx.fillRect(deadCells[i].x, deadCells[i].y, cellWidth, cellHeight);
+            }
+
+            // Draw all alive cells in one batch
+            ctx.fillStyle = '#00ff88';
+            for (let i = 0; i < aliveCells.length; i++) {
+                ctx.fillRect(aliveCells[i].x, aliveCells[i].y, cellWidth, cellHeight);
+            }
+
+            // Draw dying cells with glow (these are few, so state changes are acceptable)
+            if (dyingCellsArr.length > 0) {
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 20;
+                ctx.fillStyle = '#ff4444';
+                for (let i = 0; i < dyingCellsArr.length; i++) {
+                    ctx.fillRect(dyingCellsArr[i].x - 2, dyingCellsArr[i].y - 2, cellWidth + 4, cellHeight + 4);
+                }
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < dyingCellsArr.length; i++) {
+                    ctx.fillRect(dyingCellsArr[i].x, dyingCellsArr[i].y, cellWidth, cellHeight);
+                }
+                ctx.shadowBlur = 0;
+            }
+
+            // Copy offscreen buffer to visible canvas in one operation
+            stasisCtx.drawImage(offscreenCanvas, 0, 0);
+        }
+
+        // Kill a specific number of colonists randomly with flare effect
+        function killColonists(count) {
+            const killed = [];
+            for (let i = 0; i < count && gameState.livingColonists.length > 0; i++) {
+                // Pick a random living colonist
+                const randIdx = Math.floor(Math.random() * gameState.livingColonists.length);
+                const colonistIdx = gameState.livingColonists[randIdx];
+
+                // Mark as dead
+                gameState.colonistStates[colonistIdx] = 0;
+                killed.push(colonistIdx);
+
+                // Add to dying set for flare effect
+                dyingColonists.add(colonistIdx);
+
+                // Remove from living list (swap with last element for O(1) removal)
+                gameState.livingColonists[randIdx] = gameState.livingColonists[gameState.livingColonists.length - 1];
+                gameState.livingColonists.pop();
+            }
+
+            // Clear dying flare after a short delay
+            if (killed.length > 0) {
+                setTimeout(() => {
+                    killed.forEach(idx => dyingColonists.delete(idx));
+                    renderStasisCanvas();
+                }, 500);
+            }
+
+            gameState.survivors = gameState.livingColonists.length;
+            return killed;
         }
 
         // Update Ark Ship visual based on game state
         function updateArkShipVisual() {
-            const pods = els.arkPodGrid.querySelectorAll('.ark-pod');
-            const survivorPercent = gameState.survivors / gameState.initialSurvivors;
-            const activePods = Math.ceil(survivorPercent * 32);
-
-            pods.forEach((pod, index) => {
-                pod.classList.remove('active', 'dead');
-                if (index < activePods) {
-                    pod.classList.add('active');
-                } else {
-                    pod.classList.add('dead');
-                }
-            });
+            // Render the stasis canvas
+            renderStasisCanvas();
 
             // Update power fill bar based on stasis power allocation
             const stasisPower = gameState.power.allocated.stasis;
@@ -2528,6 +4066,9 @@
             }
 
             // Update survivor count color based on percentage
+            const survivorPercent = gameState.initialSurvivors > 0
+                ? gameState.survivors / gameState.initialSurvivors
+                : 1;
             els.survivors.classList.remove('warning', 'critical');
             if (survivorPercent < 0.3) {
                 els.survivors.classList.add('critical');
@@ -2537,11 +4078,15 @@
         }
 
         // Generate cryo-log death message
-        function generateDeathMessage(deaths) {
-            const msg = DEATH_MESSAGES[Math.floor(Math.random() * DEATH_MESSAGES.length)];
-            const pod = Math.floor(Math.random() * 9000) + 1000;
-            const sector = String.fromCharCode(65 + Math.floor(Math.random() * 8)) + Math.floor(Math.random() * 9 + 1);
-            return msg.replace('{pod}', pod).replace('{sector}', sector).replace('{count}', deaths);
+        function getNextPassengerDeath() {
+            const idx = gameState.passengerQueue[gameState.passengerIndex];
+            gameState.passengerIndex++;
+            // Wrap around if exhausted (unlikely with 1200+ passengers)
+            if (gameState.passengerIndex >= gameState.passengerQueue.length) {
+                gameState.passengerIndex = 0;
+            }
+            const p = PASSENGER_DATABASE[idx];
+            return `${p.name} (${p.age}), ${p.specialization} - Pod failure`;
         }
 
         // Add entry to cryo-log
@@ -2622,7 +4167,9 @@
             gameState.power.total = 5;
             gameState.power.maxPower = 5;
             gameState.power.allocated = { stasis: 0, thrusters: 0, shield: 0, drones: 0 };
-            gameState.survivors = 1347;
+
+            // Reinitialize stasis grid with new random survivors (1200-1500)
+            initStasisGrid();
             gameState.systems.reactor.integrity = 20;
             gameState.systems.reactor.maxIntegrity = 20;
             gameState.systems.stasis.integrity = 20;
@@ -2660,6 +4207,7 @@
             gameState.lastDeaths = 0;
             gameState.fractionalDeaths = 0;
             gameState.gameTime = { minute: 0, hour: 0, day: 17, month: 9, year: 3326 };
+            gameState.gameSpeed = 1;
 
             // Reset UI
             els.gameClock.textContent = formatGameTime();
@@ -2683,12 +4231,21 @@
             els.reactorBtn.innerHTML = 'REACTOR<br>OFFLINE';
             els.introProgress.textContent = '';
 
+            // Clear dying colonists effect and reset canvas contexts
+            dyingColonists.clear();
+            stasisCtx = null;
+            offscreenCanvas = null;
+            offscreenCtx = null;
+            renderPending = false;
+
             // Restart the story sequence
-            initArkPodGrid();
+            initStasisGrid();
             startStorySequence();
             els.cryoLog.innerHTML = '';
 
             updateUI();
+            updateSpeedUI();
+            setGameSpeed(1);
         }
 
         // Helper to set integrity bar color
@@ -3212,11 +4769,13 @@
             gameState.fractionalDeaths -= deaths;
 
             gameState.lastDeaths = deaths;
-            gameState.survivors = Math.max(0, gameState.survivors - deaths);
 
-            // Add to cryo-log on significant deaths
-            if (deaths > 0 && Math.random() < 0.3) { // 30% chance per tick with deaths
-                addCryoLogEntry(generateDeathMessage(deaths));
+            // Kill individual colonists and update visual
+            if (deaths > 0) {
+                killColonists(deaths);
+
+                // Add passenger death record to cryo-log (one per tick)
+                addCryoLogEntry(getNextPassengerDeath());
             }
 
             // Check for game over
@@ -3331,9 +4890,10 @@
 
         // Start/Pause
         els.startPause.addEventListener('click', () => {
-            if (gameState.survivors <= 0) return;
+            if (gameState.survivors <= 0 || gameState.gameOver) return;
             gameState.paused = !gameState.paused;
             els.startPause.textContent = gameState.paused ? 'START' : 'PAUSE';
+            updateSpeedUI();
         });
 
         // Research modal
@@ -3464,17 +5024,117 @@
         // Restart button
         els.restartBtn.addEventListener('click', restartGame);
 
+        // Speed control functions
+        const BASE_TICK_INTERVAL = 3000; // Base interval at 1x speed (3 seconds)
+
+        function setGameSpeed(speed) {
+            gameState.gameSpeed = speed;
+
+            // Clear existing interval
+            if (gameState.tickInterval) {
+                clearInterval(gameState.tickInterval);
+            }
+
+            // Set up new interval based on speed (faster speed = shorter interval)
+            const interval = speed > 0 ? BASE_TICK_INTERVAL / speed : BASE_TICK_INTERVAL;
+            gameState.tickInterval = setInterval(gameTick, interval);
+
+            // Unpause if we set a speed > 0
+            if (speed > 0 && gameState.paused && !gameState.gameOver) {
+                gameState.paused = false;
+                els.startPause.textContent = 'PAUSE';
+            }
+
+            updateSpeedUI();
+        }
+
+        function updateSpeedUI() {
+            const speed = gameState.gameSpeed;
+            const paused = gameState.paused;
+
+            // Remove active class from all speed buttons
+            els.speedPause.classList.remove('active', 'paused');
+            els.speedSlow.classList.remove('active');
+            els.speedNormal.classList.remove('active');
+            els.speedFast.classList.remove('active');
+            els.speedVeryFast.classList.remove('active');
+
+            // Set active state
+            if (paused) {
+                els.speedPause.classList.add('active', 'paused');
+                els.speedIndicator.textContent = 'PAUSED';
+                els.speedIndicator.classList.add('paused');
+            } else {
+                els.speedIndicator.classList.remove('paused');
+                if (speed === 0.5) {
+                    els.speedSlow.classList.add('active');
+                    els.speedIndicator.textContent = '½x';
+                } else if (speed === 1) {
+                    els.speedNormal.classList.add('active');
+                    els.speedIndicator.textContent = '1x';
+                } else if (speed === 2) {
+                    els.speedFast.classList.add('active');
+                    els.speedIndicator.textContent = '2x';
+                } else if (speed === 4) {
+                    els.speedVeryFast.classList.add('active');
+                    els.speedIndicator.textContent = '4x';
+                }
+            }
+        }
+
+        // Speed button event listeners
+        els.speedPause.addEventListener('click', () => {
+            if (!gameState.gameOver) {
+                gameState.paused = true;
+                els.startPause.textContent = 'START';
+                updateSpeedUI();
+            }
+        });
+
+        els.speedSlow.addEventListener('click', () => {
+            if (!gameState.gameOver) {
+                gameState.paused = false;
+                els.startPause.textContent = 'PAUSE';
+                setGameSpeed(0.5);
+            }
+        });
+
+        els.speedNormal.addEventListener('click', () => {
+            if (!gameState.gameOver) {
+                gameState.paused = false;
+                els.startPause.textContent = 'PAUSE';
+                setGameSpeed(1);
+            }
+        });
+
+        els.speedFast.addEventListener('click', () => {
+            if (!gameState.gameOver) {
+                gameState.paused = false;
+                els.startPause.textContent = 'PAUSE';
+                setGameSpeed(2);
+            }
+        });
+
+        els.speedVeryFast.addEventListener('click', () => {
+            if (!gameState.gameOver) {
+                gameState.paused = false;
+                els.startPause.textContent = 'PAUSE';
+                setGameSpeed(4);
+            }
+        });
+
         // Initialize
         // Initialize Ark Ship pod grid
-        initArkPodGrid();
+        initStasisGrid();
 
         updateUI();
+        updateSpeedUI();
 
         // Start the intro story sequence
         startStorySequence();
 
-        // Game loop - runs every 3 seconds (1 tick = 10 minutes of game time)
-        setInterval(gameTick, 3000);
+        // Start game loop with default speed
+        setGameSpeed(1);
     </script>
 </body>
 </html>
