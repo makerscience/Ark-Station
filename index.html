@@ -125,7 +125,7 @@
             margin-bottom: 15px;
             border-radius: 4px;
         }
-        .panel.locked, .section.locked {
+        .panel.locked, .section.locked, .drone-target.locked, .target-btn.locked {
             display: none;
         }
         .panel-title {
@@ -2149,14 +2149,14 @@
                                 </div>
                             </div>
                             <div class="drone-target-row">
-                                <div class="drone-target" id="droneTargetThrusters">
+                                <div class="drone-target locked" id="droneTargetThrusters">
                                     <div class="target-icon thruster-icon">
                                         <div class="thruster-icon-body"></div>
                                         <div class="thruster-icon-flame"></div>
                                     </div>
                                     <div class="target-label">Thrusters</div>
                                 </div>
-                                <div class="drone-target" id="droneTargetShield">
+                                <div class="drone-target locked" id="droneTargetShield">
                                     <div class="target-icon shield-icon">
                                         <div class="shield-icon-arc"></div>
                                         <div class="shield-icon-arc"></div>
@@ -2178,8 +2178,8 @@
                         <div class="target-buttons">
                             <button class="target-btn active" id="targetReactor">Reactor</button>
                             <button class="target-btn" id="targetStasis">Stasis</button>
-                            <button class="target-btn" id="targetThrusters">Thrusters</button>
-                            <button class="target-btn" id="targetShield">Shield</button>
+                            <button class="target-btn locked" id="targetThrusters">Thrusters</button>
+                            <button class="target-btn locked" id="targetShield">Shield</button>
                         </div>
                         <div class="power-controls">
                             <button class="power-btn" id="dronesMinus">−</button>
@@ -2191,7 +2191,7 @@
 
                 <div class="button-row">
                     <button class="control-btn" id="startPause">START</button>
-                    <button class="control-btn research-btn" id="researchBtn">RESEARCH</button>
+                    <button class="control-btn research-btn" id="researchBtn">HACK SYSTEMS</button>
                 </div>
                 <div class="researching-indicator" id="researchingIndicator"></div>
             </div>
@@ -2317,9 +2317,9 @@
     <!-- Research Modal -->
     <div class="modal-overlay" id="researchModal">
         <div class="modal">
-            <div class="modal-title">COMMAND AUTHORIZATION</div>
+            <div class="modal-title">SYSTEM ACCESS</div>
             <div class="command-level">
-                <div class="stat-label">Current Level</div>
+                <div class="stat-label">Access Level</div>
                 <div class="level" id="commandLevel">1</div>
             </div>
             <div class="upgrade-list" id="upgradeList"></div>
@@ -3759,7 +3759,12 @@
             orbitalPanel: document.getElementById('orbitalPanel'),
             thrusterSection: document.getElementById('thrusterSection'),
             solarPanel: document.getElementById('solarPanel'),
-            shieldSection: document.getElementById('shieldSection')
+            shieldSection: document.getElementById('shieldSection'),
+            // Lockable drone targets
+            droneTargetThrusters: document.getElementById('droneTargetThrusters'),
+            droneTargetShield: document.getElementById('droneTargetShield'),
+            targetThrustersBtn: document.getElementById('targetThrusters'),
+            targetShieldBtn: document.getElementById('targetShield')
         };
 
         // Get total allocated power
@@ -4069,10 +4074,9 @@
             // Render the stasis canvas
             renderStasisCanvas();
 
-            // Update power fill bar based on stasis power allocation
+            // Update power fill bar based on stasis power allocation (max is 5)
             const stasisPower = gameState.power.allocated.stasis;
-            const maxPower = gameState.power.maxPower;
-            const powerPercent = maxPower > 0 ? (stasisPower / maxPower) * 100 : 0;
+            const powerPercent = (stasisPower / MAX_STASIS_POWER) * 100;
             els.arkPowerFill.style.width = powerPercent + '%';
 
             // Update engine glow based on power allocation
@@ -4329,7 +4333,7 @@
                         <div class="upgrade-cost">${upgrade.cost}s</div>
                         ${isPurchased ? '<span style="color:#00ff88">✓</span>' :
                           !isAvailable ? `<span style="color:#666">Locked</span>` :
-                          `<button class="upgrade-btn" onclick="startResearch('${upgrade.id}')">RESEARCH</button>`}
+                          `<button class="upgrade-btn" onclick="startResearch('${upgrade.id}')">HACK</button>`}
                     </div>`;
                 }
                 html += '</div>';
@@ -4351,6 +4355,7 @@
             if (gameState.paused) {
                 gameState.paused = false;
                 els.startPause.textContent = 'PAUSE';
+                updateSpeedUI();
             }
         }
 
@@ -4527,12 +4532,12 @@
             setIntegrityColor(els.stasisIntegrity, stasisFillPercent);
 
             // Calculate and display projected death rate (for when paused)
-            const powerFactor = 1 - (stasis.powerAllocated / MAX_STASIS_POWER) * 0.7;
-            const stasisEffectiveness = stasis.integrity / 20;
-            const integrityFactor = 1 - Math.min(1, stasisEffectiveness * 0.1);
-            // Perfect stasis: 0 deaths when max power (5) and integrity >= 90%
-            const isPerfectStasis = stasis.powerAllocated >= MAX_STASIS_POWER && stasis.integrity >= 90;
-            const projectedDPS = isPerfectStasis ? 0 : 0.741 * powerFactor * integrityFactor * 5;
+            // Smooth curve: effectiveness = (power/5) * min(1, integrity/95)
+            // At 5 power + 95% integrity = 0 deaths
+            const powerContrib = stasis.powerAllocated / MAX_STASIS_POWER;
+            const integrityContrib = Math.min(1, stasis.integrity / 95);
+            const lifeSupport = powerContrib * integrityContrib;
+            const projectedDPS = 0.3705 * (1 - lifeSupport) * 5;
             gameState.deathsPerSecond = projectedDPS;
 
             // Thrusters system
@@ -4627,7 +4632,7 @@
             const research = gameState.research;
             if (research.inProgress) {
                 const upgrade = UPGRADES.find(u => u.id === research.inProgress);
-                els.researchingIndicator.textContent = `⟳ Researching ${upgrade.name}... ${research.timeRemaining}s`;
+                els.researchingIndicator.textContent = `⟳ Hacking ${upgrade.name}... ${Math.ceil(research.timeRemaining)}s`;
             } else {
                 els.researchingIndicator.textContent = '';
             }
@@ -4656,6 +4661,12 @@
             els.shieldSection.classList.toggle('locked', !unlocked.shield);
             els.orbitalPanel.classList.toggle('locked', !unlocked.orbital);
             els.thrusterSection.classList.toggle('locked', !unlocked.thrusters);
+
+            // Drone repair targets visibility (only show targets for unlocked systems)
+            els.droneTargetThrusters.classList.toggle('locked', !unlocked.thrusters);
+            els.droneTargetShield.classList.toggle('locked', !unlocked.shield);
+            els.targetThrustersBtn.classList.toggle('locked', !unlocked.thrusters);
+            els.targetShieldBtn.classList.toggle('locked', !unlocked.shield);
 
             // Update Ark Ship visual
             updateArkShipVisual();
@@ -4711,9 +4722,9 @@
             const solar = gameState.solar;
             const research = gameState.research;
 
-            // Process research
+            // Process research (decrement 1.0 per tick = 5 per second at 5 ticks/sec)
             if (research.inProgress) {
-                research.timeRemaining--;
+                research.timeRemaining -= 1.0;
                 if (research.timeRemaining <= 0) {
                     completeResearch();
                 }
@@ -4837,19 +4848,15 @@
             }
 
             // Calculate death rate
-            // Base death rate modified by power and integrity
-            // More power = fewer deaths, higher integrity = fewer deaths
-            const powerFactor = 1 - (stasis.powerAllocated / MAX_STASIS_POWER) * 0.7; // 0-70% reduction from power (capped at 5)
-            // Scale with integrity ratio (higher = lower death rate)
-            const stasisEffectiveness = stasis.integrity / 20; // 1.0 at 20%, 5.0 at 100%
-            const integrityFactor = 1 - Math.min(1, stasisEffectiveness * 0.1); // up to 50% reduction
+            // Smooth curve: effectiveness = (power/5) * min(1, integrity/95)
+            // At 5 power + 95% integrity = 0 deaths
+            const powerContrib = stasis.powerAllocated / MAX_STASIS_POWER;
+            const integrityContrib = Math.min(1, stasis.integrity / 95);
+            const lifeSupport = powerContrib * integrityContrib;
 
-            // Perfect stasis: 0 deaths when max power (5) and integrity >= 90%
-            const isPerfectStasis = stasis.powerAllocated >= MAX_STASIS_POWER && stasis.integrity >= 90;
-
-            // Base deaths per tick (0.741 means 1 death/sec at 5 power, 20% integrity with 5 ticks/sec)
-            const baseDeaths = 0.741;
-            const fractionalDeaths = isPerfectStasis ? 0 : baseDeaths * powerFactor * integrityFactor;
+            // Base deaths per tick (0.3705 at 0% effectiveness = ~1.85 deaths/sec)
+            const baseDeaths = 0.3705;
+            const fractionalDeaths = baseDeaths * (1 - lifeSupport);
 
             // Store deaths per second for UI display (fractionalDeaths * 5 ticks/sec)
             gameState.deathsPerSecond = fractionalDeaths * 5;
