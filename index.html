@@ -3601,7 +3601,7 @@
                 stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
                 thrusters: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
                 shield: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
-                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.00887 }
+                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.01774 }
             },
             orbital: {
                 distance: 100, // 100 = far, 66 = near, 33 = critical, 0 = destruction
@@ -4770,8 +4770,8 @@
                 solar.lastDamage = flareDamage;
             }
 
-            // Reactor decays (0.00111% per tick base at 5 ticks/sec, affected by radiation and flares)
-            reactor.integrity = Math.max(0, reactor.integrity - 0.00111 * radiationMult - flareDamage);
+            // Reactor decays (0.00222% per tick base at 5 ticks/sec, affected by radiation and flares)
+            reactor.integrity = Math.max(0, reactor.integrity - 0.00222 * radiationMult - flareDamage);
 
             // Calculate total power based on reactor integrity
             // Every 20% integrity = 5 base power, plus bonus from upgrades
@@ -4809,25 +4809,25 @@
             }
             gameState.power.total = newPower;
 
-            // Stasis integrity decays (0.00167% per tick base at 5 ticks/sec, affected by radiation and flares)
-            stasis.integrity = Math.max(0, stasis.integrity - 0.00167 * radiationMult - flareDamage);
+            // Stasis integrity decays (0.00334% per tick base at 5 ticks/sec, affected by radiation and flares)
+            stasis.integrity = Math.max(0, stasis.integrity - 0.00334 * radiationMult - flareDamage);
 
-            // Thrusters decay (0.00078% per tick base at 5 ticks/sec, affected by radiation and flares)
-            thrusters.integrity = Math.max(0, thrusters.integrity - 0.00078 * radiationMult - flareDamage);
+            // Thrusters decay (0.00156% per tick base at 5 ticks/sec, affected by radiation and flares)
+            thrusters.integrity = Math.max(0, thrusters.integrity - 0.00156 * radiationMult - flareDamage);
 
-            // Shield decay (0.00078% per tick base at 5 ticks/sec, affected by radiation and takes extra flare damage)
+            // Shield decay (0.00156% per tick base at 5 ticks/sec, affected by radiation and takes extra flare damage)
             const shieldFlareDamage = (research.commandLevel >= 2 && solar.flareActive) ? 0.0222 : 0; // Shield takes extra damage during flares
-            shield.integrity = Math.max(0, shield.integrity - 0.00078 * radiationMult - shieldFlareDamage);
+            shield.integrity = Math.max(0, shield.integrity - 0.00156 * radiationMult - shieldFlareDamage);
 
             // Orbital decay calculation - only active after CA Level 3
             if (research.commandLevel >= 3) {
-                // Base decay of 0.00167 per tick at 5 ticks/sec, reduced by thruster power and integrity
+                // Base decay of 0.00334 per tick at 5 ticks/sec, reduced by thruster power and integrity
                 // Scale thrust with integrity (every 20% = 1x effectiveness)
                 const thrusterEffectiveness = thrusters.integrity / 20;
-                const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.000667;
+                const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.001334;
                 // At 20%: 1 * power * 0.000667 per power
                 // At 100%: 5 * power * 0.000667 per power (5x stronger)
-                orbital.decayRate = Math.max(0, 0.00167 - thrusterEffect);
+                orbital.decayRate = Math.max(0, 0.00334 - thrusterEffect);
                 orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
             } else {
                 orbital.decayRate = 0;
