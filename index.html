@@ -4455,19 +4455,19 @@
             if (solar.flareActive) {
                 els.solarStatus.textContent = '☀ FLARE ACTIVE';
                 els.solarStatus.className = 'forecast-status active';
-                els.nextFlare.textContent = solar.flareDuration + 's left';
+                els.nextFlare.textContent = Math.ceil(solar.flareDuration / 5) + 's left';
             } else if (solar.nextFlare <= 5) {
                 els.solarStatus.textContent = 'IMMINENT';
                 els.solarStatus.className = 'forecast-status imminent';
-                els.nextFlare.textContent = solar.nextFlare + 's';
+                els.nextFlare.textContent = Math.ceil(solar.nextFlare / 5) + 's';
             } else if (solar.nextFlare <= 15) {
                 els.solarStatus.textContent = 'WARNING';
                 els.solarStatus.className = 'forecast-status warning';
-                els.nextFlare.textContent = solar.nextFlare + 's';
+                els.nextFlare.textContent = Math.ceil(solar.nextFlare / 5) + 's';
             } else {
                 els.solarStatus.textContent = 'CLEAR';
                 els.solarStatus.className = 'forecast-status clear';
-                els.nextFlare.textContent = solar.nextFlare + 's';
+                els.nextFlare.textContent = Math.ceil(solar.nextFlare / 5) + 's';
             }
 
             // Update solar graphic based on status
@@ -4632,7 +4632,7 @@
             const research = gameState.research;
             if (research.inProgress) {
                 const upgrade = UPGRADES.find(u => u.id === research.inProgress);
-                els.researchingIndicator.textContent = `⟳ Hacking ${upgrade.name}... ${Math.ceil(research.timeRemaining)}s`;
+                els.researchingIndicator.textContent = `⟳ Hacking ${upgrade.name}... ${Math.ceil(research.timeRemaining / 5)}s`;
             } else {
                 els.researchingIndicator.textContent = '';
             }
