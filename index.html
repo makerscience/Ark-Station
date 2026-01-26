@@ -2335,46 +2335,46 @@
         // Command Authorization upgrades gate each tier
         const UPGRADES = [
             // Level 1 -> 2 gate
-            { id: 'auth_2', name: 'Command Authorization 2', desc: 'Unlock Level 2 system upgrades', cost: 5, level: 1, unlocksLevel: 2, isGate: true },
+            { id: 'auth_2', name: 'Command Authorization 2', desc: 'Unlock Level 2 system upgrades', cost: 75, level: 1, unlocksLevel: 2, isGate: true },
 
             // Level 2 upgrades (require auth_2)
-            { id: 'reactor_cap_1', name: 'Reactor Reinforcement I', desc: 'Unlock reactor potential (60% max integrity)', cost: 10, level: 2, system: 'reactor', capBonus: 40 },
-            { id: 'stasis_cap_1', name: 'Stasis Hardening I', desc: 'Unlock stasis potential (60% max integrity)', cost: 10, level: 2, system: 'stasis', capBonus: 40 },
+            { id: 'reactor_cap_1', name: 'Reactor Reinforcement I', desc: 'Unlock reactor potential (60% max integrity)', cost: 150, level: 2, system: 'reactor', capBonus: 40 },
+            { id: 'stasis_cap_1', name: 'Stasis Hardening I', desc: 'Unlock stasis potential (60% max integrity)', cost: 150, level: 2, system: 'stasis', capBonus: 40 },
 
             // Level 2 -> 3 gate
-            { id: 'auth_3', name: 'Command Authorization 3', desc: 'Unlock Level 3 system upgrades', cost: 10, level: 2, unlocksLevel: 3, isGate: true },
+            { id: 'auth_3', name: 'Command Authorization 3', desc: 'Unlock Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
 
             // Level 3 upgrades (require auth_3)
-            { id: 'power_1', name: 'Reactor Upgrade I', desc: 'Increase max power output to 6', cost: 15, level: 3, powerBonus: 1 },
-            { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (60% max integrity)', cost: 12, level: 3, system: 'thrusters', capBonus: 40 },
-            { id: 'shield_cap_1', name: 'Shield Reinforcement I', desc: 'Unlock shield potential (60% max integrity)', cost: 12, level: 3, system: 'shield', capBonus: 40 },
+            { id: 'power_1', name: 'Reactor Upgrade I', desc: 'Increase max power output to 6', cost: 225, level: 3, powerBonus: 1 },
+            { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (60% max integrity)', cost: 180, level: 3, system: 'thrusters', capBonus: 40 },
+            { id: 'shield_cap_1', name: 'Shield Reinforcement I', desc: 'Unlock shield potential (60% max integrity)', cost: 180, level: 3, system: 'shield', capBonus: 40 },
 
             // Level 3 -> 4 gate
-            { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 15, level: 3, unlocksLevel: 4, isGate: true },
+            { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 225, level: 3, unlocksLevel: 4, isGate: true },
 
             // Level 4 upgrades (require auth_4)
-            { id: 'reactor_cap_2', name: 'Reactor Reinforcement II', desc: 'Maximize reactor potential (100% max integrity)', cost: 20, level: 4, system: 'reactor', capBonus: 40 },
-            { id: 'stasis_cap_2', name: 'Stasis Hardening II', desc: 'Maximize stasis potential (100% max integrity)', cost: 20, level: 4, system: 'stasis', capBonus: 40 },
+            { id: 'reactor_cap_2', name: 'Reactor Reinforcement II', desc: 'Maximize reactor potential (100% max integrity)', cost: 300, level: 4, system: 'reactor', capBonus: 40 },
+            { id: 'stasis_cap_2', name: 'Stasis Hardening II', desc: 'Maximize stasis potential (100% max integrity)', cost: 300, level: 4, system: 'stasis', capBonus: 40 },
 
             // Level 4 -> 5 gate
-            { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 20, level: 4, unlocksLevel: 5, isGate: true },
+            { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 300, level: 4, unlocksLevel: 5, isGate: true },
 
             // Level 5 upgrades (require auth_5)
-            { id: 'power_2', name: 'Reactor Upgrade II', desc: 'Increase max power output to 7', cost: 25, level: 5, powerBonus: 1 },
-            { id: 'repair_boost', name: 'Drone Efficiency', desc: 'Drones repair 50% faster', cost: 20, level: 5, repairBoost: 0.067 },
+            { id: 'power_2', name: 'Reactor Upgrade II', desc: 'Increase max power output to 7', cost: 375, level: 5, powerBonus: 1 },
+            { id: 'repair_boost', name: 'Drone Efficiency', desc: 'Drones repair 50% faster', cost: 300, level: 5, repairBoost: 0.00447 },
 
             // Level 5 -> 6 gate
-            { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 25, level: 5, unlocksLevel: 6, isGate: true },
+            { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 375, level: 5, unlocksLevel: 6, isGate: true },
 
             // Level 6 upgrades (require auth_6)
-            { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Maximize thruster potential (100% max integrity)', cost: 25, level: 6, system: 'thrusters', capBonus: 40 },
-            { id: 'shield_cap_2', name: 'Shield Reinforcement II', desc: 'Maximize shield potential (100% max integrity)', cost: 25, level: 6, system: 'shield', capBonus: 40 },
+            { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Maximize thruster potential (100% max integrity)', cost: 375, level: 6, system: 'thrusters', capBonus: 40 },
+            { id: 'shield_cap_2', name: 'Shield Reinforcement II', desc: 'Maximize shield potential (100% max integrity)', cost: 375, level: 6, system: 'shield', capBonus: 40 },
 
             // Level 6 -> 7 gate
-            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 30, level: 6, unlocksLevel: 7, isGate: true },
+            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 450, level: 6, unlocksLevel: 7, isGate: true },
 
             // Level 7 upgrade (require auth_7)
-            { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 30, level: 7, unlocksFinal: true }
+            { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 450, level: 7, unlocksFinal: true }
         ];
 
         // Stasis grid constants
@@ -2382,6 +2382,7 @@
         const STASIS_ROWS = 50;      // Bay rows
         const CELLS_PER_BAY = 10;    // Colonists per bay (2x5 arrangement)
         const TOTAL_COLONISTS = STASIS_COLS * STASIS_ROWS * CELLS_PER_BAY; // 10,000
+        const MAX_STASIS_POWER = 5;  // Max power that can be allocated to stasis
 
         // Passenger death records database
         const PASSENGER_DATABASE = [
@@ -3586,14 +3587,14 @@
                 stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
                 thrusters: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
                 shield: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
-                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.133 }
+                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.00887 }
             },
             orbital: {
                 distance: 100, // 100 = far, 66 = near, 33 = critical, 0 = destruction
                 decayRate: 0
             },
             solar: {
-                nextFlare: 90 + Math.floor(Math.random() * 630), // 90-720 ticks (1.5min to 12min)
+                nextFlare: 1350 + Math.floor(Math.random() * 9450), // 1350-10800 ticks (4.5-36 min at 5 ticks/sec)
                 flareActive: false,
                 flareDuration: 0,
                 lastDamage: 0
@@ -3620,6 +3621,7 @@
             victory: false,
             paused: true,
             lastDeaths: 0,
+            deathsPerSecond: 0,
             gameTime: {
                 minute: 0,    // Start at 00:00 (midnight)
                 hour: 0,
@@ -3631,18 +3633,6 @@
             gameSpeed: 1,         // Speed multiplier: 0.5, 1, 2, 4
             tickInterval: null    // Reference to the game tick interval
         };
-
-        // Death messages for cryo-log
-        const DEATH_MESSAGES = [
-            "Pod #{pod} life support failed",
-            "Cryo-loss in sector {sector}",
-            "Emergency thaw failure: Pod #{pod}",
-            "Cascade failure: {count} pods offline",
-            "Stasis breach in bay {sector}",
-            "Power fluctuation: Pod #{pod} lost",
-            "Thermal runaway: Sector {sector}",
-            "Life signs terminated: Pod #{pod}"
-        ];
 
         // DOM Elements
         const els = {
@@ -4183,10 +4173,10 @@
             gameState.systems.shield.powerAllocated = 0;
             gameState.systems.drones.powerAllocated = 0;
             gameState.systems.drones.target = 'reactor';
-            gameState.systems.drones.repairRate = 0.133;
+            gameState.systems.drones.repairRate = 0.00887;
             gameState.orbital.distance = 100;
             gameState.orbital.decayRate = 0;
-            gameState.solar.nextFlare = 90 + Math.floor(Math.random() * 630);
+            gameState.solar.nextFlare = 1350 + Math.floor(Math.random() * 9450);
             gameState.solar.flareActive = false;
             gameState.solar.flareDuration = 0;
             gameState.solar.lastDamage = 0;
@@ -4205,6 +4195,7 @@
             gameState.victory = false;
             gameState.paused = true;
             gameState.lastDeaths = 0;
+            gameState.deathsPerSecond = 0;
             gameState.fractionalDeaths = 0;
             gameState.gameTime = { minute: 0, hour: 0, day: 17, month: 9, year: 3326 };
             gameState.gameSpeed = 1;
@@ -4467,6 +4458,15 @@
             els.stasisIntegrityText.textContent = Math.round(stasis.integrity) + '%';
             setIntegrityColor(els.stasisIntegrity, stasisFillPercent);
 
+            // Calculate and display projected death rate (for when paused)
+            const powerFactor = 1 - (stasis.powerAllocated / MAX_STASIS_POWER) * 0.7;
+            const stasisEffectiveness = stasis.integrity / 20;
+            const integrityFactor = 1 - Math.min(1, stasisEffectiveness * 0.1);
+            // Perfect stasis: 0 deaths when max power (5) and integrity >= 90%
+            const isPerfectStasis = stasis.powerAllocated >= MAX_STASIS_POWER && stasis.integrity >= 90;
+            const projectedDPS = isPerfectStasis ? 0 : 0.741 * powerFactor * integrityFactor * 5;
+            gameState.deathsPerSecond = projectedDPS;
+
             // Thrusters system
             const thrusters = gameState.systems.thrusters;
             els.thrustersPower.textContent = thrusters.powerAllocated;
@@ -4537,7 +4537,7 @@
 
             // Update button states
             els.stasisMinus.disabled = stasis.powerAllocated <= 0;
-            els.stasisPlus.disabled = totalAllocated >= gameState.power.total;
+            els.stasisPlus.disabled = totalAllocated >= gameState.power.total || stasis.powerAllocated >= MAX_STASIS_POWER;
             els.thrustersMinus.disabled = thrusters.powerAllocated <= 0;
             els.thrustersPlus.disabled = totalAllocated >= gameState.power.total;
             els.shieldMinus.disabled = shield.powerAllocated <= 0;
@@ -4545,11 +4545,14 @@
             els.dronesMinus.disabled = drones.powerAllocated <= 0;
             els.dronesPlus.disabled = totalAllocated >= gameState.power.total;
 
-            // Death rate display
-            if (!gameState.paused && gameState.lastDeaths > 0) {
-                els.deathRate.textContent = `−${gameState.lastDeaths} per cycle`;
+            // Death rate display (always visible, shows deaths per second)
+            const dps = gameState.deathsPerSecond;
+            if (dps >= 0.1) {
+                els.deathRate.textContent = `−${dps.toFixed(1)}/sec`;
+            } else if (dps > 0) {
+                els.deathRate.textContent = `−${dps.toFixed(2)}/sec`;
             } else {
-                els.deathRate.textContent = '';
+                els.deathRate.textContent = '−0.0/sec';
             }
 
             // Research indicator
@@ -4645,14 +4648,14 @@
                 solar.flareDuration--;
                 if (solar.flareDuration <= 0) {
                     solar.flareActive = false;
-                    solar.nextFlare = 30 + Math.floor(Math.random() * 210); // 30-240 ticks (30s to 4min)
+                    solar.nextFlare = 450 + Math.floor(Math.random() * 3150); // 450-3600 ticks (1.5-12 min at 5 ticks/sec)
                     solar.lastDamage = 0;
                 }
             } else {
                 solar.nextFlare--;
                 if (solar.nextFlare <= 0) {
                     solar.flareActive = true;
-                    solar.flareDuration = 5 + Math.floor(Math.random() * 5); // 5-10 ticks duration
+                    solar.flareDuration = 75 + Math.floor(Math.random() * 75); // 75-150 ticks duration (15-30 sec at 5 ticks/sec)
                 }
             }
 
@@ -4674,12 +4677,12 @@
             // Solar flare damage (affects all systems)
             let flareDamage = 0;
             if (solar.flareActive) {
-                flareDamage = 0.5 * (1 - flareReduction); // Base 0.5% damage per tick (3%/6), reduced by shield
+                flareDamage = 0.0333 * (1 - flareReduction); // Base 0.0333% damage per tick, reduced by shield
                 solar.lastDamage = flareDamage;
             }
 
-            // Reactor decays (0.0167% per tick base = 0.1%/6, affected by radiation and flares)
-            reactor.integrity = Math.max(0, reactor.integrity - 0.0167 * radiationMult - flareDamage);
+            // Reactor decays (0.00111% per tick base at 5 ticks/sec, affected by radiation and flares)
+            reactor.integrity = Math.max(0, reactor.integrity - 0.00111 * radiationMult - flareDamage);
 
             // Calculate total power based on reactor integrity
             // Every 20% integrity = 5 base power, plus bonus from upgrades
@@ -4717,24 +4720,24 @@
             }
             gameState.power.total = newPower;
 
-            // Stasis integrity decays (0.025% per tick base = 0.15%/6, affected by radiation and flares)
-            stasis.integrity = Math.max(0, stasis.integrity - 0.025 * radiationMult - flareDamage);
+            // Stasis integrity decays (0.00167% per tick base at 5 ticks/sec, affected by radiation and flares)
+            stasis.integrity = Math.max(0, stasis.integrity - 0.00167 * radiationMult - flareDamage);
 
-            // Thrusters decay (0.0117% per tick base = 0.07%/6, affected by radiation and flares)
-            thrusters.integrity = Math.max(0, thrusters.integrity - 0.0117 * radiationMult - flareDamage);
+            // Thrusters decay (0.00078% per tick base at 5 ticks/sec, affected by radiation and flares)
+            thrusters.integrity = Math.max(0, thrusters.integrity - 0.00078 * radiationMult - flareDamage);
 
-            // Shield decay (0.0117% per tick base = 0.07%/6, affected by radiation and takes extra flare damage)
-            const shieldFlareDamage = solar.flareActive ? 0.333 : 0; // Shield takes extra damage during flares (2%/6)
-            shield.integrity = Math.max(0, shield.integrity - 0.0117 * radiationMult - shieldFlareDamage);
+            // Shield decay (0.00078% per tick base at 5 ticks/sec, affected by radiation and takes extra flare damage)
+            const shieldFlareDamage = solar.flareActive ? 0.0222 : 0; // Shield takes extra damage during flares
+            shield.integrity = Math.max(0, shield.integrity - 0.00078 * radiationMult - shieldFlareDamage);
 
             // Orbital decay calculation
-            // Base decay of 0.025 per tick (0.15/6), reduced by thruster power and integrity
+            // Base decay of 0.00167 per tick at 5 ticks/sec, reduced by thruster power and integrity
             // Scale thrust with integrity (every 20% = 1x effectiveness)
             const thrusterEffectiveness = thrusters.integrity / 20;
-            const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.01;
-            // At 20%: 1 * power * 0.01 = 0.01 per power (0.06/6)
-            // At 100%: 5 * power * 0.01 = 0.05 per power (5x stronger)
-            orbital.decayRate = Math.max(0, 0.025 - thrusterEffect);
+            const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.000667;
+            // At 20%: 1 * power * 0.000667 per power
+            // At 100%: 5 * power * 0.000667 per power (5x stronger)
+            orbital.decayRate = Math.max(0, 0.00167 - thrusterEffect);
             orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
 
             // Repair drones: restore integrity to target system
@@ -4754,14 +4757,20 @@
             // Calculate death rate
             // Base death rate modified by power and integrity
             // More power = fewer deaths, higher integrity = fewer deaths
-            const powerFactor = 1 - (stasis.powerAllocated / gameState.power.maxPower) * 0.7; // 0-70% reduction from power
+            const powerFactor = 1 - (stasis.powerAllocated / MAX_STASIS_POWER) * 0.7; // 0-70% reduction from power (capped at 5)
             // Scale with integrity ratio (higher = lower death rate)
             const stasisEffectiveness = stasis.integrity / 20; // 1.0 at 20%, 5.0 at 100%
             const integrityFactor = 1 - Math.min(1, stasisEffectiveness * 0.1); // up to 50% reduction
 
-            // Base deaths per tick, modified by factors (0.833 = 5/6 for 6x slower ticks)
-            const baseDeaths = 0.833;
-            const fractionalDeaths = baseDeaths * powerFactor * integrityFactor;
+            // Perfect stasis: 0 deaths when max power (5) and integrity >= 90%
+            const isPerfectStasis = stasis.powerAllocated >= MAX_STASIS_POWER && stasis.integrity >= 90;
+
+            // Base deaths per tick (0.741 means 1 death/sec at 5 power, 20% integrity with 5 ticks/sec)
+            const baseDeaths = 0.741;
+            const fractionalDeaths = isPerfectStasis ? 0 : baseDeaths * powerFactor * integrityFactor;
+
+            // Store deaths per second for UI display (fractionalDeaths * 5 ticks/sec)
+            gameState.deathsPerSecond = fractionalDeaths * 5;
 
             // Accumulate fractional deaths and apply when >= 1
             gameState.fractionalDeaths += fractionalDeaths;
@@ -4809,7 +4818,7 @@
         });
 
         els.stasisPlus.addEventListener('click', () => {
-            if (getTotalAllocated() < gameState.power.total) {
+            if (getTotalAllocated() < gameState.power.total && gameState.systems.stasis.powerAllocated < MAX_STASIS_POWER) {
                 gameState.systems.stasis.powerAllocated++;
                 gameState.power.allocated.stasis++;
                 updateUI();
@@ -5025,7 +5034,7 @@
         els.restartBtn.addEventListener('click', restartGame);
 
         // Speed control functions
-        const BASE_TICK_INTERVAL = 3000; // Base interval at 1x speed (3 seconds)
+        const BASE_TICK_INTERVAL = 200; // Base interval at 1x speed (200ms = 5 ticks/sec)
 
         function setGameSpeed(speed) {
             gameState.gameSpeed = speed;

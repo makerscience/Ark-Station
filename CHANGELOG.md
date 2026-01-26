@@ -6,6 +6,70 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-26 - Tick Rate Increase for Smoother Gameplay
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Tick rate increased from 3000ms to 200ms (5 ticks/second):**
+  - Game now updates 15x more frequently for smoother, more responsive feel
+  - All per-tick rates divided by 15 to maintain same real-time pacing
+  - All tick counts multiplied by 15 (research costs, flare timing)
+
+- **Decay rates adjusted (all ÷15):**
+  - Reactor: 0.0167% → 0.00111%
+  - Stasis: 0.025% → 0.00167%
+  - Thrusters: 0.0117% → 0.00078%
+  - Shield: 0.0117% → 0.00078%
+  - Orbital: 0.025 → 0.00167
+  - Thruster effect: 0.01 → 0.000667
+
+- **Combat/repair rates adjusted (all ÷15):**
+  - Base flare damage: 0.5 → 0.0333
+  - Shield flare damage: 0.333 → 0.0222
+  - Base death rate: 0.833 → 0.0556
+  - Drone repair rate: 0.133 → 0.00887
+  - Drone Efficiency upgrade: 0.067 → 0.00447
+
+- **Research costs adjusted (all ×15):**
+  - 5 → 75, 10 → 150, 12 → 180, 15 → 225, 20 → 300, 25 → 375, 30 → 450
+
+- **Solar flare timing adjusted (all ×15):**
+  - Initial flare: 90-720 → 1350-10800 ticks
+  - Post-flare cooldown: 30-240 → 450-3600 ticks
+  - Flare duration: 5-10 → 75-150 ticks
+
+#### Notes
+- Same overall game duration and balance maintained
+- UI now feels significantly more responsive
+- Game clock still advances at same real-time rate
+
+---
+
+### 2026-01-26 - Stasis Bay Death Rate Display Overhaul
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Death rate display now always visible:**
+  - Shows "−X.X/sec" format instead of occasional "−1 per cycle"
+  - Updates in real-time as power/integrity changes
+  - Displays projected rate even when paused (for planning)
+
+- **Stasis bay power capped at 5:**
+  - New constant MAX_STASIS_POWER = 5
+  - Power allocation formula now uses this cap instead of maxPower
+  - Allows for more predictable death rate scaling
+
+- **Death rate rebalanced:**
+  - Base deaths increased to 0.741 per tick (from 0.0556)
+  - At 5 power + 20% integrity = exactly 1 death/sec
+  - Gives players clearer feedback on life support effectiveness
+
+#### Notes
+- Death rate is calculated in both updateUI() and gameTick()
+- This ensures the display updates immediately when power changes
+
+---
+
 ### 2026-01-25 - Passenger Death Records Integration
 **Author:** Claude (AI Assistant)
 

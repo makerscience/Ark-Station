@@ -8,11 +8,13 @@
 2. (add more as needed)
 
 ## Next Actions
-- [ ] Review current game state and identify next development priorities
-- [ ] (add more as needed)
+- [x] Remove unused DEATH_MESSAGES constant (dead code cleanup)
+- [x] Change tick rate to 5 ticks/sec with same overall pacing
+- [ ] Test game end-to-end with new tick rate
+- [ ] Consider adding cause-of-death variety beyond "Pod failure"
 
 ## Open Loops / Blockers
-- None yet
+- None
 
 ## How to Resume in 30 Seconds
 - **Open:** `.memory/CURRENT_FOCUS.md`
@@ -30,13 +32,13 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Integrated 1200+ passenger death records from CSV into cryo-log
-- PASSENGER_DATABASE constant added with names, ages, specializations
-- Deaths now display: "Name (Age), Specialization - Pod failure"
-- Every tick with deaths shows one passenger name (100% rate, was 30%)
-- Passenger queue shuffled per game for varied order
-- Increased cryo-log max-height to 180px for longer names
-- Added word-wrap for long specialization titles
+- Changed tick rate from 3000ms to 200ms (5 ticks/second)
+- Divided all per-tick rates by 15 to maintain same real-time pacing
+- Multiplied all tick counts by 15 (solar flare timing, research costs)
+- Added MAX_STASIS_POWER cap of 5 for life support system
+- Death rate display now always visible, shows "−X.X/sec" format
+- Adjusted baseDeaths to 0.741 so 5 power + 20% integrity = 1 death/sec
+- Death rate calculated in updateUI so it updates even when paused
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`
