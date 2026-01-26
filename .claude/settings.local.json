@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Ark Station crisis management game\n\nComplete single-file HTML game featuring:\n- Integrity-based power scaling system \\(20% = 5 power, 100% = 25 power\\)\n- Four upgradeable systems: Reactor, Stasis, Thrusters, Shield\n- Research tree with Command Authorization gating\n- Orbital mechanics with Roche limit and radiation zones\n- Solar flare events with shield protection\n- Cinematic intro sequence with 6-paragraph story\n- Multiple ending conditions based on survivor count\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git branch:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge:*)",
+      "Bash(gh repo edit:*)",
+      "Bash(start \"\" \"D:\\\\projects\\\\ark-station\\\\index.html\")"
+    ]
+  }
+}
