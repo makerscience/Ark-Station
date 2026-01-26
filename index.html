@@ -1786,6 +1786,57 @@
         .restart-btn:hover {
             background: #00ff8822;
         }
+        /* Emergency Override Button */
+        .emergency-override {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 250;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .emergency-override.active {
+            display: flex;
+        }
+        .emergency-override-label {
+            color: #ff4444;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: emergencyPulse 1s ease-in-out infinite;
+        }
+        .emergency-btn {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000 50%, #880000);
+            border: 8px solid #440000;
+            box-shadow: 0 0 30px #ff0000, 0 0 60px #ff000066, inset 0 -10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.1s;
+        }
+        .emergency-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px #ff0000, 0 0 100px #ff000088, inset 0 -10px 30px rgba(0,0,0,0.5);
+        }
+        .emergency-btn:active {
+            transform: scale(0.95);
+            background: radial-gradient(circle at 30% 30%, #ff8888, #ff0000 50%, #aa0000);
+        }
+        @keyframes emergencyPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
         /* Ark Ship Survivors Panel */
         .survivors-panel {
             display: flex;
@@ -2325,6 +2376,12 @@
             <div class="upgrade-list" id="upgradeList"></div>
             <button class="close-btn" id="closeResearch">CLOSE</button>
         </div>
+    </div>
+
+    <!-- Emergency Override Button -->
+    <div class="emergency-override" id="emergencyOverride">
+        <div class="emergency-override-label">Emergency Override Ready</div>
+        <button class="emergency-btn" id="emergencyBtn">EXECUTE</button>
     </div>
 
     <!-- Ending Screen -->
@@ -3753,6 +3810,8 @@
             endingStats: document.getElementById('endingStats'),
             endingMessage: document.getElementById('endingMessage'),
             restartBtn: document.getElementById('restartBtn'),
+            emergencyOverride: document.getElementById('emergencyOverride'),
+            emergencyBtn: document.getElementById('emergencyBtn'),
             arkStation: document.getElementById('arkStation'),
             // Lockable panels and sections
             dronesPanel: document.getElementById('dronesPanel'),
@@ -4241,6 +4300,7 @@
             els.startPause.textContent = 'START';
             els.startPause.disabled = false;
             els.endingOverlay.classList.remove('active');
+            els.emergencyOverride.classList.remove('active');
             els.introOverlay.classList.remove('hidden');
 
             // Reset intro phases
@@ -4400,6 +4460,20 @@
             if (upgrade.unlocksLevel) {
                 gameState.research.commandLevel = upgrade.unlocksLevel;
             }
+
+            // Emergency Override - show the big red button
+            if (upgrade.unlocksFinal) {
+                els.emergencyOverride.classList.add('active');
+            }
+        }
+
+        // Trigger victory ending when emergency button is pressed
+        function executeEmergencyOverride() {
+            els.emergencyOverride.classList.remove('active');
+            gameState.victory = true;
+            gameState.gameOver = true;
+            gameState.paused = true;
+            showEnding();
         }
 
         // Update UI
@@ -5121,6 +5195,9 @@
 
         // Restart button
         els.restartBtn.addEventListener('click', restartGame);
+
+        // Emergency override button
+        els.emergencyBtn.addEventListener('click', executeEmergencyOverride);
 
         // Speed control functions
         const BASE_TICK_INTERVAL = 200; // Base interval at 1x speed (200ms = 5 ticks/sec)
