@@ -6,6 +6,75 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-26 - Emergency Override Victory Button
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Emergency Override button for game victory:**
+  - Large red circular button appears when Emergency Override is hacked
+  - Centered on screen with pulsing "Emergency Override Ready" label
+  - Clicking "EXECUTE" triggers the victory ending
+  - Button properly resets on game restart
+
+#### Notes
+- Fixes issue where game wasn't ending when Emergency Override was researched
+- Provides satisfying climactic moment for victory condition
+
+---
+
+### 2026-01-26 - Timer Display Fixes
+**Author:** Claude (AI Assistant)
+
+#### Fixed
+- **All timer displays now show real seconds (were showing ticks):**
+  - Solar forecast countdown: divided by 5 to convert ticks to seconds
+  - Solar flare duration: divided by 5
+  - Research progress indicator: divided by 5
+  - Upgrade costs in System Access window: divided by 5
+
+#### Notes
+- At 5 ticks/second, raw tick values were 5x larger than real seconds
+- Displays now accurately reflect real-time durations
+
+---
+
+### 2026-01-26 - Faster Decay and Repair Rates
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **All system integrity decay rates doubled for faster-paced gameplay:**
+  - Reactor: 0.00111% → 0.00222% per tick
+  - Stasis: 0.00167% → 0.00334% per tick
+  - Thrusters: 0.00078% → 0.00156% per tick
+  - Shield: 0.00078% → 0.00156% per tick
+  - Orbital decay: 0.00167 → 0.00334 per tick
+- **Drone repair rate doubled to match:** 0.00887 → 0.01774 per tick
+- **Thruster effect doubled to maintain orbital balance:** 0.000667 → 0.001334
+
+#### Notes
+- Game now has more urgency - systems degrade faster
+- Balance maintained: repair drones are equally more effective
+- Orbital mechanics unchanged in relative difficulty
+
+---
+
+### 2026-01-26 - UI Polish and Locked Drone Targets
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Renamed "Research" to "Hack Systems" throughout UI:**
+  - Button changed from "RESEARCH" to "HACK SYSTEMS"
+  - Modal title changed from "COMMAND AUTHORIZATION" to "SYSTEM ACCESS"
+  - "Current Level" changed to "Access Level"
+  - Individual upgrade buttons changed from "RESEARCH" to "HACK"
+  - Progress indicator shows "Hacking..." instead of "Researching..."
+- **Drone repair targets now properly locked until systems unlocked:**
+  - Thrusters and Shield targets hidden in drone visual until researched
+  - Target buttons also hidden until corresponding system unlocked
+- **Simplified death rate formula:** smooth curve based on (power/5) * min(1, integrity/95)
+
+---
+
 ### 2026-01-26 - Phase-Based Game Progression System
 **Author:** Claude (AI Assistant)
 
