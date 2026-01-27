@@ -81,8 +81,12 @@
         }
         .main-layout {
             display: grid;
-            grid-template-columns: 280px 1fr 280px;
+            grid-template-columns: 360px 280px 1fr 280px;
             gap: 15px;
+        }
+        .death-log-sidebar {
+            display: flex;
+            flex-direction: column;
         }
         .left-sidebar {
             display: flex;
@@ -99,11 +103,16 @@
             flex-direction: column;
             gap: 15px;
         }
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 280px 280px 1fr;
+            }
+        }
         @media (max-width: 900px) {
             .main-layout {
                 grid-template-columns: 1fr 1fr;
             }
-            .left-sidebar {
+            .death-log-sidebar, .left-sidebar {
                 grid-column: 1 / -1;
             }
         }
@@ -1714,24 +1723,53 @@
             color: #444;
             font-size: 12px;
         }
-        /* Cryo-Log */
-        .cryo-log {
-            max-height: 80px;
-            overflow-y: auto;
+        /* Death Log Panel */
+        .death-log-panel {
+            background: #111118;
+            border: 1px solid #ff444433;
+            padding: 12px;
+            border-radius: 4px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .death-log-title {
             font-size: 11px;
-            color: #666;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #222;
+            color: #ff6666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #ff444433;
+            padding-bottom: 8px;
+        }
+        .cryo-log {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 14px;
+            color: #888;
             word-wrap: break-word;
         }
         .log-entry {
-            margin-bottom: 4px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #ff444422;
+            line-height: 1.4;
             opacity: 0.8;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
         }
         .log-entry.recent {
             color: #ff6666;
             opacity: 1;
+        }
+        .pod-failure {
+            display: block;
+            color: #ff4444;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-top: 4px;
         }
         /* System Status */
         .system-status {
@@ -1941,27 +1979,40 @@
             50% { opacity: 1; }
         }
         .ark-power-indicator {
-            margin-top: 10px;
+            width: 100%;
             text-align: center;
         }
         .ark-power-bar {
-            width: 80px;
-            height: 6px;
+            width: 100%;
+            height: 8px;
             background: #222;
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
-            margin: 0 auto;
+            position: relative;
+        }
+        .ark-power-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            width: 1px;
+            height: 100%;
+            background: #444;
+        }
+        .ark-power-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 40%;
+            width: 1px;
+            height: 100%;
+            background: #444;
         }
         .ark-power-fill {
             height: 100%;
             background: #00aaff;
             transition: width 0.3s;
             box-shadow: 0 0 8px #00aaff66;
-        }
-        .ark-power-label {
-            font-size: 10px;
-            color: #666;
-            margin-top: 4px;
         }
         .survivors-info {
             flex: 1;
@@ -1985,12 +2036,6 @@
         .survivors-info-vertical .stasis-header {
             flex-direction: column;
             gap: 8px;
-        }
-        .survivors-info-vertical .cryo-log {
-            max-height: 180px;
-            text-align: left;
-            width: 100%;
-            margin-top: 10px;
         }
         .survivors-info-vertical .integrity-bar {
             width: 100%;
@@ -2028,8 +2073,9 @@
         }
         .stasis-header {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            gap: 8px;
             margin-bottom: 10px;
         }
         .stasis-title {
@@ -2070,12 +2116,12 @@
     <div class="intro-overlay" id="introOverlay">
         <!-- Story Phase -->
         <div class="intro-story" id="introStory">
-            <p class="story-paragraph" id="story1">You entered your stasis pod alongside thousands of others, each one of you dreaming of life in a new world. But you woke to the violent screams of tearing metal and the howl of rapid decompression. The hull had been breached.</p>
-            <p class="story-paragraph" id="story2">Helpless, you watched as hundreds of bodies were ripped from their pods and flung into the vast darkness of space. With seconds to spare, you clawed your way free and hacked the emergency override as the air was sucked from your lungs. The breach sealed. You survived. But the crew is dead and you lack command authorization to open any of the remaining pods. </p>
-            <p class="story-paragraph" id="story3">However, Ark station is near. The orbiting sanctuary is meant to be your foothold in a new solar system. If you can make it there, you should survive. But as the Ark Ship draws close, your hope sours. </p>
+            <p class="story-paragraph" id="story1">You entered a stasis pod alongside thousands of others, each one of you dreaming of life in a new world. You woke to the violent screams of tearing metal and the howl of rapid decompression. </p>
+            <p class="story-paragraph" id="story2">Thousands of bodies were ripped from their pods and flung into the vast darkness of space. You clawed your way free and hacked the emergency override to seal the breach. You survived, but everyone with Command Authorization to open the pods was dead. </p>
+            <p class="story-paragraph" id="story3">Ark station is your only hope. The orbiting sanctuary is your foothold in a new solar system. But as the Ark Ship draws close, your hope sours. </p>
             <p class="story-paragraph" id="story4">There is no welcome beacon. No hail from the automatic systems. You dock with the silent hulk and step into a graveyard of cold, dark corridors. </p>
-            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. More than a thousand colonists remain trapped in stasis, unaware their time is running out. Backup life support is failing. Most of the pods have already gone dark. Your time is running out. </p>
-            <p class="story-paragraph" id="story6">You stand before the silent reactor, praying it will start. </p>
+            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. Backup life support is failing. More than a thousand colonists remain trapped in stasis, unaware their time is running out.  </p>
+            <p class="story-paragraph" id="story6">You stand before the silent reactor and pray it will start. </p>
             <button class="continue-btn" id="continueBtn">CONTINUE</button>
             <button class="skip-btn" id="skipBtn">SKIP</button>
         </div>
@@ -2101,6 +2147,12 @@
         <h1>ARK STATION</h1>
 
         <div class="main-layout">
+            <div class="death-log-sidebar">
+                <div class="death-log-panel">
+                    <div class="death-log-title">Casualty Log</div>
+                    <div class="cryo-log" id="cryoLog"></div>
+                </div>
+            </div>
             <div class="left-sidebar">
                 <div class="panel">
                     <div class="panel-title">Ark Ship — Stasis Bay</div>
@@ -2115,12 +2167,6 @@
                                 <div class="ark-ship-engine"></div>
                                 <div class="ark-engine-glow" id="arkEngineGlow"></div>
                             </div>
-                            <div class="ark-power-indicator">
-                                <div class="ark-power-bar">
-                                    <div class="ark-power-fill" id="arkPowerFill" style="width: 0%"></div>
-                                </div>
-                                <div class="ark-power-label">LIFE SUPPORT</div>
-                            </div>
                         </div>
                         <div class="survivors-info-vertical">
                             <div class="survivor-count" id="survivors">---</div>
@@ -2128,7 +2174,12 @@
                             <div class="death-rate" id="deathRate"></div>
                             <div class="stasis-controls-section">
                                 <div class="stasis-header">
-                                    <div class="stasis-title">Life Support</div>
+                                    <div class="stasis-title">Life Support Power</div>
+                                    <div class="ark-power-indicator">
+                                        <div class="ark-power-bar">
+                                            <div class="ark-power-fill" id="arkPowerFill" style="width: 0%"></div>
+                                        </div>
+                                    </div>
                                     <div class="stasis-power-controls">
                                         <button class="power-btn" id="stasisMinus">−</button>
                                         <div class="power-display"><span id="stasisPower">0</span> ⚡</div>
@@ -2146,7 +2197,6 @@
                                 </div>
                                 <div class="system-status critical" id="stasisStatus">CRITICAL</div>
                             </div>
-                            <div class="cryo-log" id="cryoLog"></div>
                         </div>
                     </div>
                 </div>
@@ -4172,7 +4222,7 @@
                 gameState.passengerIndex = 0;
             }
             const p = PASSENGER_DATABASE[idx];
-            return `${p.name} (${p.age}), ${p.specialization} - Pod failure`;
+            return `${p.name} (${p.age}), ${p.specialization}<br><span class="pod-failure">POD FAILURE</span>`;
         }
 
         // Add entry to cryo-log
