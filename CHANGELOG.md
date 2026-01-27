@@ -30,13 +30,25 @@ This document tracks all changes made to the project.
 - **Removed all 5 Reactor Power Upgrades** (power_1 through power_5)
   - Power now scales purely with reactor integrity
   - Simplifies progression - focus on reactor reinforcement to unlock more power
+- **Reactor Core visual redesigned:**
+  - Visual enlarged ~75% (container 120px → 210px)
+  - Centered in panel with info section below instead of beside
+  - Power display increased to 36px font
+  - Integrity bar centered with max-width constraint
+- **Repair Drones panel moved to center column:**
+  - Now positioned above Reactor Core panel
+  - Left sidebar contains only Stasis Bay
+- **Speed controls moved to right side of header:**
+  - Game clock on left, title centered, speed controls on right
+  - Speed indicator positioned next to speed buttons
+- **Brightened all grey UI text for readability:**
+  - #444 → #777, #555 → #888, #666 → #999, #888 → #aaa
 - **Game now stays paused during intro sequence:**
   - Time no longer passes while intro text displays
   - Player must click START or a speed button after intro to begin
 - **Life Support power bar repositioned:**
   - Moved from ship visual to directly above +/- controls
   - Renamed label to "Life Support Power"
-- **Restored balanced 3-column layout** (was temporarily 4-column with left sidebar)
 
 #### Notes
 - Max potential display updates dynamically based on reactor max integrity

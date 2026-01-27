@@ -23,12 +23,20 @@
             position: relative;
         }
         .time-control-bar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .time-control-left {
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+        .time-control-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .game-clock {
             font-family: monospace;
@@ -47,7 +55,7 @@
             background: #1a1a2e;
             border: 1px solid #333;
             border-radius: 4px;
-            color: #888;
+            color: #aaa;
             font-size: 11px;
             font-family: monospace;
             cursor: pointer;
@@ -55,7 +63,7 @@
         }
         .speed-btn:hover {
             background: #2a2a4e;
-            border-color: #555;
+            border-color: #888;
             color: #aaa;
         }
         .speed-btn.active {
@@ -72,7 +80,7 @@
         .speed-indicator {
             font-family: monospace;
             font-size: 12px;
-            color: #666;
+            color: #999;
             min-width: 35px;
             text-align: center;
         }
@@ -114,9 +122,10 @@
         }
         h1 {
             text-align: center;
-            margin-bottom: 30px;
+            margin: 0;
             color: #00ff88;
             text-shadow: 0 0 10px #00ff8855;
+            flex: 1;
         }
         .panel {
             background: #111118;
@@ -140,7 +149,7 @@
             align-items: center;
             justify-content: center;
             padding: 40px 20px;
-            color: #444;
+            color: #777;
             text-align: center;
         }
         .locked-indicator .locked-icon {
@@ -156,7 +165,7 @@
             display: none;
         }
         .panel-title {
-            color: #888;
+            color: #aaa;
             font-size: 12px;
             margin-bottom: 10px;
             text-transform: uppercase;
@@ -164,13 +173,14 @@
         /* Reactor Core Visual */
         .reactor-panel {
             display: flex;
-            gap: 20px;
+            flex-direction: column;
             align-items: center;
+            gap: 20px;
         }
         .reactor-visual-container {
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 210px;
+            height: 210px;
             flex-shrink: 0;
         }
         .reactor-core-visual {
@@ -178,20 +188,20 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 30px;
-            height: 30px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: radial-gradient(circle, #115522 0%, #0a2211 50%, #051108 100%);
-            border: 2px solid #00ff8833;
-            box-shadow: inset 0 0 10px #00ff8822;
+            border: 3px solid #00ff8833;
+            box-shadow: inset 0 0 15px #00ff8822;
             transition: all 0.5s;
         }
         /* Integrity levels - size expansion */
-        .reactor-core-visual.integrity-1 { width: 30px; height: 30px; }
-        .reactor-core-visual.integrity-2 { width: 50px; height: 50px; }
-        .reactor-core-visual.integrity-3 { width: 70px; height: 70px; }
-        .reactor-core-visual.integrity-4 { width: 90px; height: 90px; }
-        .reactor-core-visual.integrity-5 { width: 110px; height: 110px; }
+        .reactor-core-visual.integrity-1 { width: 52px; height: 52px; }
+        .reactor-core-visual.integrity-2 { width: 86px; height: 86px; }
+        .reactor-core-visual.integrity-3 { width: 120px; height: 120px; }
+        .reactor-core-visual.integrity-4 { width: 155px; height: 155px; }
+        .reactor-core-visual.integrity-5 { width: 190px; height: 190px; }
         /* Power glow levels */
         .reactor-core-visual.glow-1 {
             background: radial-gradient(circle, #1a6633 0%, #0d3318 50%, #051108 100%);
@@ -259,17 +269,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: radial-gradient(circle, #00ff88 0%, #00aa55 100%);
             opacity: 0.3;
             transition: opacity 0.5s, width 0.5s, height 0.5s;
         }
-        .reactor-core-visual.integrity-2 .reactor-core-inner { width: 25px; height: 25px; }
-        .reactor-core-visual.integrity-3 .reactor-core-inner { width: 30px; height: 30px; }
-        .reactor-core-visual.integrity-4 .reactor-core-inner { width: 35px; height: 35px; }
-        .reactor-core-visual.integrity-5 .reactor-core-inner { width: 40px; height: 40px; }
+        .reactor-core-visual.integrity-2 .reactor-core-inner { width: 43px; height: 43px; }
+        .reactor-core-visual.integrity-3 .reactor-core-inner { width: 52px; height: 52px; }
+        .reactor-core-visual.integrity-4 .reactor-core-inner { width: 60px; height: 60px; }
+        .reactor-core-visual.integrity-5 .reactor-core-inner { width: 68px; height: 68px; }
         .reactor-ring {
             position: absolute;
             top: 50%;
@@ -279,11 +289,11 @@
             border: 1px solid #00ff8822;
             transition: border-color 0.5s, box-shadow 0.5s;
         }
-        .reactor-ring-1 { width: 40px; height: 40px; }
-        .reactor-ring-2 { width: 60px; height: 60px; }
-        .reactor-ring-3 { width: 80px; height: 80px; }
-        .reactor-ring-4 { width: 100px; height: 100px; }
-        .reactor-ring-5 { width: 120px; height: 120px; }
+        .reactor-ring-1 { width: 68px; height: 68px; }
+        .reactor-ring-2 { width: 105px; height: 105px; }
+        .reactor-ring-3 { width: 140px; height: 140px; }
+        .reactor-ring-4 { width: 175px; height: 175px; }
+        .reactor-ring-5 { width: 210px; height: 210px; }
         .reactor-ring.active {
             border-color: #00ff8866;
             box-shadow: 0 0 8px #00ff8844;
@@ -293,10 +303,11 @@
             box-shadow: 0 0 15px #00ff8866;
         }
         .reactor-info {
-            flex: 1;
+            text-align: center;
+            width: 100%;
         }
         .reactor-power-display {
-            font-size: 32px;
+            font-size: 36px;
             color: #00ff88;
             margin-bottom: 5px;
         }
@@ -304,27 +315,30 @@
             color: #00ff88;
         }
         .reactor-power-display .separator {
-            color: #444;
+            color: #777;
         }
         .reactor-power-display .total {
             color: #00aa55;
         }
         .reactor-max-power {
             font-size: 11px;
-            color: #666;
+            color: #999;
             margin-bottom: 15px;
         }
         .reactor-integrity-section {
             border-top: 1px solid #222;
             padding-top: 10px;
             margin-top: 10px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .stat {
             font-size: 24px;
             margin-bottom: 5px;
         }
         .stat-label {
-            color: #666;
+            color: #999;
             font-size: 12px;
         }
         .system {
@@ -431,7 +445,7 @@
             padding: 4px 8px;
             background: #222;
             border: 1px solid #00ff8855;
-            color: #666;
+            color: #999;
             font-size: 11px;
             cursor: pointer;
             border-radius: 3px;
@@ -579,7 +593,7 @@
         }
         .thruster-title {
             font-size: 12px;
-            color: #888;
+            color: #aaa;
             text-transform: uppercase;
         }
         .thruster-power-display {
@@ -1159,7 +1173,7 @@
         }
         .target-label {
             font-size: 9px;
-            color: #666;
+            color: #999;
             margin-top: 4px;
             text-transform: uppercase;
         }
@@ -1443,7 +1457,7 @@
             margin-bottom: 4px;
         }
         .upgrade-desc {
-            color: #666;
+            color: #999;
             font-size: 11px;
         }
         .upgrade-cost {
@@ -1503,7 +1517,7 @@
             opacity: 0.5;
         }
         .level-header {
-            color: #888;
+            color: #aaa;
             font-size: 11px;
             text-transform: uppercase;
             margin-bottom: 8px;
@@ -1557,7 +1571,7 @@
             display: none;
         }
         .story-paragraph {
-            color: #888;
+            color: #aaa;
             text-align: center;
             max-width: 600px;
             margin-bottom: 30px;
@@ -1577,7 +1591,7 @@
             padding: 16px 32px;
             background: transparent;
             border: 2px solid #666;
-            color: #888;
+            color: #aaa;
             font-size: 24px;
             cursor: pointer;
             font-family: inherit;
@@ -1586,8 +1600,8 @@
             animation: skipFlash 1.5s ease-in-out infinite;
         }
         @keyframes skipFlash {
-            0%, 100% { opacity: 1; border-color: #888; color: #aaa; }
-            50% { opacity: 0.4; border-color: #444; color: #555; }
+            0%, 100% { opacity: 1; border-color: #aaa; color: #aaa; }
+            50% { opacity: 0.4; border-color: #777; color: #888; }
         }
         .skip-btn:hover {
             border-color: #00ff88;
@@ -1638,7 +1652,7 @@
             opacity: 1;
         }
         .intro-text {
-            color: #666;
+            color: #999;
             text-align: center;
             max-width: 400px;
             margin-bottom: 30px;
@@ -1738,7 +1752,7 @@
         }
         .intro-progress {
             margin-top: 20px;
-            color: #444;
+            color: #777;
             font-size: 12px;
         }
         /* Death Log Panel - Bottom Bar */
@@ -1776,7 +1790,7 @@
             border: 1px solid #ff444422;
             border-radius: 4px;
             font-size: 13px;
-            color: #888;
+            color: #aaa;
             line-height: 1.4;
             opacity: 0.8;
         }
@@ -1815,7 +1829,7 @@
         .system-status.online { color: #00ff88; }
         .system-status.stressed { color: #ffaa00; }
         .system-status.critical { color: #ff4444; }
-        .system-status.offline { color: #666; }
+        .system-status.offline { color: #999; }
         /* Ending Screen */
         .ending-overlay {
             position: fixed;
@@ -1846,7 +1860,7 @@
             line-height: 1.8;
         }
         .ending-message {
-            color: #888;
+            color: #aaa;
             text-align: center;
             max-width: 400px;
             margin-bottom: 30px;
@@ -2099,7 +2113,7 @@
         }
         .survivor-label {
             font-size: 12px;
-            color: #666;
+            color: #999;
             margin-bottom: 15px;
         }
         .stasis-controls-section {
@@ -2116,7 +2130,7 @@
         }
         .stasis-title {
             font-size: 12px;
-            color: #888;
+            color: #aaa;
             text-transform: uppercase;
         }
         .stasis-power-controls {
@@ -2170,17 +2184,21 @@
 
     <div class="container">
         <div class="time-control-bar">
-            <div class="game-clock" id="gameClock">October 17, 00:00, 3326</div>
-            <div class="speed-controls">
-                <button class="speed-btn" id="speedPause" title="Pause">| |</button>
-                <button class="speed-btn" id="speedSlow" title="Slow (0.5x)">½</button>
-                <button class="speed-btn active" id="speedNormal" title="Normal (1x)">1x</button>
-                <button class="speed-btn" id="speedFast" title="Fast (2x)">2x</button>
-                <button class="speed-btn" id="speedVeryFast" title="Very Fast (4x)">4x</button>
+            <div class="time-control-left">
+                <div class="game-clock" id="gameClock">October 17, 00:00, 3326</div>
             </div>
-            <div class="speed-indicator" id="speedIndicator">1x</div>
+            <h1>ARK STATION</h1>
+            <div class="time-control-right">
+                <div class="speed-indicator" id="speedIndicator">1x</div>
+                <div class="speed-controls">
+                    <button class="speed-btn" id="speedPause" title="Pause">| |</button>
+                    <button class="speed-btn" id="speedSlow" title="Slow (0.5x)">½</button>
+                    <button class="speed-btn active" id="speedNormal" title="Normal (1x)">1x</button>
+                    <button class="speed-btn" id="speedFast" title="Fast (2x)">2x</button>
+                    <button class="speed-btn" id="speedVeryFast" title="Very Fast (4x)">4x</button>
+                </div>
+            </div>
         </div>
-        <h1>ARK STATION</h1>
 
         <div class="main-layout">
             <div class="left-sidebar">
@@ -2230,40 +2248,10 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="center-column">
-                <div class="panel">
-                    <div class="panel-title">Reactor Core</div>
-                    <div class="reactor-panel">
-                        <div class="reactor-visual-container">
-                            <div class="reactor-ring reactor-ring-5" id="reactorRing5"></div>
-                            <div class="reactor-ring reactor-ring-4" id="reactorRing4"></div>
-                            <div class="reactor-ring reactor-ring-3" id="reactorRing3"></div>
-                            <div class="reactor-ring reactor-ring-2" id="reactorRing2"></div>
-                            <div class="reactor-ring reactor-ring-1" id="reactorRing1"></div>
-                            <div class="reactor-core-visual integrity-1 glow-1" id="reactorCoreVisual">
-                                <div class="reactor-core-inner" id="reactorCoreInner"></div>
-                            </div>
-                        </div>
-                        <div class="reactor-info">
-                            <div class="reactor-power-display">
-                                <span class="allocated" id="powerAllocated">0</span><span class="separator"> / </span><span class="total" id="powerTotal">5</span>
-                            </div>
-                            <div class="stat-label">Power Allocated / Output</div>
-                            <div class="reactor-max-power">Max Potential: <span id="reactorMaxPotential">25</span> power</div>
-                            <div class="reactor-integrity-section">
-                                <div class="integrity-bar">
-                                    <div class="integrity-fill" id="reactorIntegrity" style="width: 20%"></div>
-                                    <div class="integrity-locked" id="reactorLocked" style="width: 80%"></div>
-                                </div>
-                                <div class="stat-label">Integrity: <span id="reactorIntegrityText">20%</span> <span id="reactorRepairing" style="color: #00aaff; display: none;">[REPAIRING]</span></div>
-                                <div class="system-status critical" id="reactorStatus">CRITICAL</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="panel locked" id="dronesPanel">
                     <div class="panel-title">Repair Drones</div>
                     <div class="locked-indicator">
@@ -2314,7 +2302,7 @@
                             <div class="drone" id="drone4"></div>
                             <div class="drone" id="drone5"></div>
                         </div>
-                                            </div>
+                    </div>
                     <div class="drone-controls">
                         <div class="target-buttons">
                             <button class="target-btn active" id="targetReactor">Reactor</button>
@@ -2326,6 +2314,37 @@
                             <button class="power-btn" id="dronesMinus">−</button>
                             <div class="power-display"><span id="dronesPower">0</span> ⚡</div>
                             <button class="power-btn" id="dronesPlus">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Reactor Core</div>
+                    <div class="reactor-panel">
+                        <div class="reactor-visual-container">
+                            <div class="reactor-ring reactor-ring-5" id="reactorRing5"></div>
+                            <div class="reactor-ring reactor-ring-4" id="reactorRing4"></div>
+                            <div class="reactor-ring reactor-ring-3" id="reactorRing3"></div>
+                            <div class="reactor-ring reactor-ring-2" id="reactorRing2"></div>
+                            <div class="reactor-ring reactor-ring-1" id="reactorRing1"></div>
+                            <div class="reactor-core-visual integrity-1 glow-1" id="reactorCoreVisual">
+                                <div class="reactor-core-inner" id="reactorCoreInner"></div>
+                            </div>
+                        </div>
+                        <div class="reactor-info">
+                            <div class="reactor-power-display">
+                                <span class="allocated" id="powerAllocated">0</span><span class="separator"> / </span><span class="total" id="powerTotal">5</span>
+                            </div>
+                            <div class="stat-label">Power Allocated / Output</div>
+                            <div class="reactor-max-power">Max Potential: <span id="reactorMaxPotential">25</span> power</div>
+                            <div class="reactor-integrity-section">
+                                <div class="integrity-bar">
+                                    <div class="integrity-fill" id="reactorIntegrity" style="width: 20%"></div>
+                                    <div class="integrity-locked" id="reactorLocked" style="width: 80%"></div>
+                                </div>
+                                <div class="stat-label">Integrity: <span id="reactorIntegrityText">20%</span> <span id="reactorRepairing" style="color: #00aaff; display: none;">[REPAIRING]</span></div>
+                                <div class="system-status critical" id="reactorStatus">CRITICAL</div>
+                            </div>
                         </div>
                     </div>
                 </div>
