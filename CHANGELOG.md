@@ -6,6 +6,53 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-27 - System Independence and Upgrade Rework
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Reactor display now shows available power** instead of allocated power
+  - Number decreases as power is allocated to systems
+  - More intuitive for resource management decisions
+- **Reactor power scaling adjusted:** 1 power per 5% integrity (max 20, was 25)
+  - 0-5% = 1 power, 6-10% = 2 power, etc.
+  - Each reactor upgrade now adds 4 power capacity
+  - Initial power fixed to 4 (matches 20% integrity)
+- **Stasis bay upgrades shifted down one Command Authorization level**
+  - First upgrade now available at CA Level 1 (was Level 2)
+- **Reactor Core panel height reduced ~15%** for better screen fit
+- **Shield system reworked:**
+  - Starts at 3% integrity with 100% max (no integrity cap upgrades needed)
+  - 4 integrity upgrades replaced with 3 repair speed upgrades (+50% each)
+  - Shield repair multiplier: 1.0x → 1.5x → 2.0x → 2.5x
+- **Solar/Shield and Orbital/Thrusters now unlock independently:**
+  - Can research shield before solar forecast (and vice versa)
+  - Can research thrusters before orbital status (and vice versa)
+  - Each subsystem shows its own "System Offline" indicator when locked
+- **Consistent green headers for all systems:**
+  - All panels now show system name with ONLINE/OFFLINE status
+  - OFFLINE status displayed in red, ONLINE in green
+  - Applies to: Stasis Bay, Reactor Core, Repair Drones, Orbital Status, Orbital Thrusters, Solar Forecast, Solar Shield Matrix
+
+#### Added
+- **Scientific names for Stasis Bay upgrades:**
+  - Atmospheric Blend Controller (O₂/N₂ mixing, CO₂ scrubbing)
+  - Hemobalance Perfusion Module (anticoagulant, electrolyte correction)
+  - Neural Drift Dampener (neuro-stimulation for safe brain idle)
+  - Bioelectric Homeostasis Harness (ECG/EEG monitoring, counterpulses)
+- **Scientific names for Reactor Core upgrades:**
+  - Muon-Catalyzed Ignition Lattice (hot starts, reduced misfires)
+  - Superconducting Flux Confinement Girdle (plasma stabilization)
+  - Thermoacoustic Resonance Recuperator (waste heat recovery)
+  - Neutrino-Indexed Reaction Governor (real-time reaction monitoring)
+- **Shield repair speed upgrades (placeholder names):**
+  - Solar Shield: Repair Enhancement I/II/III
+
+#### Fixed
+- Initial power state now correctly starts at 4 (was 5, didn't match formula)
+- Locked panel opacity removed so Repair Drones header matches other systems
+
+---
+
 ### 2026-01-27 - UI Layout Overhaul and Reactor Power Changes
 **Author:** Claude (AI Assistant)
 
