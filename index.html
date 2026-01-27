@@ -135,12 +135,13 @@
             border-radius: 4px;
         }
         .panel.locked {
-            opacity: 0.5;
+            opacity: 1;
         }
-        .panel.locked > *:not(.panel-title):not(.locked-indicator) {
+        .panel.locked > *:not(.panel-title):not(.locked-indicator):not(.locked-section-header):not(.section-locked-indicator) {
             display: none;
         }
-        .panel.locked .locked-indicator {
+        .panel.locked .locked-indicator,
+        .panel.locked .section-locked-indicator {
             display: flex;
         }
         .locked-indicator {
@@ -164,6 +165,41 @@
         .section.locked, .drone-target.locked, .target-btn.locked {
             display: none;
         }
+        .section-locked-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #777;
+            text-align: center;
+        }
+        .section-locked-indicator .locked-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .section-locked-indicator .locked-text {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .locked-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .locked-section-header .system-name {
+            font-size: 13px;
+            color: #00ff88;
+        }
+        .locked-section-header .system-status {
+            font-size: 10px;
+            color: #00ff88;
+        }
+        .locked-section-header .system-status.offline {
+            color: #ff4444;
+        }
         .panel-title {
             color: #aaa;
             font-size: 12px;
@@ -175,12 +211,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
         }
         .reactor-visual-container {
             position: relative;
-            width: 210px;
-            height: 210px;
+            width: 180px;
+            height: 180px;
             flex-shrink: 0;
         }
         .reactor-core-visual {
@@ -188,8 +224,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: radial-gradient(circle, #115522 0%, #0a2211 50%, #051108 100%);
             border: 3px solid #00ff8833;
@@ -197,11 +233,11 @@
             transition: all 0.5s;
         }
         /* Integrity levels - size expansion */
-        .reactor-core-visual.integrity-1 { width: 52px; height: 52px; }
-        .reactor-core-visual.integrity-2 { width: 86px; height: 86px; }
-        .reactor-core-visual.integrity-3 { width: 120px; height: 120px; }
-        .reactor-core-visual.integrity-4 { width: 155px; height: 155px; }
-        .reactor-core-visual.integrity-5 { width: 190px; height: 190px; }
+        .reactor-core-visual.integrity-1 { width: 44px; height: 44px; }
+        .reactor-core-visual.integrity-2 { width: 73px; height: 73px; }
+        .reactor-core-visual.integrity-3 { width: 102px; height: 102px; }
+        .reactor-core-visual.integrity-4 { width: 132px; height: 132px; }
+        .reactor-core-visual.integrity-5 { width: 162px; height: 162px; }
         /* Power glow levels */
         .reactor-core-visual.glow-1 {
             background: radial-gradient(circle, #1a6633 0%, #0d3318 50%, #051108 100%);
@@ -269,17 +305,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 34px;
-            height: 34px;
+            width: 29px;
+            height: 29px;
             border-radius: 50%;
             background: radial-gradient(circle, #00ff88 0%, #00aa55 100%);
             opacity: 0.3;
             transition: opacity 0.5s, width 0.5s, height 0.5s;
         }
-        .reactor-core-visual.integrity-2 .reactor-core-inner { width: 43px; height: 43px; }
-        .reactor-core-visual.integrity-3 .reactor-core-inner { width: 52px; height: 52px; }
-        .reactor-core-visual.integrity-4 .reactor-core-inner { width: 60px; height: 60px; }
-        .reactor-core-visual.integrity-5 .reactor-core-inner { width: 68px; height: 68px; }
+        .reactor-core-visual.integrity-2 .reactor-core-inner { width: 37px; height: 37px; }
+        .reactor-core-visual.integrity-3 .reactor-core-inner { width: 44px; height: 44px; }
+        .reactor-core-visual.integrity-4 .reactor-core-inner { width: 51px; height: 51px; }
+        .reactor-core-visual.integrity-5 .reactor-core-inner { width: 58px; height: 58px; }
         .reactor-ring {
             position: absolute;
             top: 50%;
@@ -289,11 +325,11 @@
             border: 1px solid #00ff8822;
             transition: border-color 0.5s, box-shadow 0.5s;
         }
-        .reactor-ring-1 { width: 68px; height: 68px; }
-        .reactor-ring-2 { width: 105px; height: 105px; }
-        .reactor-ring-3 { width: 140px; height: 140px; }
-        .reactor-ring-4 { width: 175px; height: 175px; }
-        .reactor-ring-5 { width: 210px; height: 210px; }
+        .reactor-ring-1 { width: 58px; height: 58px; }
+        .reactor-ring-2 { width: 89px; height: 89px; }
+        .reactor-ring-3 { width: 119px; height: 119px; }
+        .reactor-ring-4 { width: 149px; height: 149px; }
+        .reactor-ring-5 { width: 180px; height: 180px; }
         .reactor-ring.active {
             border-color: #00ff8866;
             box-shadow: 0 0 8px #00ff8844;
@@ -2203,7 +2239,10 @@
         <div class="main-layout">
             <div class="left-sidebar">
                 <div class="panel">
-                    <div class="panel-title">Ark Ship — Stasis Bay</div>
+                    <div class="locked-section-header">
+                            <span class="system-name">Ark Ship — Stasis Bay</span>
+                            <span class="system-status">ONLINE</span>
+                        </div>
                     <div class="survivors-panel-vertical">
                         <div class="ark-ship-visual">
                             <div class="ark-ship-container">
@@ -2253,8 +2292,11 @@
 
             <div class="center-column">
                 <div class="panel locked" id="dronesPanel">
-                    <div class="panel-title">Repair Drones</div>
-                    <div class="locked-indicator">
+                    <div class="locked-section-header">
+                        <span class="system-name">Repair Drones</span>
+                        <span class="system-status offline" id="dronesStatus">OFFLINE</span>
+                    </div>
+                    <div class="section-locked-indicator">
                         <div class="locked-icon">⚠</div>
                         <div class="locked-text">System Offline</div>
                     </div>
@@ -2319,7 +2361,10 @@
                 </div>
 
                 <div class="panel">
-                    <div class="panel-title">Reactor Core</div>
+                    <div class="locked-section-header">
+                            <span class="system-name">Reactor Core</span>
+                            <span class="system-status">ONLINE</span>
+                        </div>
                     <div class="reactor-panel">
                         <div class="reactor-visual-container">
                             <div class="reactor-ring reactor-ring-5" id="reactorRing5"></div>
@@ -2333,10 +2378,10 @@
                         </div>
                         <div class="reactor-info">
                             <div class="reactor-power-display">
-                                <span class="allocated" id="powerAllocated">0</span><span class="separator"> / </span><span class="total" id="powerTotal">5</span>
+                                <span class="allocated" id="powerAvailable">5</span><span class="separator"> / </span><span class="total" id="powerTotal">5</span>
                             </div>
-                            <div class="stat-label">Power Allocated / Output</div>
-                            <div class="reactor-max-power">Max Potential: <span id="reactorMaxPotential">25</span> power</div>
+                            <div class="stat-label">Power Available / Output</div>
+                            <div class="reactor-max-power">Max Potential: <span id="reactorMaxPotential">20</span> power</div>
                             <div class="reactor-integrity-section">
                                 <div class="integrity-bar">
                                     <div class="integrity-fill" id="reactorIntegrity" style="width: 20%"></div>
@@ -2357,12 +2402,22 @@
             </div>
 
             <div class="right-column">
-                <div class="panel locked" id="orbitalPanel">
-                    <div class="panel-title">Orbital Status</div>
-                    <div class="locked-indicator">
-                        <div class="locked-icon">⚠</div>
-                        <div class="locked-text">System Offline</div>
+                <div class="panel" id="orbitalPanel">
+                    <div class="orbital-status-section section" id="orbitalStatusSection">
+                        <div class="locked-section-header">
+                            <span class="system-name">Orbital Status</span>
+                            <span class="system-status offline">OFFLINE</span>
+                        </div>
+                        <div class="section-locked-indicator">
+                            <div class="locked-icon">⚠</div>
+                            <div class="locked-text">System Offline</div>
+                        </div>
                     </div>
+                    <div class="orbital-status-content section locked" id="orbitalStatusContent">
+                        <div class="locked-section-header">
+                            <span class="system-name">Orbital Status</span>
+                            <span class="system-status">ONLINE</span>
+                        </div>
                     <div class="orbital-visual">
                         <div class="sun-glow"></div>
                         <div class="orbital-track"></div>
@@ -2381,7 +2436,18 @@
                         </div>
                     </div>
                     <div class="radiation-warning" id="radiationWarning"></div>
+                    </div>
 
+                    <div class="thruster-section-locked section" id="thrusterSectionLocked">
+                        <div class="locked-section-header">
+                            <span class="system-name">Orbital Thrusters</span>
+                            <span class="system-status offline">OFFLINE</span>
+                        </div>
+                        <div class="section-locked-indicator">
+                            <div class="locked-icon">⚠</div>
+                            <div class="locked-text">System Offline</div>
+                        </div>
+                    </div>
                     <div class="thruster-section section locked" id="thrusterSection">
                         <div class="thruster-header">
                             <div class="thruster-title">Orbital Thrusters</div>
@@ -2410,12 +2476,22 @@
                     </div>
                 </div>
 
-                <div class="panel locked" id="solarPanel">
-                    <div class="panel-title">Solar Forecast</div>
-                    <div class="locked-indicator">
-                        <div class="locked-icon">⚠</div>
-                        <div class="locked-text">System Offline</div>
+                <div class="panel" id="solarPanel">
+                    <div class="solar-forecast-section section" id="solarForecastSection">
+                        <div class="locked-section-header">
+                            <span class="system-name">Solar Forecast</span>
+                            <span class="system-status offline">OFFLINE</span>
+                        </div>
+                        <div class="section-locked-indicator">
+                            <div class="locked-icon">⚠</div>
+                            <div class="locked-text">System Offline</div>
+                        </div>
                     </div>
+                    <div class="solar-forecast-content section locked" id="solarForecastContent">
+                        <div class="locked-section-header">
+                            <span class="system-name">Solar Forecast</span>
+                            <span class="system-status">ONLINE</span>
+                        </div>
                     <div class="solar-visual-container">
                         <div class="solar-graphic clear" id="solarGraphic">
                             <div class="flare-burst"></div>
@@ -2460,17 +2536,28 @@
                         </div>
                     </div>
                     <div class="flare-damage" id="flareDamage"></div>
+                    </div>
 
+                    <div class="shield-section-locked section" id="shieldSectionLocked">
+                        <div class="locked-section-header">
+                            <span class="system-name">Solar Shield Matrix</span>
+                            <span class="system-status offline">OFFLINE</span>
+                        </div>
+                        <div class="section-locked-indicator">
+                            <div class="locked-icon">⚠</div>
+                            <div class="locked-text">System Offline</div>
+                        </div>
+                    </div>
                     <div class="shield-controls section locked" id="shieldSection">
                         <div class="shield-header">
                             <span class="system-name">Solar Shield Matrix</span>
                             <span class="system-status critical" id="shieldStatus">CRITICAL</span>
                         </div>
                         <div class="integrity-bar">
-                            <div class="integrity-fill" id="shieldIntegrity" style="width: 20%"></div>
-                            <div class="integrity-locked" id="shieldLocked" style="width: 80%"></div>
+                            <div class="integrity-fill" id="shieldIntegrity" style="width: 3%"></div>
+                            <div class="integrity-locked" id="shieldLocked" style="width: 0%"></div>
                         </div>
-                        <div class="stat-label">Integrity: <span id="shieldIntegrityText">20%</span></div>
+                        <div class="stat-label">Integrity: <span id="shieldIntegrityText">3%</span></div>
                         <div class="power-controls">
                             <button class="power-btn" id="shieldMinus">−</button>
                             <div class="power-display"><span id="shieldPower">0</span> ⚡</div>
@@ -2526,36 +2613,35 @@
 
             // Level 2 upgrades (Phase 2 - Drones)
             { id: 'unlock_drones', name: 'Repair Drones System', desc: 'Activate repair drone bay', cost: 100, level: 2, unlocksDrones: true },
-            { id: 'stasis_cap_1', name: 'Stasis Hardening I', desc: 'Unlock stasis potential (40% max integrity)', cost: 150, level: 2, system: 'stasis', capBonus: 20 },
-            { id: 'reactor_cap_1', name: 'Reactor Reinforcement I', desc: 'Unlock reactor potential (40% max integrity)', cost: 150, level: 2, system: 'reactor', capBonus: 20 },
+            { id: 'stasis_cap_1', name: 'Stasis Bay: Atmospheric Blend Controller', desc: 'Regulates O₂/N₂ mixing, CO₂ scrubbing, humidity, and pressure smoothing to prevent hypoxia and embolism risk (+20% max integrity)', cost: 150, level: 1, system: 'stasis', capBonus: 20 },
+            { id: 'reactor_cap_1', name: 'Reactor Core: Muon-Catalyzed Ignition Lattice', desc: 'Enables hot starts from low-power mode using muon-catalyzed fusion principles, reducing misfire chances (+20% max integrity)', cost: 150, level: 2, system: 'reactor', capBonus: 20 },
             { id: 'auth_3', name: 'Command Authorization 3', desc: 'Unlock Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
 
             // Level 3 upgrades (Phase 3 - Solar)
             { id: 'unlock_solar', name: 'Solar Forecast System', desc: 'Activate solar monitoring array (1 power)', cost: 100, level: 3, unlocksSolar: true },
             { id: 'unlock_shield', name: 'Solar Shield Matrix', desc: 'Activate solar shield controls', cost: 120, level: 3, unlocksShield: true },
-            { id: 'shield_cap_1', name: 'Shield Reinforcement I', desc: 'Unlock shield potential (40% max integrity)', cost: 150, level: 3, system: 'shield', capBonus: 20 },
-            { id: 'reactor_cap_2', name: 'Reactor Reinforcement II', desc: 'Unlock reactor potential (60% max integrity)', cost: 180, level: 3, system: 'reactor', capBonus: 20 },
-            { id: 'stasis_cap_2', name: 'Stasis Hardening II', desc: 'Unlock stasis potential (60% max integrity)', cost: 180, level: 3, system: 'stasis', capBonus: 20 },
+            { id: 'shield_repair_1', name: 'Solar Shield: Repair Enhancement I', desc: 'Improves drone repair efficiency for solar shield (+50% shield repair speed)', cost: 150, level: 3, shieldRepairBoost: 0.5 },
+            { id: 'reactor_cap_2', name: 'Reactor Core: Superconducting Flux Confinement Girdle', desc: 'Superconducting magnetic confinement stabilizes plasma geometry, enabling hotter and cleaner operation (+20% max integrity)', cost: 180, level: 3, system: 'reactor', capBonus: 20 },
+            { id: 'stasis_cap_2', name: 'Stasis Bay: Hemobalance Perfusion Module', desc: 'Micro-pump with anticoagulant dosing and electrolyte/pH correction to prevent clotting and organ perfusion issues (+20% max integrity)', cost: 180, level: 2, system: 'stasis', capBonus: 20 },
             { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 200, level: 3, unlocksLevel: 4, isGate: true },
 
             // Level 4 upgrades (Phase 4 - Orbital)
             { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 4, unlocksOrbital: true },
             { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls', cost: 120, level: 4, unlocksThrusters: true },
-            { id: 'shield_cap_2', name: 'Shield Reinforcement II', desc: 'Unlock shield potential (60% max integrity)', cost: 200, level: 4, system: 'shield', capBonus: 20 },
+            { id: 'shield_repair_2', name: 'Solar Shield: Repair Enhancement II', desc: 'Further improves drone repair efficiency for solar shield (+50% shield repair speed)', cost: 200, level: 4, shieldRepairBoost: 0.5 },
             { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (40% max integrity)', cost: 180, level: 4, system: 'thrusters', capBonus: 20 },
-            { id: 'stasis_cap_3', name: 'Stasis Hardening III', desc: 'Unlock stasis potential (80% max integrity)', cost: 220, level: 4, system: 'stasis', capBonus: 20 },
-            { id: 'reactor_cap_3', name: 'Reactor Reinforcement III', desc: 'Unlock reactor potential (80% max integrity)', cost: 220, level: 4, system: 'reactor', capBonus: 20 },
+            { id: 'stasis_cap_3', name: 'Stasis Bay: Neural Drift Dampener', desc: 'Low-power neuro-stimulation lattice that keeps brain activity in safe idle patterns, preventing memory corruption and personality drift (+20% max integrity)', cost: 220, level: 3, system: 'stasis', capBonus: 20 },
+            { id: 'reactor_cap_3', name: 'Reactor Core: Thermoacoustic Resonance Recuperator', desc: 'Harvests waste heat and vibration via thermoacoustic conversion, boosting efficiency and extending fuel life (+20% max integrity)', cost: 220, level: 4, system: 'reactor', capBonus: 20 },
             { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
 
             // Level 5 upgrades (Phase 5 begins)
-            { id: 'stasis_cap_4', name: 'Stasis Hardening IV', desc: 'Maximize stasis potential (100% max integrity)', cost: 280, level: 5, system: 'stasis', capBonus: 20 },
-            { id: 'shield_cap_3', name: 'Shield Reinforcement III', desc: 'Unlock shield potential (80% max integrity)', cost: 250, level: 5, system: 'shield', capBonus: 20 },
+            { id: 'stasis_cap_4', name: 'Stasis Bay: Bioelectric Homeostasis Harness', desc: 'Electrode mesh monitors ECG/EEG and delivers counterpulses to prevent arrhythmias, seizures, and neuromuscular jitter (+20% max integrity)', cost: 280, level: 4, system: 'stasis', capBonus: 20 },
+            { id: 'shield_repair_3', name: 'Solar Shield: Repair Enhancement III', desc: 'Maximizes drone repair efficiency for solar shield (+50% shield repair speed)', cost: 250, level: 5, shieldRepairBoost: 0.5 },
             { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Unlock thruster potential (60% max integrity)', cost: 220, level: 5, system: 'thrusters', capBonus: 20 },
-            { id: 'reactor_cap_4', name: 'Reactor Reinforcement IV', desc: 'Maximize reactor potential (100% max integrity)', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
+            { id: 'reactor_cap_4', name: 'Reactor Core: Neutrino-Indexed Reaction Governor', desc: 'Real-time neutrino detection monitors reaction state, preventing runaway spikes and enabling precision control (+20% max integrity)', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
             { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
             // Level 6 upgrades
-            { id: 'shield_cap_4', name: 'Shield Reinforcement IV', desc: 'Maximize shield potential (100% max integrity)', cost: 300, level: 6, system: 'shield', capBonus: 20 },
             { id: 'thrusters_cap_3', name: 'Thruster Reinforcement III', desc: 'Unlock thruster potential (80% max integrity)', cost: 280, level: 6, system: 'thrusters', capBonus: 20 },
             { id: 'thrusters_cap_4', name: 'Thruster Reinforcement IV', desc: 'Maximize thruster potential (100% max integrity)', cost: 300, level: 6, system: 'thrusters', capBonus: 20 },
             { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
@@ -3768,7 +3854,7 @@
 
         // Game State
         const gameState = {
-            power: { total: 5, maxPower: 5, allocated: { stasis: 0, thrusters: 0, shield: 0, drones: 0 } },
+            power: { total: 4, maxPower: 4, allocated: { stasis: 0, thrusters: 0, shield: 0, drones: 0 } },
             survivors: 0, // Will be set during init
             colonistStates: null, // Uint8Array: 0 = dead, 1 = alive
             livingColonists: [], // Indices of living colonists for efficient random selection
@@ -3776,8 +3862,8 @@
                 reactor: { integrity: 20, maxIntegrity: 20 },
                 stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
                 thrusters: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
-                shield: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
-                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.01774 }
+                shield: { integrity: 3, maxIntegrity: 100, powerAllocated: 0 },
+                drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.01774, shieldRepairMultiplier: 1.0 }
             },
             orbital: {
                 distance: 100, // 100 = far, 66 = near, 33 = critical, 0 = destruction
@@ -3840,7 +3926,7 @@
             speedFast: document.getElementById('speedFast'),
             speedVeryFast: document.getElementById('speedVeryFast'),
             speedIndicator: document.getElementById('speedIndicator'),
-            powerAllocated: document.getElementById('powerAllocated'),
+            powerAvailable: document.getElementById('powerAvailable'),
             powerTotal: document.getElementById('powerTotal'),
             survivors: document.getElementById('survivors'),
             deathRate: document.getElementById('deathRate'),
@@ -3934,9 +4020,16 @@
             arkStation: document.getElementById('arkStation'),
             // Lockable panels and sections
             dronesPanel: document.getElementById('dronesPanel'),
+            dronesStatusText: document.getElementById('dronesStatus'),
             orbitalPanel: document.getElementById('orbitalPanel'),
+            orbitalStatusSection: document.getElementById('orbitalStatusSection'),
+            orbitalStatusContent: document.getElementById('orbitalStatusContent'),
+            thrusterSectionLocked: document.getElementById('thrusterSectionLocked'),
             thrusterSection: document.getElementById('thrusterSection'),
             solarPanel: document.getElementById('solarPanel'),
+            solarForecastSection: document.getElementById('solarForecastSection'),
+            solarForecastContent: document.getElementById('solarForecastContent'),
+            shieldSectionLocked: document.getElementById('shieldSectionLocked'),
             shieldSection: document.getElementById('shieldSection'),
             // Lockable drone targets
             droneTargetThrusters: document.getElementById('droneTargetThrusters'),
@@ -4363,7 +4456,7 @@
         // Restart game
         function restartGame() {
             // Reset game state
-            gameState.power.total = 5;
+            gameState.power.total = 4;
             gameState.power.maxPower = 5;
             gameState.power.allocated = { stasis: 0, thrusters: 0, shield: 0, drones: 0 };
 
@@ -4377,12 +4470,13 @@
             gameState.systems.thrusters.integrity = 20;
             gameState.systems.thrusters.maxIntegrity = 20;
             gameState.systems.thrusters.powerAllocated = 0;
-            gameState.systems.shield.integrity = 20;
-            gameState.systems.shield.maxIntegrity = 20;
+            gameState.systems.shield.integrity = 3;
+            gameState.systems.shield.maxIntegrity = 100;
             gameState.systems.shield.powerAllocated = 0;
             gameState.systems.drones.powerAllocated = 0;
             gameState.systems.drones.target = 'reactor';
             gameState.systems.drones.repairRate = 0.00887;
+            gameState.systems.drones.shieldRepairMultiplier = 1.0;
             gameState.orbital.distance = 100;
             gameState.orbital.decayRate = 0;
             gameState.solar.nextFlare = 600 + Math.floor(Math.random() * 600);
@@ -4554,6 +4648,9 @@
             if (upgrade.repairBoost) {
                 gameState.systems.drones.repairRate += upgrade.repairBoost;
             }
+            if (upgrade.shieldRepairBoost) {
+                gameState.systems.drones.shieldRepairMultiplier += upgrade.shieldRepairBoost;
+            }
 
             // System unlock upgrades
             if (upgrade.unlocksDrones) {
@@ -4595,7 +4692,7 @@
         // Update UI
         function updateUI() {
             const totalAllocated = getTotalAllocated();
-            els.powerAllocated.textContent = totalAllocated;
+            els.powerAvailable.textContent = gameState.power.total - totalAllocated;
             els.powerTotal.textContent = gameState.power.total;
             els.survivors.textContent = gameState.survivors.toLocaleString();
 
@@ -4688,7 +4785,7 @@
             setIntegrityColor(els.reactorIntegrity, reactorFillPercent);
 
             // Update max potential based on reactor max integrity
-            const maxPotential = Math.max(1, Math.ceil(reactor.maxIntegrity / 4));
+            const maxPotential = Math.max(1, Math.ceil(reactor.maxIntegrity / 5));
             els.reactorMaxPotential.textContent = maxPotential;
 
             // Reactor visual - integrity controls size, power controls glow
@@ -4851,10 +4948,18 @@
             // Panel visibility based on unlocked systems
             const unlocked = gameState.unlockedSystems;
             els.dronesPanel.classList.toggle('locked', !unlocked.drones);
-            els.solarPanel.classList.toggle('locked', !unlocked.solar);
-            els.shieldSection.classList.toggle('locked', !unlocked.shield);
-            els.orbitalPanel.classList.toggle('locked', !unlocked.orbital);
-            els.thrusterSection.classList.toggle('locked', !unlocked.thrusters);
+            els.dronesStatusText.textContent = unlocked.drones ? 'ONLINE' : 'OFFLINE';
+            els.dronesStatusText.classList.toggle('offline', !unlocked.drones);
+            // Solar forecast and shield are separate systems in the same panel
+            els.solarForecastSection.classList.toggle('locked', unlocked.solar);  // Hide locked indicator when unlocked
+            els.solarForecastContent.classList.toggle('locked', !unlocked.solar); // Show content when unlocked
+            els.shieldSectionLocked.classList.toggle('locked', unlocked.shield);  // Hide locked indicator when unlocked
+            els.shieldSection.classList.toggle('locked', !unlocked.shield);       // Show controls when unlocked
+            // Orbital status and thrusters are separate systems in the same panel
+            els.orbitalStatusSection.classList.toggle('locked', unlocked.orbital);    // Hide locked indicator when unlocked
+            els.orbitalStatusContent.classList.toggle('locked', !unlocked.orbital);   // Show content when unlocked
+            els.thrusterSectionLocked.classList.toggle('locked', unlocked.thrusters); // Hide locked indicator when unlocked
+            els.thrusterSection.classList.toggle('locked', !unlocked.thrusters);      // Show controls when unlocked
 
             // Drone repair targets visibility (only show targets for unlocked systems)
             els.droneTargetThrusters.classList.toggle('locked', !unlocked.thrusters);
@@ -4969,7 +5074,7 @@
 
             // Calculate total power based on reactor integrity
             // Power increases at 5%, 9%, 13%, 17%, etc. (every 4% starting from 5)
-            const newPower = Math.max(1, Math.ceil(reactor.integrity / 4));
+            const newPower = Math.max(1, Math.ceil(reactor.integrity / 5));
 
             // If power decreased, reduce allocations if necessary
             if (newPower < gameState.power.total) {
@@ -5035,7 +5140,8 @@
                 } else if (drones.target === 'thrusters') {
                     thrusters.integrity = Math.min(thrusters.maxIntegrity, thrusters.integrity + repairAmount);
                 } else if (drones.target === 'shield') {
-                    shield.integrity = Math.min(shield.maxIntegrity, shield.integrity + repairAmount);
+                    const shieldRepairAmount = repairAmount * drones.shieldRepairMultiplier;
+                    shield.integrity = Math.min(shield.maxIntegrity, shield.integrity + shieldRepairAmount);
                 }
             }
 
