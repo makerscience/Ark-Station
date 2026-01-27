@@ -5,13 +5,13 @@
 
 ## Active Objectives (max 3)
 1. Continue development of Ark Station game
-2. (add more as needed)
+2. Playtest and balance gameplay
 
 ## Next Actions
-- [ ] Test game end-to-end with new phase progression system
-- [ ] Verify panels appear/hide correctly at each CA level
-- [ ] Balance solar flare timing and damage values
+- [ ] Playtest full game loop from intro to victory/defeat
+- [ ] Balance decay/repair rates if game feels too fast or slow
 - [ ] Consider adding display power cost mechanic (solar/orbital panels costing 1 power each)
+- [ ] Add more variety to ending messages based on victory conditions
 
 ## Open Loops / Blockers
 - Display power cost not yet implemented (plan mentioned it but skipped for now)
@@ -32,14 +32,14 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Implemented 5-phase game progression system tied to Command Authorization levels
-- Solar flare timing reduced to 2-4 minutes (was 4.5-36 minutes)
-- Added power caps of 5 to all systems (stasis, drones, shield, thrusters)
-- Restructured research tree from 16 to 32 upgrades with system unlock gates
-- Added orbital movement indicator showing direction (climbing/falling/stable) and speed
-- Implemented UI visibility system - panels hidden until researched
-- Made solar flares only active after CA Level 2, orbital decay after CA Level 3
-- Power progression now 5→8→11→14→17→20 via 5 reactor upgrades
+- Doubled all system decay rates and drone repair rates for faster-paced gameplay
+- Fixed timer displays to show real seconds (was showing ticks as seconds)
+- Added Emergency Override victory button - big red "EXECUTE" button appears when hacked
+- Renamed "Research" → "Hack Systems" throughout UI for thematic consistency
+- Locked drone repair targets (Thrusters/Shield) until those systems are unlocked
+- Moved Skip button to bottom-right corner, made it 2x larger with flash animation
+- Game now starts paused after intro - player must click START or a speed button
+- Updated changelog with all session changes
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`
