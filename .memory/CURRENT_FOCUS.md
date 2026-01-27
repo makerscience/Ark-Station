@@ -32,14 +32,14 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Doubled all system decay rates and drone repair rates for faster-paced gameplay
-- Fixed timer displays to show real seconds (was showing ticks as seconds)
-- Added Emergency Override victory button - big red "EXECUTE" button appears when hacked
-- Renamed "Research" → "Hack Systems" throughout UI for thematic consistency
-- Locked drone repair targets (Thrusters/Shield) until those systems are unlocked
-- Moved Skip button to bottom-right corner, made it 2x larger with flash animation
-- Game now starts paused after intro - player must click START or a speed button
-- Updated changelog with all session changes
+- Game now stays paused during intro (time doesn't pass until player clicks START)
+- Casualty Log moved to full-width bottom panel (horizontal scrolling cards)
+- Locked panels now visible with "System Offline" placeholder instead of hidden
+- Reactor power formula simplified: 1 power per 4% integrity (ceil), removed 5 power upgrades
+- Reactor Core visual enlarged ~75%, centered with info below
+- Repair Drones panel moved above Reactor Core in center column
+- Speed controls moved to right side of header bar
+- Brightened all grey UI text for better readability (#666→#999, #888→#aaa)
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`
