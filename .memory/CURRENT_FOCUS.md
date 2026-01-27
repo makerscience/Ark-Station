@@ -10,11 +10,13 @@
 ## Next Actions
 - [ ] Playtest full game loop from intro to victory/defeat
 - [ ] Balance decay/repair rates if game feels too fast or slow
-- [ ] Consider adding display power cost mechanic (solar/orbital panels costing 1 power each)
+- [ ] Add scientific names for shield repair upgrades (currently placeholders)
 - [ ] Add more variety to ending messages based on victory conditions
+- [ ] Consider individual drone assignment system (explored but deferred)
 
 ## Open Loops / Blockers
-- Display power cost not yet implemented (plan mentioned it but skipped for now)
+- Shield repair upgrades have placeholder names ("Solar Shield: Repair Enhancement I/II/III")
+- Display power cost for solar/orbital panels not implemented
 
 ## How to Resume in 30 Seconds
 - **Open:** `.memory/CURRENT_FOCUS.md`
@@ -32,14 +34,14 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Game now stays paused during intro (time doesn't pass until player clicks START)
-- Casualty Log moved to full-width bottom panel (horizontal scrolling cards)
-- Locked panels now visible with "System Offline" placeholder instead of hidden
-- Reactor power formula simplified: 1 power per 4% integrity (ceil), removed 5 power upgrades
-- Reactor Core visual enlarged ~75%, centered with info below
-- Repair Drones panel moved above Reactor Core in center column
-- Speed controls moved to right side of header bar
-- Brightened all grey UI text for better readability (#666→#999, #888→#aaa)
+- Reactor display now shows available power (decreases as allocated) instead of allocated power
+- Renamed stasis bay upgrades with scientific names (Atmospheric Blend Controller, etc.)
+- Renamed reactor core upgrades with scientific names (Muon-Catalyzed Ignition Lattice, etc.)
+- Reworked shield: starts at 3% integrity, 100% max, upgrades boost repair speed instead of integrity
+- Solar/Shield and Orbital/Thrusters now unlock independently (can research in any order)
+- Shifted stasis bay upgrades down one Command Authorization level
+- Reactor power scaling: 1 power per 5% integrity (max 20, was 25), fixed initial power to 4
+- Added consistent green ONLINE / red OFFLINE headers for all systems
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

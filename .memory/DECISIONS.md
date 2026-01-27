@@ -36,3 +36,30 @@ Tip: Search with `rg "Tags:.*workflow" .memory/DECISIONS.md`
 - Rationale: Old formula (floor(integrity/20)*5 + bonus) dropped power immediately at game start. New formula (ceil(integrity/4)) gives 3% buffer before first power loss at 20% starting integrity. Power upgrades were redundant since power scales naturally with reactor reinforcement.
 - Alternatives considered: Keep power upgrades with adjusted formula, use round() instead of ceil().
 - Consequences / Follow-ups: Max power now 25 (at 100% integrity) instead of variable based on upgrades. Reactor Reinforcement upgrades are now the sole path to more power.
+
+---
+
+## 2026-01-27 (Session 2)
+- Tags: architecture
+- Decision: Independent unlock for subsystems within panels (Solar/Shield, Orbital/Thrusters).
+- Rationale: Players may want to unlock shield before seeing solar forecast, or thrusters before orbital status. Each subsystem now has its own "System Offline" indicator and can be researched independently.
+- Alternatives considered: Keep paired unlocks (solar always comes with shield visibility).
+- Consequences / Follow-ups: More flexible research paths. UI shows each subsystem's ONLINE/OFFLINE status separately.
+
+---
+
+## 2026-01-27 (Session 2)
+- Tags: architecture
+- Decision: Shield has no integrity cap upgrades - starts at 3% integrity with 100% max. Shield upgrades boost drone repair speed instead.
+- Rationale: Shield is different from other systems - it should be repairable to full from the start but is fragile and slow to repair. Makes shield management more about prioritization than upgrade gating.
+- Alternatives considered: Keep 4-tier integrity cap upgrades like other systems.
+- Consequences / Follow-ups: Shield repair multiplier goes 1.0x → 1.5x → 2.0x → 2.5x with 3 upgrades. Players need to balance drone time between shield and other systems.
+
+---
+
+## 2026-01-27 (Session 2)
+- Tags: architecture
+- Decision: Reactor power formula changed to 1 power per 5% integrity (max 20, was max 25).
+- Rationale: User requested each reactor upgrade add 4 power capacity for cleaner progression. At 20% integrity = 4 power, each +20% integrity upgrade adds 4 power, max 20 power at 100%.
+- Alternatives considered: Keep 1 per 4% (max 25).
+- Consequences / Follow-ups: Slightly tighter power budget. Game may need rebalancing.
