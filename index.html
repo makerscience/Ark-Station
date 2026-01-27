@@ -1545,21 +1545,27 @@
         }
         .skip-btn {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            padding: 8px 16px;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 32px;
             background: transparent;
-            border: 1px solid #333;
-            color: #444;
-            font-size: 12px;
+            border: 2px solid #666;
+            color: #888;
+            font-size: 24px;
             cursor: pointer;
             font-family: inherit;
             border-radius: 4px;
             transition: all 0.3s;
+            animation: skipFlash 1.5s ease-in-out infinite;
+        }
+        @keyframes skipFlash {
+            0%, 100% { opacity: 1; border-color: #888; color: #aaa; }
+            50% { opacity: 0.4; border-color: #444; color: #555; }
         }
         .skip-btn:hover {
-            border-color: #666;
-            color: #888;
+            border-color: #00ff88;
+            color: #00ff88;
+            animation: none;
         }
         .continue-btn {
             padding: 12px 30px;
@@ -2064,11 +2070,11 @@
     <div class="intro-overlay" id="introOverlay">
         <!-- Story Phase -->
         <div class="intro-story" id="introStory">
-            <p class="story-paragraph" id="story1">You went to sleep dreaming of life in a new world. You woke to the violent screams of tearing metal and the howl of decompression. The hull has been breached.</p>
-            <p class="story-paragraph" id="story2">Helpless, you watch as hundreds of bodies are ripped from their stasis pods and flung into the vast darkness of space beyond. With seconds to spare, you claw your way free, slamming the emergency manual override as the air is sucked from your lungs. The breach seals. You survive. But the crew is dead and you lack command authorization to open any of the remaining pods. </p>
-            <p class="story-paragraph" id="story3">Ahead lies your destination. Closer than you expected. Ark station is only a few days away. It is meant to be your sanctuary, your foothold in a new solar system, built by machines before you even arrived. But as the Ark Ship draws closer, your hope sours. </p>
-            <p class="story-paragraph" id="story4">The station is a ruin drifting perilously close to the burning star it orbits. There is no welcome beacon. No hail from the automatic systems. You dock with the silent hulk, stepping into a graveyard of cold, dark corridors. </p>
-            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. Thousands of colonists remain trapped in stasis, unaware their time is running out. Backup life support is failing. First, hundreds will die, then thousands. </p>
+            <p class="story-paragraph" id="story1">You entered your stasis pod alongside thousands of others, each one of you dreaming of life in a new world. But you woke to the violent screams of tearing metal and the howl of rapid decompression. The hull had been breached.</p>
+            <p class="story-paragraph" id="story2">Helpless, you watched as hundreds of bodies were ripped from their pods and flung into the vast darkness of space. With seconds to spare, you clawed your way free and hacked the emergency override as the air was sucked from your lungs. The breach sealed. You survived. But the crew is dead and you lack command authorization to open any of the remaining pods. </p>
+            <p class="story-paragraph" id="story3">However, Ark station is near. The orbiting sanctuary is meant to be your foothold in a new solar system. If you can make it there, you should survive. But as the Ark Ship draws close, your hope sours. </p>
+            <p class="story-paragraph" id="story4">There is no welcome beacon. No hail from the automatic systems. You dock with the silent hulk and step into a graveyard of cold, dark corridors. </p>
+            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. More than a thousand colonists remain trapped in stasis, unaware their time is running out. Backup life support is failing. Most of the pods have already gone dark. Your time is running out. </p>
             <p class="story-paragraph" id="story6">You stand before the silent reactor, praying it will start. </p>
             <button class="continue-btn" id="continueBtn">CONTINUE</button>
             <button class="skip-btn" id="skipBtn">SKIP</button>
@@ -5214,8 +5220,8 @@
             const interval = speed > 0 ? BASE_TICK_INTERVAL / speed : BASE_TICK_INTERVAL;
             gameState.tickInterval = setInterval(gameTick, interval);
 
-            // Unpause if we set a speed > 0
-            if (speed > 0 && gameState.paused && !gameState.gameOver) {
+            // Unpause if we set a speed > 0 (but not during intro)
+            if (speed > 0 && gameState.paused && !gameState.gameOver && !gameState.intro.active) {
                 gameState.paused = false;
                 els.startPause.textContent = 'PAUSE';
             }
