@@ -81,12 +81,8 @@
         }
         .main-layout {
             display: grid;
-            grid-template-columns: 360px 280px 1fr 280px;
+            grid-template-columns: 280px 1fr 280px;
             gap: 15px;
-        }
-        .death-log-sidebar {
-            display: flex;
-            flex-direction: column;
         }
         .left-sidebar {
             display: flex;
@@ -103,16 +99,11 @@
             flex-direction: column;
             gap: 15px;
         }
-        @media (max-width: 1200px) {
-            .main-layout {
-                grid-template-columns: 280px 280px 1fr;
-            }
-        }
         @media (max-width: 900px) {
             .main-layout {
                 grid-template-columns: 1fr 1fr;
             }
-            .death-log-sidebar, .left-sidebar {
+            .left-sidebar {
                 grid-column: 1 / -1;
             }
         }
@@ -134,7 +125,34 @@
             margin-bottom: 15px;
             border-radius: 4px;
         }
-        .panel.locked, .section.locked, .drone-target.locked, .target-btn.locked {
+        .panel.locked {
+            opacity: 0.5;
+        }
+        .panel.locked > *:not(.panel-title):not(.locked-indicator) {
+            display: none;
+        }
+        .panel.locked .locked-indicator {
+            display: flex;
+        }
+        .locked-indicator {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            color: #444;
+            text-align: center;
+        }
+        .locked-indicator .locked-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .locked-indicator .locked-text {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .section.locked, .drone-target.locked, .target-btn.locked {
             display: none;
         }
         .panel-title {
@@ -1723,53 +1741,71 @@
             color: #444;
             font-size: 12px;
         }
-        /* Death Log Panel */
+        /* Death Log Panel - Bottom Bar */
         .death-log-panel {
             background: #111118;
             border: 1px solid #ff444433;
-            padding: 12px;
+            padding: 12px 20px;
             border-radius: 4px;
-            height: 100%;
+            margin-top: 15px;
+        }
+        .death-log-header {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
         }
         .death-log-title {
             font-size: 11px;
             color: #ff6666;
-            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: 1px solid #ff444433;
-            padding-bottom: 8px;
+            white-space: nowrap;
         }
         .cryo-log {
-            flex: 1;
-            overflow-y: auto;
-            font-size: 14px;
-            color: #888;
-            word-wrap: break-word;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 5px;
         }
         .log-entry {
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #ff444422;
+            flex-shrink: 0;
+            padding: 8px 15px;
+            background: #0a0a0f;
+            border: 1px solid #ff444422;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #888;
             line-height: 1.4;
             opacity: 0.8;
         }
-        .log-entry:last-child {
-            border-bottom: none;
-        }
         .log-entry.recent {
             color: #ff6666;
+            border-color: #ff444444;
             opacity: 1;
         }
         .pod-failure {
             display: block;
             color: #ff4444;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             letter-spacing: 1px;
             margin-top: 4px;
+        }
+        .cryo-log::-webkit-scrollbar {
+            height: 6px;
+        }
+        .cryo-log::-webkit-scrollbar-track {
+            background: #1a1a1f;
+            border-radius: 3px;
+        }
+        .cryo-log::-webkit-scrollbar-thumb {
+            background: #ff444444;
+            border-radius: 3px;
+        }
+        .cryo-log::-webkit-scrollbar-thumb:hover {
+            background: #ff444466;
         }
         /* System Status */
         .system-status {
@@ -2147,12 +2183,6 @@
         <h1>ARK STATION</h1>
 
         <div class="main-layout">
-            <div class="death-log-sidebar">
-                <div class="death-log-panel">
-                    <div class="death-log-title">Casualty Log</div>
-                    <div class="cryo-log" id="cryoLog"></div>
-                </div>
-            </div>
             <div class="left-sidebar">
                 <div class="panel">
                     <div class="panel-title">Ark Ship — Stasis Bay</div>
@@ -2221,7 +2251,7 @@
                                 <span class="allocated" id="powerAllocated">0</span><span class="separator"> / </span><span class="total" id="powerTotal">5</span>
                             </div>
                             <div class="stat-label">Power Allocated / Output</div>
-                            <div class="reactor-max-power">Max Potential: <span id="reactorMaxPotential">27</span> power</div>
+                            <div class="reactor-max-power">Max Potential: <span id="reactorMaxPotential">25</span> power</div>
                             <div class="reactor-integrity-section">
                                 <div class="integrity-bar">
                                     <div class="integrity-fill" id="reactorIntegrity" style="width: 20%"></div>
@@ -2236,6 +2266,10 @@
 
                 <div class="panel locked" id="dronesPanel">
                     <div class="panel-title">Repair Drones</div>
+                    <div class="locked-indicator">
+                        <div class="locked-icon">⚠</div>
+                        <div class="locked-text">System Offline</div>
+                    </div>
                     <div class="drone-visual-container" id="droneVisualContainer">
                         <div class="drone-targets">
                             <div class="drone-target-row">
@@ -2306,6 +2340,10 @@
             <div class="right-column">
                 <div class="panel locked" id="orbitalPanel">
                     <div class="panel-title">Orbital Status</div>
+                    <div class="locked-indicator">
+                        <div class="locked-icon">⚠</div>
+                        <div class="locked-text">System Offline</div>
+                    </div>
                     <div class="orbital-visual">
                         <div class="sun-glow"></div>
                         <div class="orbital-track"></div>
@@ -2355,6 +2393,10 @@
 
                 <div class="panel locked" id="solarPanel">
                     <div class="panel-title">Solar Forecast</div>
+                    <div class="locked-indicator">
+                        <div class="locked-icon">⚠</div>
+                        <div class="locked-text">System Offline</div>
+                    </div>
                     <div class="solar-visual-container">
                         <div class="solar-graphic clear" id="solarGraphic">
                             <div class="flare-burst"></div>
@@ -2419,6 +2461,13 @@
                 </div>
             </div>
         </div>
+
+        <div class="death-log-panel">
+            <div class="death-log-header">
+                <div class="death-log-title">Casualty Log</div>
+            </div>
+            <div class="cryo-log" id="cryoLog"></div>
+        </div>
     </div>
 
     <!-- Research Modal -->
@@ -2458,7 +2507,6 @@
 
             // Level 2 upgrades (Phase 2 - Drones)
             { id: 'unlock_drones', name: 'Repair Drones System', desc: 'Activate repair drone bay', cost: 100, level: 2, unlocksDrones: true },
-            { id: 'power_1', name: 'Reactor Power Upgrade I', desc: 'Increase max power output to 8', cost: 120, level: 2, powerBonus: 3 },
             { id: 'stasis_cap_1', name: 'Stasis Hardening I', desc: 'Unlock stasis potential (40% max integrity)', cost: 150, level: 2, system: 'stasis', capBonus: 20 },
             { id: 'reactor_cap_1', name: 'Reactor Reinforcement I', desc: 'Unlock reactor potential (40% max integrity)', cost: 150, level: 2, system: 'reactor', capBonus: 20 },
             { id: 'auth_3', name: 'Command Authorization 3', desc: 'Unlock Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
@@ -2466,7 +2514,6 @@
             // Level 3 upgrades (Phase 3 - Solar)
             { id: 'unlock_solar', name: 'Solar Forecast System', desc: 'Activate solar monitoring array (1 power)', cost: 100, level: 3, unlocksSolar: true },
             { id: 'unlock_shield', name: 'Solar Shield Matrix', desc: 'Activate solar shield controls', cost: 120, level: 3, unlocksShield: true },
-            { id: 'power_2', name: 'Reactor Power Upgrade II', desc: 'Increase max power output to 11', cost: 150, level: 3, powerBonus: 3 },
             { id: 'shield_cap_1', name: 'Shield Reinforcement I', desc: 'Unlock shield potential (40% max integrity)', cost: 150, level: 3, system: 'shield', capBonus: 20 },
             { id: 'reactor_cap_2', name: 'Reactor Reinforcement II', desc: 'Unlock reactor potential (60% max integrity)', cost: 180, level: 3, system: 'reactor', capBonus: 20 },
             { id: 'stasis_cap_2', name: 'Stasis Hardening II', desc: 'Unlock stasis potential (60% max integrity)', cost: 180, level: 3, system: 'stasis', capBonus: 20 },
@@ -2475,7 +2522,6 @@
             // Level 4 upgrades (Phase 4 - Orbital)
             { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 4, unlocksOrbital: true },
             { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls', cost: 120, level: 4, unlocksThrusters: true },
-            { id: 'power_3', name: 'Reactor Power Upgrade III', desc: 'Increase max power output to 14', cost: 180, level: 4, powerBonus: 3 },
             { id: 'shield_cap_2', name: 'Shield Reinforcement II', desc: 'Unlock shield potential (60% max integrity)', cost: 200, level: 4, system: 'shield', capBonus: 20 },
             { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (40% max integrity)', cost: 180, level: 4, system: 'thrusters', capBonus: 20 },
             { id: 'stasis_cap_3', name: 'Stasis Hardening III', desc: 'Unlock stasis potential (80% max integrity)', cost: 220, level: 4, system: 'stasis', capBonus: 20 },
@@ -2483,7 +2529,6 @@
             { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
 
             // Level 5 upgrades (Phase 5 begins)
-            { id: 'power_4', name: 'Reactor Power Upgrade IV', desc: 'Increase max power output to 17', cost: 220, level: 5, powerBonus: 3 },
             { id: 'stasis_cap_4', name: 'Stasis Hardening IV', desc: 'Maximize stasis potential (100% max integrity)', cost: 280, level: 5, system: 'stasis', capBonus: 20 },
             { id: 'shield_cap_3', name: 'Shield Reinforcement III', desc: 'Unlock shield potential (80% max integrity)', cost: 250, level: 5, system: 'shield', capBonus: 20 },
             { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Unlock thruster potential (60% max integrity)', cost: 220, level: 5, system: 'thrusters', capBonus: 20 },
@@ -2491,7 +2536,6 @@
             { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
             // Level 6 upgrades
-            { id: 'power_5', name: 'Reactor Power Upgrade V', desc: 'Maximize power output to 20', cost: 280, level: 6, powerBonus: 3 },
             { id: 'shield_cap_4', name: 'Shield Reinforcement IV', desc: 'Maximize shield potential (100% max integrity)', cost: 300, level: 6, system: 'shield', capBonus: 20 },
             { id: 'thrusters_cap_3', name: 'Thruster Reinforcement III', desc: 'Unlock thruster potential (80% max integrity)', cost: 280, level: 6, system: 'thrusters', capBonus: 20 },
             { id: 'thrusters_cap_4', name: 'Thruster Reinforcement IV', desc: 'Maximize thruster potential (100% max integrity)', cost: 300, level: 6, system: 'thrusters', capBonus: 20 },
@@ -4488,9 +4532,6 @@
             if (upgrade.capBonus && upgrade.system) {
                 gameState.systems[upgrade.system].maxIntegrity += upgrade.capBonus;
             }
-            if (upgrade.powerBonus) {
-                gameState.power.maxPower += upgrade.powerBonus;
-            }
             if (upgrade.repairBoost) {
                 gameState.systems.drones.repairRate += upgrade.repairBoost;
             }
@@ -4627,9 +4668,13 @@
             els.reactorIntegrityText.textContent = Math.round(reactor.integrity) + '%';
             setIntegrityColor(els.reactorIntegrity, reactorFillPercent);
 
+            // Update max potential based on reactor max integrity
+            const maxPotential = Math.max(1, Math.ceil(reactor.maxIntegrity / 4));
+            els.reactorMaxPotential.textContent = maxPotential;
+
             // Reactor visual - integrity controls size, power controls glow
             const power = gameState.power.total;
-            const maxPossiblePower = 27;
+            const maxPossiblePower = 25;
             const integrity = reactor.integrity;
 
             // Integrity level (1-5) based on 20% increments
@@ -4904,10 +4949,8 @@
             reactor.integrity = Math.max(0, reactor.integrity - 0.00222 * radiationMult - flareDamage);
 
             // Calculate total power based on reactor integrity
-            // Every 20% integrity = 5 base power, plus bonus from upgrades
-            const basePower = Math.floor((reactor.integrity / 20) * 5);
-            const bonusPower = gameState.power.maxPower - 5; // upgrades add to base 5
-            const newPower = Math.max(1, basePower + bonusPower);
+            // Power increases at 5%, 9%, 13%, 17%, etc. (every 4% starting from 5)
+            const newPower = Math.max(1, Math.ceil(reactor.integrity / 4));
 
             // If power decreased, reduce allocations if necessary
             if (newPower < gameState.power.total) {

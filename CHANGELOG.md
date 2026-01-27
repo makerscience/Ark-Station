@@ -6,29 +6,41 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
-### 2026-01-27 - UI Improvements: Casualty Log and Life Support Power
+### 2026-01-27 - UI Layout Overhaul and Reactor Power Changes
 **Author:** Claude (AI Assistant)
 
 #### Added
-- **Separate Casualty Log panel:**
-  - New panel to the left of Stasis Bay (360px wide)
-  - Dedicated scrolling list of passenger deaths
-  - Larger font (14px) for better readability
-  - "POD FAILURE" displayed on its own line below each name
-  - Red-themed styling with separators between entries
+- **Casualty Log panel at bottom of screen:**
+  - Full-width horizontal panel below main game area
+  - Deaths display as cards in a scrollable row (newest on left)
+  - "POD FAILURE" displayed on its own line in each card
+  - Red-themed styling with custom scrollbar
+- **Locked panel placeholders:**
+  - Offline systems (Drones, Orbital, Solar) now visible from game start
+  - Show panel title with "⚠ System Offline" indicator
+  - Panels dimmed at 50% opacity until unlocked
+  - Gives players sense of final layout without revealing details
 
 #### Changed
+- **New reactor power formula:** Every 4% integrity = 1 power
+  - Power increases at 5%, 9%, 13%, 17%, etc. (bottom of each 4% bracket)
+  - At 20% integrity: 5 power (starting value)
+  - At 100% integrity: 25 power (maximum)
+  - Power won't drop until integrity falls below 17% (3% buffer from start)
+- **Removed all 5 Reactor Power Upgrades** (power_1 through power_5)
+  - Power now scales purely with reactor integrity
+  - Simplifies progression - focus on reactor reinforcement to unlock more power
 - **Game now stays paused during intro sequence:**
   - Time no longer passes while intro text displays
   - Player must click START or a speed button after intro to begin
 - **Life Support power bar repositioned:**
   - Moved from ship visual to directly above +/- controls
-  - Makes power allocation relationship clearer
   - Renamed label to "Life Support Power"
+- **Restored balanced 3-column layout** (was temporarily 4-column with left sidebar)
 
 #### Notes
-- Layout updated to 4-column grid to accommodate new Casualty Log panel
-- Responsive breakpoints adjusted for smaller screens
+- Max potential display updates dynamically based on reactor max integrity
+- Formula: `Math.max(1, Math.ceil(integrity / 4))`
 
 ---
 
