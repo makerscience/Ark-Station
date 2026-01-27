@@ -6,6 +6,32 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-27 - UI Improvements: Casualty Log and Life Support Power
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Separate Casualty Log panel:**
+  - New panel to the left of Stasis Bay (360px wide)
+  - Dedicated scrolling list of passenger deaths
+  - Larger font (14px) for better readability
+  - "POD FAILURE" displayed on its own line below each name
+  - Red-themed styling with separators between entries
+
+#### Changed
+- **Game now stays paused during intro sequence:**
+  - Time no longer passes while intro text displays
+  - Player must click START or a speed button after intro to begin
+- **Life Support power bar repositioned:**
+  - Moved from ship visual to directly above +/- controls
+  - Makes power allocation relationship clearer
+  - Renamed label to "Life Support Power"
+
+#### Notes
+- Layout updated to 4-column grid to accommodate new Casualty Log panel
+- Responsive breakpoints adjusted for smaller screens
+
+---
+
 ### 2026-01-26 - Emergency Override Victory Button
 **Author:** Claude (AI Assistant)
 
