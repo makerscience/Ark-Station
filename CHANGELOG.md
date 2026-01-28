@@ -6,6 +6,25 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-28 - UI Polish, Distance Display & Victory Condition
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **HACK SYSTEMS button** now shows "HACKING {name}..." with smaller font (11px) to prevent button resize
+- **Ambient Temperature** simplified to zone-based labels instead of Kelvin values:
+  - Far: Cool | Medium: Warm | Close: Hot | Very Close: Scorching | Critical: Infernal
+- **Orbital distance** now displays as km countdown (0-100,000 km) instead of zone labels
+  - Movement speed also shown in km/sec
+  - Zone colors preserved for visual feedback
+- **Shield blocking indicator** added to integrity display:
+  - Shows "(Blocking XX%)" in green when powered
+  - Shows "(Unpowered)" in gray when shield has no power
+- **Emergency Override** now locked until station reaches safe distance (>40,000 km)
+  - Shows "Too Close to Roche Limit" in red when locked due to proximity
+  - Requires player to climb out of Critical/Very Close zones before victory is possible
+
+---
+
 ### 2026-01-28 - Thruster Rebalance, UI Lockouts & Status Feedback
 **Author:** Claude (AI Assistant)
 

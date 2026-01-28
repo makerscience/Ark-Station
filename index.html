@@ -441,6 +441,8 @@
         .ambient-temp.temp-extreme { color: #ff4400; }
         .ambient-temp.temp-critical { color: #ff0000; }
         .ambient-temp.hidden { display: none; }
+        .shield-blocking { color: #00ff88; margin-left: 8px; }
+        .shield-blocking.inactive { color: #666; }
         .system {
             display: flex;
             justify-content: space-between;
@@ -1537,6 +1539,7 @@
             border-color: #666688;
             color: #8888aa;
             cursor: not-allowed;
+            font-size: 11px;
         }
         .research-btn.hacking:hover {
             background: #33337722;
@@ -2756,7 +2759,7 @@
                             <div class="integrity-fill" id="shieldIntegrity" style="width: 3%"></div>
                             <div class="integrity-locked" id="shieldLocked" style="width: 0%"></div>
                         </div>
-                        <div class="stat-label">Integrity: <span id="shieldIntegrityText">3%</span></div>
+                        <div class="stat-label">Integrity: <span id="shieldIntegrityText">3%</span> <span class="shield-blocking" id="shieldBlocking"></span></div>
                         <div class="stat-label ambient-temp hidden" id="ambientTempRow">Ambient Temp: <span id="ambientTemp">--</span></div>
                         <div class="power-controls">
                             <button class="power-btn" id="shieldMinus">−</button>
@@ -4195,6 +4198,7 @@
             shieldIntegrity: document.getElementById('shieldIntegrity'),
             shieldLocked: document.getElementById('shieldLocked'),
             shieldIntegrityText: document.getElementById('shieldIntegrityText'),
+            shieldBlocking: document.getElementById('shieldBlocking'),
             ambientTempRow: document.getElementById('ambientTempRow'),
             ambientTemp: document.getElementById('ambientTemp'),
             shieldPower: document.getElementById('shieldPower'),
@@ -4837,17 +4841,13 @@
             return 'critical';                       // Extreme
         }
 
-        // Get ambient temperature based on distance (Kelvin, exponential curve)
+        // Get ambient temperature description based on distance zone
         function getAmbientTemp(distance) {
-            return Math.round(150 + Math.pow(100 - distance, 1.5) * 3.85);
-        }
-
-        function getTempClass(temp) {
-            if (temp >= 2500) return 'temp-critical';
-            if (temp >= 1500) return 'temp-extreme';
-            if (temp >= 800)  return 'temp-hot';
-            if (temp >= 400)  return 'temp-warm';
-            return 'temp-cool';
+            if (distance > 80) return { label: 'Cool', class: 'temp-cool' };           // Far
+            if (distance > 60) return { label: 'Warm', class: 'temp-warm' };           // Medium
+            if (distance > 40) return { label: 'Hot', class: 'temp-hot' };             // Close
+            if (distance > 20) return { label: 'Scorching', class: 'temp-extreme' };   // Very Close
+            return { label: 'Infernal', class: 'temp-critical' };                       // Critical
         }
 
         // Render upgrade list in modal as a tree structure
@@ -4876,12 +4876,22 @@
 
                 for (const upgrade of levels[level]) {
                     const isPurchased = research.purchased.includes(upgrade.id);
-                    const isAvailable = !isPurchased && upgrade.level <= research.commandLevel;
+                    let isAvailable = !isPurchased && upgrade.level <= research.commandLevel;
+
+                    // Emergency Override requires station to be out of critical/very close zones (distance > 40)
+                    const needsSafeDistance = upgrade.unlocksFinal && gameState.orbital.distance <= 40;
+                    if (needsSafeDistance) isAvailable = false;
 
                     let statusClass = '';
                     if (isPurchased) statusClass = 'purchased';
                     else if (isAvailable) statusClass = 'available';
                     if (upgrade.isGate) statusClass += ' gate-upgrade';
+
+                    // Custom lock message for Emergency Override when too close
+                    let lockMessage = '<span style="color:#666">Locked</span>';
+                    if (needsSafeDistance) {
+                        lockMessage = '<span style="color:#ff6666">Too Close to Roche Limit</span>';
+                    }
 
                     html += `<div class="upgrade-item ${statusClass}">
                         <div class="upgrade-info">
@@ -4890,7 +4900,7 @@
                         </div>
                         <div class="upgrade-cost">${upgrade.cost / 5}s</div>
                         ${isPurchased ? '<span style="color:#00ff88">✓</span>' :
-                          !isAvailable ? `<span style="color:#666">Locked</span>` :
+                          !isAvailable ? lockMessage :
                           `<button class="upgrade-btn" onclick="startResearch('${upgrade.id}')">HACK</button>`}
                     </div>`;
                 }
@@ -4904,6 +4914,8 @@
             const upgrade = UPGRADES.find(u => u.id === upgradeId);
             if (!upgrade || gameState.research.purchased.includes(upgradeId)) return;
             if (upgrade.level > gameState.research.commandLevel) return;
+            // Emergency Override requires station to be out of critical/very close zones
+            if (upgrade.unlocksFinal && gameState.orbital.distance <= 40) return;
 
             gameState.research.inProgress = upgradeId;
             gameState.research.timeRemaining = upgrade.cost;
@@ -4995,10 +5007,11 @@
             els.powerTotal.textContent = gameState.power.total;
             els.survivors.textContent = gameState.survivors.toLocaleString();
 
-            // Orbital status
+            // Orbital status - display as km (internal 0-100 = 0-100,000 km)
             const orbital = gameState.orbital;
             const distInfo = getDistanceInfo(orbital.distance);
-            els.orbitalDistance.textContent = distInfo.label;
+            const distanceKm = Math.round(orbital.distance * 1000);
+            els.orbitalDistance.textContent = distanceKm.toLocaleString() + ' km';
             els.orbitalDistance.className = 'distance ' + distInfo.class;
 
             // Calculate orbital velocity for display (per second at 5 ticks/sec)
@@ -5009,16 +5022,17 @@
             const thrusterEffectDisplay = thrusterEffects[activeThrustersDisplay];
             const velocityPerTick = thrusterEffectDisplay - baseDecay;
             const velocityPerSec = velocityPerTick * 5; // 5 ticks per second
+            const velocityKmPerSec = velocityPerSec * 1000; // Convert to km/sec
 
-            // Display movement with direction
-            if (Math.abs(velocityPerSec) < 0.001) {
+            // Display movement with direction (in km/sec)
+            if (Math.abs(velocityKmPerSec) < 1) {
                 els.orbitalMovement.textContent = '— STABLE';
                 els.orbitalMovement.className = '';
-            } else if (velocityPerSec > 0) {
-                els.orbitalMovement.textContent = `↑ ${velocityPerSec.toFixed(2)}/sec`;
+            } else if (velocityKmPerSec > 0) {
+                els.orbitalMovement.textContent = `↑ ${Math.round(velocityKmPerSec)} km/sec`;
                 els.orbitalMovement.className = 'climbing';
             } else {
-                els.orbitalMovement.textContent = `↓ ${Math.abs(velocityPerSec).toFixed(2)}/sec`;
+                els.orbitalMovement.textContent = `↓ ${Math.abs(Math.round(velocityKmPerSec))} km/sec`;
                 els.orbitalMovement.className = 'falling';
             }
 
@@ -5237,14 +5251,24 @@
             els.shieldIntegrityText.textContent = Math.round(shield.integrity) + '%';
             setIntegrityColor(els.shieldIntegrity, shieldFillPercent);
 
+            // Shield blocking percentage display
+            if (shield.powerAllocated > 0) {
+                const blockingPercent = Math.round(getShieldAbsorption(shield.integrity) * 100);
+                els.shieldBlocking.textContent = `(Blocking ${blockingPercent}%)`;
+                els.shieldBlocking.classList.remove('inactive');
+            } else {
+                els.shieldBlocking.textContent = '(Unpowered)';
+                els.shieldBlocking.classList.add('inactive');
+            }
+
             // Ambient temperature readout (appears at CA4 when orbital decay starts)
             if (gameState.research.commandLevel >= 4) {
                 els.ambientTempRow.classList.remove('hidden');
-                const temp = getAmbientTemp(orbital.distance);
-                els.ambientTemp.textContent = temp.toLocaleString() + ' K';
+                const tempInfo = getAmbientTemp(orbital.distance);
+                els.ambientTemp.textContent = tempInfo.label;
                 const tempClasses = ['temp-cool', 'temp-warm', 'temp-hot', 'temp-extreme', 'temp-critical'];
                 els.ambientTempRow.classList.remove(...tempClasses);
-                els.ambientTempRow.classList.add(getTempClass(temp));
+                els.ambientTempRow.classList.add(tempInfo.class);
             } else {
                 els.ambientTempRow.classList.add('hidden');
             }
@@ -5314,7 +5338,7 @@
             const research = gameState.research;
             if (research.inProgress) {
                 const upgrade = UPGRADES.find(u => u.id === research.inProgress);
-                els.researchBtn.textContent = `⟳ ${upgrade.name}... ${Math.ceil(research.timeRemaining / 5)}s`;
+                els.researchBtn.textContent = `HACKING ${upgrade.name}... ${Math.ceil(research.timeRemaining / 5)}s`;
                 els.researchBtn.classList.add('hacking');
                 els.researchingIndicator.textContent = '';
             } else {
