@@ -434,13 +434,6 @@
             color: #999;
             font-size: 12px;
         }
-        .ambient-temp { transition: color 0.5s; }
-        .ambient-temp.temp-cool { color: #88aaff; }
-        .ambient-temp.temp-warm { color: #ccaa44; }
-        .ambient-temp.temp-hot { color: #ff8800; }
-        .ambient-temp.temp-extreme { color: #ff4400; }
-        .ambient-temp.temp-critical { color: #ff0000; }
-        .ambient-temp.hidden { display: none; }
         .shield-blocking { color: #00ff88; margin-left: 8px; }
         .shield-blocking.inactive { color: #666; }
         .system {
@@ -599,6 +592,17 @@
             color: #ff4444;
             margin-top: 5px;
         }
+        .shield-radiation-warning {
+            font-size: 11px;
+            margin-top: 5px;
+            transition: color 0.3s;
+        }
+        .shield-radiation-warning.rad-minimal { color: #00ff88; }
+        .shield-radiation-warning.rad-low { color: #88cc44; }
+        .shield-radiation-warning.rad-elevated { color: #ffaa00; }
+        .shield-radiation-warning.rad-high { color: #ff6600; }
+        .shield-radiation-warning.rad-extreme { color: #ff4444; }
+        .shield-radiation-warning.rad-flare { color: #ff0000; font-weight: bold; }
         /* Orbital Visualization */
         .orbital-visual {
             position: relative;
@@ -2611,7 +2615,6 @@
                             <div id="orbitalMovement">— STABLE</div>
                         </div>
                     </div>
-                    <div class="radiation-warning" id="radiationWarning"></div>
                     </div>
 
                     <div class="thruster-section-locked section" id="thrusterSectionLocked">
@@ -2760,7 +2763,7 @@
                             <div class="integrity-locked" id="shieldLocked" style="width: 0%"></div>
                         </div>
                         <div class="stat-label">Integrity: <span id="shieldIntegrityText">3%</span> <span class="shield-blocking" id="shieldBlocking"></span></div>
-                        <div class="stat-label ambient-temp hidden" id="ambientTempRow">Ambient Temp: <span id="ambientTemp">--</span></div>
+                        <div class="shield-radiation-warning" id="shieldRadiationWarning">Radiation: Minimal</div>
                         <div class="power-controls">
                             <button class="power-btn" id="shieldMinus">−</button>
                             <div class="power-display"><span id="shieldPower">0</span> ⚡</div>
@@ -4155,7 +4158,6 @@
             deathRate: document.getElementById('deathRate'),
             orbitalDistance: document.getElementById('orbitalDistance'),
             orbitalMovement: document.getElementById('orbitalMovement'),
-            radiationWarning: document.getElementById('radiationWarning'),
             solarStatus: document.getElementById('solarStatus'),
             solarGraphic: document.getElementById('solarGraphic'),
             shieldGraphic: document.getElementById('shieldGraphic'),
@@ -4199,8 +4201,7 @@
             shieldLocked: document.getElementById('shieldLocked'),
             shieldIntegrityText: document.getElementById('shieldIntegrityText'),
             shieldBlocking: document.getElementById('shieldBlocking'),
-            ambientTempRow: document.getElementById('ambientTempRow'),
-            ambientTemp: document.getElementById('ambientTemp'),
+            shieldRadiationWarning: document.getElementById('shieldRadiationWarning'),
             shieldPower: document.getElementById('shieldPower'),
             shieldMinus: document.getElementById('shieldMinus'),
             shieldPlus: document.getElementById('shieldPlus'),
@@ -4768,7 +4769,6 @@
             els.emergencyOverride.classList.remove('active');
             els.flareOverlay.classList.remove('active');
             els.rocheOverlay.classList.remove('zone-medium', 'zone-close', 'zone-veryclose', 'zone-critical');
-            els.ambientTempRow.classList.add('hidden');
             els.container.classList.remove('shake-1', 'shake-2', 'shake-3');
             els.introOverlay.classList.remove('hidden');
 
@@ -4839,15 +4839,6 @@
             if (distance > 40) return 'close';      // Noticeable
             if (distance > 20) return 'veryclose';  // Strong
             return 'critical';                       // Extreme
-        }
-
-        // Get ambient temperature description based on distance zone
-        function getAmbientTemp(distance) {
-            if (distance > 80) return { label: 'Cool', class: 'temp-cool' };           // Far
-            if (distance > 60) return { label: 'Warm', class: 'temp-warm' };           // Medium
-            if (distance > 40) return { label: 'Hot', class: 'temp-hot' };             // Close
-            if (distance > 20) return { label: 'Scorching', class: 'temp-extreme' };   // Very Close
-            return { label: 'Infernal', class: 'temp-critical' };                       // Critical
         }
 
         // Render upgrade list in modal as a tree structure
@@ -5007,11 +4998,11 @@
             els.powerTotal.textContent = gameState.power.total;
             els.survivors.textContent = gameState.survivors.toLocaleString();
 
-            // Orbital status - display as km (internal 0-100 = 0-100,000 km)
+            // Orbital status - display zone label + km (internal 0-100 = 0-100,000 km)
             const orbital = gameState.orbital;
             const distInfo = getDistanceInfo(orbital.distance);
             const distanceKm = Math.round(orbital.distance * 1000);
-            els.orbitalDistance.textContent = distanceKm.toLocaleString() + ' km';
+            els.orbitalDistance.textContent = `${distInfo.label} — ${distanceKm.toLocaleString()} km`;
             els.orbitalDistance.className = 'distance ' + distInfo.class;
 
             // Calculate orbital velocity for display (per second at 5 ticks/sec)
@@ -5062,19 +5053,6 @@
             } else {
                 els.rocheOverlay.classList.remove(...rocheZones);
                 els.rocheOverlay.style.removeProperty('--roche-dampen');
-            }
-
-            // Radiation warning based on distance (5 zones)
-            if (orbital.distance <= 20) {
-                els.radiationWarning.textContent = '⚠ EXTREME RADIATION - All systems taking critical damage!';
-            } else if (orbital.distance <= 40) {
-                els.radiationWarning.textContent = '⚠ HIGH RADIATION - Systems degrading rapidly!';
-            } else if (orbital.distance <= 60) {
-                els.radiationWarning.textContent = '⚠ Elevated radiation - Systems degrading faster';
-            } else if (orbital.distance <= 80) {
-                els.radiationWarning.textContent = '⚠ Low radiation detected';
-            } else {
-                els.radiationWarning.textContent = '';
             }
 
             // Solar forecast
@@ -5261,16 +5239,28 @@
                 els.shieldBlocking.classList.add('inactive');
             }
 
-            // Ambient temperature readout (appears at CA4 when orbital decay starts)
-            if (gameState.research.commandLevel >= 4) {
-                els.ambientTempRow.classList.remove('hidden');
-                const tempInfo = getAmbientTemp(orbital.distance);
-                els.ambientTemp.textContent = tempInfo.label;
-                const tempClasses = ['temp-cool', 'temp-warm', 'temp-hot', 'temp-extreme', 'temp-critical'];
-                els.ambientTempRow.classList.remove(...tempClasses);
-                els.ambientTempRow.classList.add(tempInfo.class);
+            // Radiation warning in shield panel (based on distance zone, max during flares)
+            const radClasses = ['rad-minimal', 'rad-low', 'rad-elevated', 'rad-high', 'rad-extreme', 'rad-flare'];
+            els.shieldRadiationWarning.classList.remove(...radClasses);
+
+            if (gameState.solar.flareActive) {
+                els.shieldRadiationWarning.textContent = '☢ SOLAR FLARE - Maximum radiation!';
+                els.shieldRadiationWarning.classList.add('rad-flare');
+            } else if (orbital.distance <= 20) {
+                els.shieldRadiationWarning.textContent = '☢ Radiation: Extreme';
+                els.shieldRadiationWarning.classList.add('rad-extreme');
+            } else if (orbital.distance <= 40) {
+                els.shieldRadiationWarning.textContent = '☢ Radiation: High';
+                els.shieldRadiationWarning.classList.add('rad-high');
+            } else if (orbital.distance <= 60) {
+                els.shieldRadiationWarning.textContent = '⚠ Radiation: Elevated';
+                els.shieldRadiationWarning.classList.add('rad-elevated');
+            } else if (orbital.distance <= 80) {
+                els.shieldRadiationWarning.textContent = 'Radiation: Low';
+                els.shieldRadiationWarning.classList.add('rad-low');
             } else {
-                els.ambientTempRow.classList.add('hidden');
+                els.shieldRadiationWarning.textContent = 'Radiation: Minimal';
+                els.shieldRadiationWarning.classList.add('rad-minimal');
             }
 
             // Update shield graphic based on power
