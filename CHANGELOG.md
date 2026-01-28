@@ -6,6 +6,42 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-27 - Thruster System Overhaul
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Thrusters converted to 4 individual units** (from single integrity-based system)
+  - Each thruster is unlocked separately via research upgrades
+  - Each active thruster consumes 1 power
+  - Binary on/off toggle per thruster (no degradation/repair needed)
+  - 4 thrusters = 4 power max, fully counters orbital decay
+- **Orbital decay formula simplified:**
+  - Base decay: 0.00334 per tick
+  - Each active thruster reduces decay by 0.001 (4 thrusters = stable orbit)
+- **Research upgrades restructured:**
+  - "Orbital Thrusters" (L4) now unlocks panel + Thruster 1
+  - "Thruster Bay 2 Override" (L4, 150 points)
+  - "Thruster Bay 3 Override" (L5, 200 points)
+  - "Thruster Bay 4 Override" (L6, 250 points)
+  - Removed 4x "Thruster Reinforcement" integrity upgrades
+
+#### Removed
+- **Thrusters removed from drone repair targets**
+  - Repair drones now only target: Reactor, Stasis, Shield
+  - Thrusters are binary (no integrity to repair)
+- **Thruster integrity/maxIntegrity system removed**
+- **MAX_THRUSTER_POWER constant removed** (implicit 4 max from array)
+
+#### Added
+- **New thruster UI:** Horizontal row of 4 smaller thruster graphics with individual toggle buttons
+- **Per-thruster status display:** LOCKED / OFF / ON with color-coded styling
+- **Flame animation on powered thrusters**
+
+#### Fixed
+- **Thruster toggle cursor:** Now shows pointer cursor when hovering over ON buttons (was showing not-allowed)
+
+---
+
 ### 2026-01-27 - System Independence and Upgrade Rework
 **Author:** Claude (AI Assistant)
 

@@ -34,14 +34,13 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Reactor display now shows available power (decreases as allocated) instead of allocated power
-- Renamed stasis bay upgrades with scientific names (Atmospheric Blend Controller, etc.)
-- Renamed reactor core upgrades with scientific names (Muon-Catalyzed Ignition Lattice, etc.)
-- Reworked shield: starts at 3% integrity, 100% max, upgrades boost repair speed instead of integrity
-- Solar/Shield and Orbital/Thrusters now unlock independently (can research in any order)
-- Shifted stasis bay upgrades down one Command Authorization level
-- Reactor power scaling: 1 power per 5% integrity (max 20, was 25), fixed initial power to 4
-- Added consistent green ONLINE / red OFFLINE headers for all systems
+- Converted thrusters from single integrity-based system to 4 individual toggle units
+- Each thruster: unlocked via research, consumes 1 power when ON, binary state (no repair)
+- Research: "Orbital Thrusters" unlocks panel+T1, then T2/T3/T4 as separate upgrades
+- Removed thrusters from drone repair targets (now only Reactor, Stasis, Shield)
+- 4 active thrusters fully counter orbital decay (each contributes 0.001 vs 0.00334 base decay)
+- New UI: horizontal grid of 4 smaller thruster graphics with toggle buttons
+- Cleaned up old thruster CSS and removed MAX_THRUSTER_POWER constant
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

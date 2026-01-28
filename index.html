@@ -162,11 +162,14 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        .section.locked, .drone-target.locked, .target-btn.locked {
+        .section.locked, .target-btn.locked {
             display: none;
         }
+        .drone-target.locked {
+            visibility: hidden;
+        }
         .section-locked-indicator {
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -200,6 +203,32 @@
         .locked-section-header .system-status.offline {
             color: #ff4444;
         }
+        /* Repair Drones Panel - consistent height for online/offline states */
+        #dronesPanel {
+            min-height: 271px;
+            max-height: 271px;
+            margin-bottom: 8px;
+        }
+        #dronesPanel .section-locked-indicator {
+            padding: 63px 20px;
+        }
+        #dronesPanel .drone-visual-container {
+            height: 136px;
+            margin-bottom: 8px;
+        }
+        #dronesPanel .drone-targets {
+            padding: 8px;
+        }
+        #dronesPanel .drone-controls {
+            gap: 6px;
+        }
+        #dronesPanel .target-buttons {
+            gap: 5px;
+        }
+        #dronesPanel .target-btn {
+            padding: 3px 6px;
+            font-size: 10px;
+        }
         .panel-title {
             color: #aaa;
             font-size: 12px;
@@ -215,8 +244,8 @@
         }
         .reactor-visual-container {
             position: relative;
-            width: 180px;
-            height: 180px;
+            width: 144px;
+            height: 144px;
             flex-shrink: 0;
         }
         .reactor-core-visual {
@@ -224,8 +253,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 44px;
-            height: 44px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background: radial-gradient(circle, #115522 0%, #0a2211 50%, #051108 100%);
             border: 3px solid #00ff8833;
@@ -233,11 +262,11 @@
             transition: all 0.5s;
         }
         /* Integrity levels - size expansion */
-        .reactor-core-visual.integrity-1 { width: 44px; height: 44px; }
-        .reactor-core-visual.integrity-2 { width: 73px; height: 73px; }
-        .reactor-core-visual.integrity-3 { width: 102px; height: 102px; }
-        .reactor-core-visual.integrity-4 { width: 132px; height: 132px; }
-        .reactor-core-visual.integrity-5 { width: 162px; height: 162px; }
+        .reactor-core-visual.integrity-1 { width: 35px; height: 35px; }
+        .reactor-core-visual.integrity-2 { width: 58px; height: 58px; }
+        .reactor-core-visual.integrity-3 { width: 82px; height: 82px; }
+        .reactor-core-visual.integrity-4 { width: 106px; height: 106px; }
+        .reactor-core-visual.integrity-5 { width: 130px; height: 130px; }
         /* Power glow levels */
         .reactor-core-visual.glow-1 {
             background: radial-gradient(circle, #1a6633 0%, #0d3318 50%, #051108 100%);
@@ -325,11 +354,11 @@
             border: 1px solid #00ff8822;
             transition: border-color 0.5s, box-shadow 0.5s;
         }
-        .reactor-ring-1 { width: 58px; height: 58px; }
-        .reactor-ring-2 { width: 89px; height: 89px; }
-        .reactor-ring-3 { width: 119px; height: 119px; }
-        .reactor-ring-4 { width: 149px; height: 149px; }
-        .reactor-ring-5 { width: 180px; height: 180px; }
+        .reactor-ring-1 { width: 46px; height: 46px; }
+        .reactor-ring-2 { width: 71px; height: 71px; }
+        .reactor-ring-3 { width: 95px; height: 95px; }
+        .reactor-ring-4 { width: 119px; height: 119px; }
+        .reactor-ring-5 { width: 144px; height: 144px; }
         .reactor-ring.active {
             border-color: #00ff8866;
             box-shadow: 0 0 8px #00ff8844;
@@ -632,137 +661,165 @@
             color: #aaa;
             text-transform: uppercase;
         }
-        .thruster-power-display {
+        /* Thruster Grid (4 individual thrusters) */
+        .thruster-power-summary {
+            font-size: 11px;
+            color: #888;
+        }
+        .thruster-grid {
             display: flex;
-            align-items: center;
             gap: 8px;
+            margin-top: 10px;
+            justify-content: space-between;
         }
-        .thruster-stats {
-            margin-top: 5px;
-        }
-        .thruster-stats .integrity-bar {
-            width: 100%;
-            height: 8px;
-        }
-        .thruster-graphic-container {
-            margin-top: 12px;
-            height: 50px;
-            position: relative;
-            overflow: visible;
-        }
-        .thruster-graphic {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 60px;
-            height: 50px;
-        }
-        .thruster-body {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            width: 45px;
-            height: 28px;
-            background: linear-gradient(180deg, #2a2a4e 0%, #1a1a2e 50%, #2a2a4e 100%);
-            border: 1px solid #3a3a5e;
+        .thruster-unit {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            background: rgba(0, 20, 40, 0.5);
+            border: 1px solid #1a3a4a;
             border-radius: 4px;
+            transition: all 0.3s;
         }
-        .thruster-nozzle {
+        .thruster-unit.locked {
+            opacity: 0.4;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .thruster-unit.unlocked {
+            border-color: #2a5a6a;
+        }
+        .thruster-unit.powered {
+            border-color: #00aaff;
+            background: rgba(0, 100, 150, 0.2);
+            box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+        }
+        .thruster-unit-label {
+            font-size: 9px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .thruster-unit.unlocked .thruster-unit-label {
+            color: #888;
+        }
+        .thruster-unit.powered .thruster-unit-label {
+            color: #00aaff;
+        }
+        .thruster-unit-status {
+            font-size: 8px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 2px;
+            margin-bottom: 6px;
+        }
+        .thruster-unit.locked .thruster-unit-status {
+            background: #331111;
+            color: #884444;
+        }
+        .thruster-unit.unlocked .thruster-unit-status {
+            background: #113311;
+            color: #449944;
+        }
+        .thruster-unit.powered .thruster-unit-status {
+            background: #003366;
+            color: #00ccff;
+        }
+        .thruster-graphic-small {
+            position: relative;
+            width: 30px;
+            height: 35px;
+            margin-bottom: 6px;
+        }
+        .thruster-body-small {
             position: absolute;
-            top: 50%;
-            left: 43px;
-            transform: translateY(-50%);
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 14px;
+            background: linear-gradient(180deg, #3a4a5a 0%, #2a3a4a 50%, #1a2a3a 100%);
+            border-radius: 3px 3px 0 0;
+        }
+        .thruster-nozzle-small {
+            position: absolute;
+            top: 13px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 8px;
+            background: linear-gradient(180deg, #4a5a6a 0%, #2a3a4a 100%);
+            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+        }
+        .thruster-flame-outer-small {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            background: radial-gradient(ellipse at top, #ff660066 0%, #ff440033 50%, transparent 100%);
+            border-radius: 0 0 50% 50%;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+        .thruster-flame-inner-small {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            background: linear-gradient(180deg, #ffffff 0%, #00ffff 30%, #00aaff 60%, transparent 100%);
+            border-radius: 0 0 50% 50%;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+        .thruster-graphic-small.active .thruster-flame-outer-small {
             width: 14px;
             height: 18px;
-            background: linear-gradient(90deg, #2a2a4e 0%, #3a3a5e 50%, #4a4a6e 100%);
-            border-radius: 0 4px 4px 0;
-            border: 1px solid #3a3a5e;
-            border-left: none;
-        }
-        .thruster-flame-outer {
-            position: absolute;
-            top: 50%;
-            left: 57px;
-            transform: translateY(-50%);
-            width: 0;
-            height: 16px;
-            background: linear-gradient(90deg, #0066aa 0%, #00aaff66 40%, transparent 100%);
-            border-radius: 0 8px 8px 0;
-            opacity: 0;
-            transition: width 0.2s ease-out, opacity 0.2s;
-        }
-        .thruster-flame-inner {
-            position: absolute;
-            top: 50%;
-            left: 57px;
-            transform: translateY(-50%);
-            width: 0;
-            height: 10px;
-            background: linear-gradient(90deg, #00ddff 0%, #00ffff 30%, transparent 100%);
-            border-radius: 0 5px 5px 0;
-            opacity: 0;
-            transition: width 0.2s ease-out, opacity 0.2s;
-        }
-        .thruster-graphic.power-1 .thruster-flame-inner {
-            width: 20px;
-            opacity: 0.8;
-            animation: flameFlicker 0.15s infinite;
-        }
-        .thruster-graphic.power-1 .thruster-flame-outer {
-            width: 30px;
-            opacity: 0.5;
-        }
-        .thruster-graphic.power-2 .thruster-flame-inner {
-            width: 40px;
-            opacity: 0.9;
-            animation: flameFlicker 0.12s infinite;
-        }
-        .thruster-graphic.power-2 .thruster-flame-outer {
-            width: 55px;
             opacity: 0.6;
         }
-        .thruster-graphic.power-3 .thruster-flame-inner {
-            width: 60px;
-            opacity: 1;
-            animation: flameFlicker 0.1s infinite;
-        }
-        .thruster-graphic.power-3 .thruster-flame-outer {
-            width: 80px;
-            height: 20px;
-            opacity: 0.7;
-        }
-        .thruster-graphic.power-4 .thruster-flame-inner {
-            width: 90px;
-            height: 12px;
-            opacity: 1;
-            animation: flameFlicker 0.08s infinite;
-        }
-        .thruster-graphic.power-4 .thruster-flame-outer {
-            width: 120px;
-            height: 24px;
-            opacity: 0.8;
-        }
-        .thruster-graphic.power-5 .thruster-flame-inner {
-            width: 130px;
+        .thruster-graphic-small.active .thruster-flame-inner-small {
+            width: 8px;
             height: 14px;
-            background: linear-gradient(90deg, #ffffff 0%, #00ffff 20%, #00aaff 50%, transparent 100%);
             opacity: 1;
-            animation: flameFlicker 0.06s infinite;
+            animation: flameFlickerSmall 0.12s infinite;
         }
-        .thruster-graphic.power-5 .thruster-flame-outer {
-            width: 170px;
-            height: 28px;
-            opacity: 0.9;
-            animation: flamePulse 0.3s infinite;
+        @keyframes flameFlickerSmall {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+            50% { opacity: 0.85; transform: translateX(-50%) scaleY(0.9); }
         }
-        @keyframes flameFlicker {
-            0%, 100% { opacity: 1; transform: translateY(-50%) scaleY(1); }
-            50% { opacity: 0.85; transform: translateY(-50%) scaleY(0.92); }
+        .thruster-toggle {
+            font-size: 9px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            background: #1a1a1a;
+            color: #666;
+            cursor: not-allowed;
+            transition: all 0.2s;
         }
-        @keyframes flamePulse {
-            0%, 100% { opacity: 0.9; }
-            50% { opacity: 0.7; }
+        .thruster-unit.unlocked .thruster-toggle {
+            cursor: pointer;
+            border-color: #444;
+            color: #888;
+            background: #222;
+        }
+        .thruster-unit.unlocked .thruster-toggle:hover {
+            border-color: #00aaff;
+            color: #aaa;
+        }
+        .thruster-unit.powered .thruster-toggle {
+            cursor: pointer;
+            border-color: #00aaff;
+            background: #003366;
+            color: #00ccff;
+        }
+        .thruster-toggle:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
         }
         /* Solar Visual */
         .solar-visual-container {
@@ -1379,19 +1436,19 @@
 
         @keyframes flyToReactor {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-75px, -40px); }
+            50% { transform: translate(-75px, -38px); }
         }
         @keyframes flyToStasis {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(75px, -40px); }
+            50% { transform: translate(75px, -38px); }
         }
         @keyframes flyToThrusters {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-75px, 40px); }
+            50% { transform: translate(-75px, 38px); }
         }
         @keyframes flyToShield {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(75px, 40px); }
+            50% { transform: translate(75px, 38px); }
         }
 
         
@@ -2320,13 +2377,6 @@
                                 </div>
                             </div>
                             <div class="drone-target-row">
-                                <div class="drone-target locked" id="droneTargetThrusters">
-                                    <div class="target-icon thruster-icon">
-                                        <div class="thruster-icon-body"></div>
-                                        <div class="thruster-icon-flame"></div>
-                                    </div>
-                                    <div class="target-label">Thrusters</div>
-                                </div>
                                 <div class="drone-target locked" id="droneTargetShield">
                                     <div class="target-icon shield-icon">
                                         <div class="shield-icon-arc"></div>
@@ -2349,7 +2399,6 @@
                         <div class="target-buttons">
                             <button class="target-btn active" id="targetReactor">Reactor</button>
                             <button class="target-btn" id="targetStasis">Stasis</button>
-                            <button class="target-btn locked" id="targetThrusters">Thrusters</button>
                             <button class="target-btn locked" id="targetShield">Shield</button>
                         </div>
                         <div class="power-controls">
@@ -2451,26 +2500,52 @@
                     <div class="thruster-section section locked" id="thrusterSection">
                         <div class="thruster-header">
                             <div class="thruster-title">Orbital Thrusters</div>
-                            <div class="thruster-power-display">
-                                <button class="power-btn" id="thrustersMinus">−</button>
-                                <div class="power-display"><span id="thrustersPower">0</span> ⚡</div>
-                                <button class="power-btn" id="thrustersPlus">+</button>
-                            </div>
+                            <div class="thruster-power-summary"><span id="thrustersActivePower">0</span>/4 active</div>
                         </div>
-                        <div class="thruster-stats">
-                            <div class="integrity-bar">
-                                <div class="integrity-fill" id="thrustersIntegrity" style="width: 20%"></div>
-                                <div class="integrity-locked" id="thrustersLocked" style="width: 80%"></div>
+                        <div class="thruster-grid">
+                            <div class="thruster-unit locked" id="thrusterUnit1">
+                                <div class="thruster-unit-label">BAY 1</div>
+                                <div class="thruster-unit-status">LOCKED</div>
+                                <div class="thruster-graphic-small" id="thrusterGraphic1">
+                                    <div class="thruster-body-small"></div>
+                                    <div class="thruster-nozzle-small"></div>
+                                    <div class="thruster-flame-outer-small"></div>
+                                    <div class="thruster-flame-inner-small"></div>
+                                </div>
+                                <button class="thruster-toggle" id="thrusterToggle1" disabled>OFF</button>
                             </div>
-                            <div class="stat-label">Integrity: <span id="thrustersIntegrityText">20%</span></div>
-                        </div>
-                        <div class="system-status critical" id="thrustersStatus">CRITICAL</div>
-                        <div class="thruster-graphic-container">
-                            <div class="thruster-graphic" id="thrusterGraphic">
-                                <div class="thruster-body"></div>
-                                <div class="thruster-nozzle"></div>
-                                <div class="thruster-flame-outer"></div>
-                                <div class="thruster-flame-inner"></div>
+                            <div class="thruster-unit locked" id="thrusterUnit2">
+                                <div class="thruster-unit-label">BAY 2</div>
+                                <div class="thruster-unit-status">LOCKED</div>
+                                <div class="thruster-graphic-small" id="thrusterGraphic2">
+                                    <div class="thruster-body-small"></div>
+                                    <div class="thruster-nozzle-small"></div>
+                                    <div class="thruster-flame-outer-small"></div>
+                                    <div class="thruster-flame-inner-small"></div>
+                                </div>
+                                <button class="thruster-toggle" id="thrusterToggle2" disabled>OFF</button>
+                            </div>
+                            <div class="thruster-unit locked" id="thrusterUnit3">
+                                <div class="thruster-unit-label">BAY 3</div>
+                                <div class="thruster-unit-status">LOCKED</div>
+                                <div class="thruster-graphic-small" id="thrusterGraphic3">
+                                    <div class="thruster-body-small"></div>
+                                    <div class="thruster-nozzle-small"></div>
+                                    <div class="thruster-flame-outer-small"></div>
+                                    <div class="thruster-flame-inner-small"></div>
+                                </div>
+                                <button class="thruster-toggle" id="thrusterToggle3" disabled>OFF</button>
+                            </div>
+                            <div class="thruster-unit locked" id="thrusterUnit4">
+                                <div class="thruster-unit-label">BAY 4</div>
+                                <div class="thruster-unit-status">LOCKED</div>
+                                <div class="thruster-graphic-small" id="thrusterGraphic4">
+                                    <div class="thruster-body-small"></div>
+                                    <div class="thruster-nozzle-small"></div>
+                                    <div class="thruster-flame-outer-small"></div>
+                                    <div class="thruster-flame-inner-small"></div>
+                                </div>
+                                <button class="thruster-toggle" id="thrusterToggle4" disabled>OFF</button>
                             </div>
                         </div>
                     </div>
@@ -2627,9 +2702,9 @@
 
             // Level 4 upgrades (Phase 4 - Orbital)
             { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 4, unlocksOrbital: true },
-            { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls', cost: 120, level: 4, unlocksThrusters: true },
+            { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls + Thruster Bay 1', cost: 120, level: 4, unlocksThrusters: true, unlocksThruster: 1 },
             { id: 'shield_repair_2', name: 'Solar Shield: Repair Enhancement II', desc: 'Further improves drone repair efficiency for solar shield (+50% shield repair speed)', cost: 200, level: 4, shieldRepairBoost: 0.5 },
-            { id: 'thrusters_cap_1', name: 'Thruster Reinforcement I', desc: 'Unlock thruster potential (40% max integrity)', cost: 180, level: 4, system: 'thrusters', capBonus: 20 },
+            { id: 'thruster_2', name: 'Thruster Bay 2 Override', desc: 'Bypass safety lockout on Thruster Bay 2', cost: 150, level: 4, unlocksThruster: 2 },
             { id: 'stasis_cap_3', name: 'Stasis Bay: Neural Drift Dampener', desc: 'Low-power neuro-stimulation lattice that keeps brain activity in safe idle patterns, preventing memory corruption and personality drift (+20% max integrity)', cost: 220, level: 3, system: 'stasis', capBonus: 20 },
             { id: 'reactor_cap_3', name: 'Reactor Core: Thermoacoustic Resonance Recuperator', desc: 'Harvests waste heat and vibration via thermoacoustic conversion, boosting efficiency and extending fuel life (+20% max integrity)', cost: 220, level: 4, system: 'reactor', capBonus: 20 },
             { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
@@ -2637,13 +2712,12 @@
             // Level 5 upgrades (Phase 5 begins)
             { id: 'stasis_cap_4', name: 'Stasis Bay: Bioelectric Homeostasis Harness', desc: 'Electrode mesh monitors ECG/EEG and delivers counterpulses to prevent arrhythmias, seizures, and neuromuscular jitter (+20% max integrity)', cost: 280, level: 4, system: 'stasis', capBonus: 20 },
             { id: 'shield_repair_3', name: 'Solar Shield: Repair Enhancement III', desc: 'Maximizes drone repair efficiency for solar shield (+50% shield repair speed)', cost: 250, level: 5, shieldRepairBoost: 0.5 },
-            { id: 'thrusters_cap_2', name: 'Thruster Reinforcement II', desc: 'Unlock thruster potential (60% max integrity)', cost: 220, level: 5, system: 'thrusters', capBonus: 20 },
+            { id: 'thruster_3', name: 'Thruster Bay 3 Override', desc: 'Bypass safety lockout on Thruster Bay 3', cost: 200, level: 5, unlocksThruster: 3 },
             { id: 'reactor_cap_4', name: 'Reactor Core: Neutrino-Indexed Reaction Governor', desc: 'Real-time neutrino detection monitors reaction state, preventing runaway spikes and enabling precision control (+20% max integrity)', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
             { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
             // Level 6 upgrades
-            { id: 'thrusters_cap_3', name: 'Thruster Reinforcement III', desc: 'Unlock thruster potential (80% max integrity)', cost: 280, level: 6, system: 'thrusters', capBonus: 20 },
-            { id: 'thrusters_cap_4', name: 'Thruster Reinforcement IV', desc: 'Maximize thruster potential (100% max integrity)', cost: 300, level: 6, system: 'thrusters', capBonus: 20 },
+            { id: 'thruster_4', name: 'Thruster Bay 4 Override', desc: 'Bypass safety lockout on Thruster Bay 4', cost: 250, level: 6, unlocksThruster: 4 },
             { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
 
             // Level 7 upgrade
@@ -2658,7 +2732,6 @@
         const MAX_STASIS_POWER = 5;  // Max power that can be allocated to stasis
         const MAX_DRONE_POWER = 5;   // Max power that can be allocated to drones
         const MAX_SHIELD_POWER = 5;  // Max power that can be allocated to shield
-        const MAX_THRUSTER_POWER = 5; // Max power that can be allocated to thrusters
 
         // Passenger death records database
         const PASSENGER_DATABASE = [
@@ -3854,14 +3927,21 @@
 
         // Game State
         const gameState = {
-            power: { total: 4, maxPower: 4, allocated: { stasis: 0, thrusters: 0, shield: 0, drones: 0 } },
+            power: { total: 4, maxPower: 4, allocated: { stasis: 0, shield: 0, drones: 0 } },
             survivors: 0, // Will be set during init
             colonistStates: null, // Uint8Array: 0 = dead, 1 = alive
             livingColonists: [], // Indices of living colonists for efficient random selection
             systems: {
                 reactor: { integrity: 20, maxIntegrity: 20 },
                 stasis: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
-                thrusters: { integrity: 20, maxIntegrity: 20, powerAllocated: 0 },
+                thrusters: {
+                    units: [
+                        { unlocked: false, powered: false },
+                        { unlocked: false, powered: false },
+                        { unlocked: false, powered: false },
+                        { unlocked: false, powered: false }
+                    ]
+                },
                 shield: { integrity: 3, maxIntegrity: 100, powerAllocated: 0 },
                 drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.01774, shieldRepairMultiplier: 1.0 }
             },
@@ -3959,13 +4039,19 @@
             stasisPower: document.getElementById('stasisPower'),
             stasisMinus: document.getElementById('stasisMinus'),
             stasisPlus: document.getElementById('stasisPlus'),
-            thrusterGraphic: document.getElementById('thrusterGraphic'),
-            thrustersIntegrity: document.getElementById('thrustersIntegrity'),
-            thrustersLocked: document.getElementById('thrustersLocked'),
-            thrustersIntegrityText: document.getElementById('thrustersIntegrityText'),
-            thrustersPower: document.getElementById('thrustersPower'),
-            thrustersMinus: document.getElementById('thrustersMinus'),
-            thrustersPlus: document.getElementById('thrustersPlus'),
+            thrustersActivePower: document.getElementById('thrustersActivePower'),
+            thrusterUnit1: document.getElementById('thrusterUnit1'),
+            thrusterUnit2: document.getElementById('thrusterUnit2'),
+            thrusterUnit3: document.getElementById('thrusterUnit3'),
+            thrusterUnit4: document.getElementById('thrusterUnit4'),
+            thrusterGraphic1: document.getElementById('thrusterGraphic1'),
+            thrusterGraphic2: document.getElementById('thrusterGraphic2'),
+            thrusterGraphic3: document.getElementById('thrusterGraphic3'),
+            thrusterGraphic4: document.getElementById('thrusterGraphic4'),
+            thrusterToggle1: document.getElementById('thrusterToggle1'),
+            thrusterToggle2: document.getElementById('thrusterToggle2'),
+            thrusterToggle3: document.getElementById('thrusterToggle3'),
+            thrusterToggle4: document.getElementById('thrusterToggle4'),
             shieldIntegrity: document.getElementById('shieldIntegrity'),
             shieldLocked: document.getElementById('shieldLocked'),
             shieldIntegrityText: document.getElementById('shieldIntegrityText'),
@@ -3975,14 +4061,12 @@
             droneVisualContainer: document.getElementById('droneVisualContainer'),
             droneTargetReactor: document.getElementById('droneTargetReactor'),
             droneTargetStasis: document.getElementById('droneTargetStasis'),
-            droneTargetThrusters: document.getElementById('droneTargetThrusters'),
             droneTargetShield: document.getElementById('droneTargetShield'),
             dronesPower: document.getElementById('dronesPower'),
             dronesMinus: document.getElementById('dronesMinus'),
             dronesPlus: document.getElementById('dronesPlus'),
             targetReactor: document.getElementById('targetReactor'),
             targetStasis: document.getElementById('targetStasis'),
-            targetThrusters: document.getElementById('targetThrusters'),
             targetShield: document.getElementById('targetShield'),
             startPause: document.getElementById('startPause'),
             researchBtn: document.getElementById('researchBtn'),
@@ -4008,7 +4092,6 @@
             cryoLog: document.getElementById('cryoLog'),
             reactorStatus: document.getElementById('reactorStatus'),
             stasisStatus: document.getElementById('stasisStatus'),
-            thrustersStatus: document.getElementById('thrustersStatus'),
             shieldStatus: document.getElementById('shieldStatus'),
             endingOverlay: document.getElementById('endingOverlay'),
             endingTitle: document.getElementById('endingTitle'),
@@ -4032,15 +4115,20 @@
             shieldSectionLocked: document.getElementById('shieldSectionLocked'),
             shieldSection: document.getElementById('shieldSection'),
             // Lockable drone targets
-            droneTargetThrusters: document.getElementById('droneTargetThrusters'),
             droneTargetShield: document.getElementById('droneTargetShield'),
-            targetThrustersBtn: document.getElementById('targetThrusters'),
             targetShieldBtn: document.getElementById('targetShield')
         };
 
         // Get total allocated power
         function getTotalAllocated() {
-            return Object.values(gameState.power.allocated).reduce((a, b) => a + b, 0);
+            const basePower = Object.values(gameState.power.allocated).reduce((a, b) => a + b, 0);
+            const thrusterPower = gameState.systems.thrusters.units.filter(t => t.unlocked && t.powered).length;
+            return basePower + thrusterPower;
+        }
+
+        // Get count of active thrusters
+        function getActiveThrusters() {
+            return gameState.systems.thrusters.units.filter(t => t.unlocked && t.powered).length;
         }
 
         // Simple noise function for organic clustering
@@ -4458,7 +4546,7 @@
             // Reset game state
             gameState.power.total = 4;
             gameState.power.maxPower = 5;
-            gameState.power.allocated = { stasis: 0, thrusters: 0, shield: 0, drones: 0 };
+            gameState.power.allocated = { stasis: 0, shield: 0, drones: 0 };
 
             // Reinitialize stasis grid with new random survivors (1200-1500)
             initStasisGrid();
@@ -4467,9 +4555,12 @@
             gameState.systems.stasis.integrity = 20;
             gameState.systems.stasis.maxIntegrity = 20;
             gameState.systems.stasis.powerAllocated = 0;
-            gameState.systems.thrusters.integrity = 20;
-            gameState.systems.thrusters.maxIntegrity = 20;
-            gameState.systems.thrusters.powerAllocated = 0;
+            gameState.systems.thrusters.units = [
+                { unlocked: false, powered: false },
+                { unlocked: false, powered: false },
+                { unlocked: false, powered: false },
+                { unlocked: false, powered: false }
+            ];
             gameState.systems.shield.integrity = 3;
             gameState.systems.shield.maxIntegrity = 100;
             gameState.systems.shield.powerAllocated = 0;
@@ -4669,6 +4760,11 @@
                 gameState.unlockedSystems.thrusters = true;
             }
 
+            // Unlock individual thrusters
+            if (upgrade.unlocksThruster) {
+                gameState.systems.thrusters.units[upgrade.unlocksThruster - 1].unlocked = true;
+            }
+
             // Gate upgrades unlock the next command level
             if (upgrade.unlocksLevel) {
                 gameState.research.commandLevel = upgrade.unlocksLevel;
@@ -4703,10 +4799,10 @@
             els.orbitalDistance.className = 'distance ' + distInfo.class;
 
             // Calculate orbital velocity for display (per second at 5 ticks/sec)
-            const thrusterSys = gameState.systems.thrusters;
-            const thrusterEffectiveness = thrusterSys.integrity / 20;
-            const thrusterEffect = thrusterSys.powerAllocated * thrusterEffectiveness * 0.000667;
-            const baseDecay = 0.00167;
+            // Each active thruster contributes 0.001 reduction, base decay is 0.00334
+            const activeThrustersDisplay = getActiveThrusters();
+            const thrusterEffect = activeThrustersDisplay * 0.001;
+            const baseDecay = 0.00334;
             const velocityPerTick = thrusterEffect - baseDecay;
             const velocityPerSec = velocityPerTick * 5; // 5 ticks per second
 
@@ -4831,20 +4927,39 @@
             const projectedDPS = 0.3705 * (1 - lifeSupport) * 5;
             gameState.deathsPerSecond = projectedDPS;
 
-            // Thrusters system
+            // Thrusters system - 4 individual units
             const thrusters = gameState.systems.thrusters;
-            els.thrustersPower.textContent = thrusters.powerAllocated;
-            const thrustersFillPercent = (thrusters.integrity / thrusters.maxIntegrity) * 100;
-            els.thrustersIntegrity.style.width = thrusters.integrity + '%';
-            els.thrustersLocked.style.width = (100 - thrusters.maxIntegrity) + '%';
-            els.thrustersIntegrityText.textContent = Math.round(thrusters.integrity) + '%';
-            setIntegrityColor(els.thrustersIntegrity, thrustersFillPercent);
+            const activeCount = getActiveThrusters();
+            els.thrustersActivePower.textContent = activeCount;
 
-            // Update thruster visual based on power allocation
-            els.thrusterGraphic.className = 'thruster-graphic';
-            if (thrusters.powerAllocated > 0) {
-                const powerLevel = Math.min(5, thrusters.powerAllocated);
-                els.thrusterGraphic.classList.add('power-' + powerLevel);
+            // Update each thruster unit
+            for (let i = 0; i < 4; i++) {
+                const unit = thrusters.units[i];
+                const unitEl = els['thrusterUnit' + (i + 1)];
+                const graphicEl = els['thrusterGraphic' + (i + 1)];
+                const toggleEl = els['thrusterToggle' + (i + 1)];
+                const statusEl = unitEl.querySelector('.thruster-unit-status');
+
+                // Update unit classes
+                unitEl.classList.toggle('locked', !unit.unlocked);
+                unitEl.classList.toggle('unlocked', unit.unlocked && !unit.powered);
+                unitEl.classList.toggle('powered', unit.unlocked && unit.powered);
+
+                // Update status text
+                if (!unit.unlocked) {
+                    statusEl.textContent = 'LOCKED';
+                } else if (unit.powered) {
+                    statusEl.textContent = 'ON';
+                } else {
+                    statusEl.textContent = 'OFF';
+                }
+
+                // Update graphic animation
+                graphicEl.classList.toggle('active', unit.powered);
+
+                // Update toggle button
+                toggleEl.textContent = unit.powered ? 'ON' : 'OFF';
+                toggleEl.disabled = !unit.unlocked;
             }
 
             // Shield system
@@ -4871,7 +4986,6 @@
             // Update target buttons
             els.targetReactor.classList.toggle('active', drones.target === 'reactor');
             els.targetStasis.classList.toggle('active', drones.target === 'stasis');
-            els.targetThrusters.classList.toggle('active', drones.target === 'thrusters');
             els.targetShield.classList.toggle('active', drones.target === 'shield');
 
             // Update drone visual container
@@ -4885,14 +4999,12 @@
             // Update drone target icons
             els.droneTargetReactor.classList.toggle('active', drones.target === 'reactor');
             els.droneTargetStasis.classList.toggle('active', drones.target === 'stasis');
-            els.droneTargetThrusters.classList.toggle('active', drones.target === 'thrusters');
             els.droneTargetShield.classList.toggle('active', drones.target === 'shield');
 
             // Add repairing animation to active target when drones have power
             const isRepairingVisual = drones.powerAllocated > 0;
             els.droneTargetReactor.classList.toggle('repairing', isRepairingVisual && drones.target === 'reactor');
             els.droneTargetStasis.classList.toggle('repairing', isRepairingVisual && drones.target === 'stasis');
-            els.droneTargetThrusters.classList.toggle('repairing', isRepairingVisual && drones.target === 'thrusters');
             els.droneTargetShield.classList.toggle('repairing', isRepairingVisual && drones.target === 'shield');
 
             // Show repairing indicator on target system (only if drones have power)
@@ -4902,8 +5014,6 @@
             // Update button states
             els.stasisMinus.disabled = stasis.powerAllocated <= 0;
             els.stasisPlus.disabled = totalAllocated >= gameState.power.total || stasis.powerAllocated >= MAX_STASIS_POWER;
-            els.thrustersMinus.disabled = thrusters.powerAllocated <= 0;
-            els.thrustersPlus.disabled = totalAllocated >= gameState.power.total || thrusters.powerAllocated >= MAX_THRUSTER_POWER;
             els.shieldMinus.disabled = shield.powerAllocated <= 0;
             els.shieldPlus.disabled = totalAllocated >= gameState.power.total || shield.powerAllocated >= MAX_SHIELD_POWER;
             els.dronesMinus.disabled = drones.powerAllocated <= 0;
@@ -4937,10 +5047,6 @@
             els.stasisStatus.textContent = stasisStatusInfo.text;
             els.stasisStatus.className = 'system-status ' + stasisStatusInfo.class;
 
-            const thrustersStatusInfo = getSystemStatus(thrusters.integrity);
-            els.thrustersStatus.textContent = thrustersStatusInfo.text;
-            els.thrustersStatus.className = 'system-status ' + thrustersStatusInfo.class;
-
             const shieldStatusInfo = getSystemStatus(shield.integrity);
             els.shieldStatus.textContent = shieldStatusInfo.text;
             els.shieldStatus.className = 'system-status ' + shieldStatusInfo.class;
@@ -4962,9 +5068,7 @@
             els.thrusterSection.classList.toggle('locked', !unlocked.thrusters);      // Show controls when unlocked
 
             // Drone repair targets visibility (only show targets for unlocked systems)
-            els.droneTargetThrusters.classList.toggle('locked', !unlocked.thrusters);
             els.droneTargetShield.classList.toggle('locked', !unlocked.shield);
-            els.targetThrustersBtn.classList.toggle('locked', !unlocked.thrusters);
             els.targetShieldBtn.classList.toggle('locked', !unlocked.shield);
 
             // Update Ark Ship visual
@@ -5092,11 +5196,12 @@
                     gameState.power.allocated.shield -= reduction;
                     excess -= reduction;
                 }
-                if (excess > 0 && thrusters.powerAllocated > 0) {
-                    const reduction = Math.min(thrusters.powerAllocated, excess);
-                    thrusters.powerAllocated -= reduction;
-                    gameState.power.allocated.thrusters -= reduction;
-                    excess -= reduction;
+                // Turn off thrusters (newest first)
+                for (let i = 3; i >= 0 && excess > 0; i--) {
+                    if (thrusters.units[i].unlocked && thrusters.units[i].powered) {
+                        thrusters.units[i].powered = false;
+                        excess -= 1;
+                    }
                 }
                 if (excess > 0 && stasis.powerAllocated > 0) {
                     const reduction = Math.min(stasis.powerAllocated, excess);
@@ -5109,21 +5214,16 @@
             // Stasis integrity decays (0.00334% per tick base at 5 ticks/sec, affected by radiation and flares)
             stasis.integrity = Math.max(0, stasis.integrity - 0.00334 * radiationMult - flareDamage);
 
-            // Thrusters decay (0.00156% per tick base at 5 ticks/sec, affected by radiation and flares)
-            thrusters.integrity = Math.max(0, thrusters.integrity - 0.00156 * radiationMult - flareDamage);
-
             // Shield decay (0.00156% per tick base at 5 ticks/sec, affected by radiation and takes extra flare damage)
             const shieldFlareDamage = (research.commandLevel >= 2 && solar.flareActive) ? 0.0222 : 0; // Shield takes extra damage during flares
             shield.integrity = Math.max(0, shield.integrity - 0.00156 * radiationMult - shieldFlareDamage);
 
             // Orbital decay calculation - only active after CA Level 3
             if (research.commandLevel >= 3) {
-                // Base decay of 0.00334 per tick at 5 ticks/sec, reduced by thruster power and integrity
-                // Scale thrust with integrity (every 20% = 1x effectiveness)
-                const thrusterEffectiveness = thrusters.integrity / 20;
-                const thrusterEffect = thrusters.powerAllocated * thrusterEffectiveness * 0.001334;
-                // At 20%: 1 * power * 0.000667 per power
-                // At 100%: 5 * power * 0.000667 per power (5x stronger)
+                // Base decay of 0.00334 per tick at 5 ticks/sec
+                // Each active thruster contributes 0.001 reduction (4 thrusters = 0.004, fully counters decay)
+                const activeThrusters = getActiveThrusters();
+                const thrusterEffect = activeThrusters * 0.001;
                 orbital.decayRate = Math.max(0, 0.00334 - thrusterEffect);
                 orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
             } else {
@@ -5137,8 +5237,6 @@
                     reactor.integrity = Math.min(reactor.maxIntegrity, reactor.integrity + repairAmount);
                 } else if (drones.target === 'stasis') {
                     stasis.integrity = Math.min(stasis.maxIntegrity, stasis.integrity + repairAmount);
-                } else if (drones.target === 'thrusters') {
-                    thrusters.integrity = Math.min(thrusters.maxIntegrity, thrusters.integrity + repairAmount);
                 } else if (drones.target === 'shield') {
                     const shieldRepairAmount = repairAmount * drones.shieldRepairMultiplier;
                     shield.integrity = Math.min(shield.maxIntegrity, shield.integrity + shieldRepairAmount);
@@ -5212,22 +5310,24 @@
             }
         });
 
-        // Thrusters power allocation
-        els.thrustersMinus.addEventListener('click', () => {
-            if (gameState.systems.thrusters.powerAllocated > 0) {
-                gameState.systems.thrusters.powerAllocated--;
-                gameState.power.allocated.thrusters--;
-                updateUI();
-            }
-        });
+        // Thruster toggle buttons
+        for (let i = 1; i <= 4; i++) {
+            els['thrusterToggle' + i].addEventListener('click', () => {
+                const unit = gameState.systems.thrusters.units[i - 1];
+                if (!unit.unlocked) return;
 
-        els.thrustersPlus.addEventListener('click', () => {
-            if (getTotalAllocated() < gameState.power.total && gameState.systems.thrusters.powerAllocated < MAX_THRUSTER_POWER) {
-                gameState.systems.thrusters.powerAllocated++;
-                gameState.power.allocated.thrusters++;
+                if (unit.powered) {
+                    // Turn off - always allowed
+                    unit.powered = false;
+                } else {
+                    // Turn on - check power budget
+                    if (getTotalAllocated() < gameState.power.total) {
+                        unit.powered = true;
+                    }
+                }
                 updateUI();
-            }
-        });
+            });
+        }
 
         // Shield power allocation
         els.shieldMinus.addEventListener('click', () => {
@@ -5271,11 +5371,6 @@
 
         els.targetStasis.addEventListener('click', () => {
             gameState.systems.drones.target = 'stasis';
-            updateUI();
-        });
-
-        els.targetThrusters.addEventListener('click', () => {
-            gameState.systems.drones.target = 'thrusters';
             updateUI();
         });
 
