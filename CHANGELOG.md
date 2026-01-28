@@ -6,6 +6,25 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-27 - Orbital System Research Restructure
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Orbital decay now activates at CA Level 4** (was Level 3)
+  - Hidden orbital decay starts one level later, giving players more time before the reveal
+- **Orbital Status System moved to Level 5** (was Level 4)
+- **Orbital Thrusters + Thruster Bay 1 moved to Level 5** (was Level 4)
+- **Thruster Bay 2 Override moved to Level 5** (was Level 4)
+- **Thruster Bay 3 Override moved to Level 6** (was Level 5)
+- Thruster Bay 4 remains at Level 6
+
+#### Notes
+- Level 5 now unlocks: Orbital Status, Thrusters 1 & 2
+- Level 6 now unlocks: Thrusters 3 & 4
+- Delays orbital crisis reveal, creating more tension when players finally discover the falling orbit
+
+---
+
 ### 2026-01-27 - Solar Flare Shield Absorption Mechanic
 **Author:** Claude (AI Assistant)
 

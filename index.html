@@ -2748,23 +2748,23 @@
             { id: 'stasis_cap_2', name: 'Stasis Bay: Hemobalance Perfusion Module', desc: 'Micro-pump with anticoagulant dosing and electrolyte/pH correction to prevent clotting and organ perfusion issues (+20% max integrity)', cost: 180, level: 2, system: 'stasis', capBonus: 20 },
             { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 200, level: 3, unlocksLevel: 4, isGate: true },
 
-            // Level 4 upgrades (Phase 4 - Orbital)
-            { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 4, unlocksOrbital: true },
-            { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls + Thruster Bay 1', cost: 120, level: 4, unlocksThrusters: true, unlocksThruster: 1 },
+            // Level 4 upgrades
             { id: 'shield_repair_2', name: 'Solar Shield: Repair Enhancement II', desc: 'Further improves drone repair efficiency for solar shield (+50% shield repair speed)', cost: 200, level: 4, shieldRepairBoost: 0.5 },
-            { id: 'thruster_2', name: 'Thruster Bay 2 Override', desc: 'Bypass safety lockout on Thruster Bay 2', cost: 150, level: 4, unlocksThruster: 2 },
             { id: 'stasis_cap_3', name: 'Stasis Bay: Neural Drift Dampener', desc: 'Low-power neuro-stimulation lattice that keeps brain activity in safe idle patterns, preventing memory corruption and personality drift (+20% max integrity)', cost: 220, level: 3, system: 'stasis', capBonus: 20 },
             { id: 'reactor_cap_3', name: 'Reactor Core: Thermoacoustic Resonance Recuperator', desc: 'Harvests waste heat and vibration via thermoacoustic conversion, boosting efficiency and extending fuel life (+20% max integrity)', cost: 220, level: 4, system: 'reactor', capBonus: 20 },
             { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
 
-            // Level 5 upgrades (Phase 5 begins)
+            // Level 5 upgrades (Phase 4 - Orbital unlocks here)
             { id: 'stasis_cap_4', name: 'Stasis Bay: Bioelectric Homeostasis Harness', desc: 'Electrode mesh monitors ECG/EEG and delivers counterpulses to prevent arrhythmias, seizures, and neuromuscular jitter (+20% max integrity)', cost: 280, level: 4, system: 'stasis', capBonus: 20 },
             { id: 'shield_repair_3', name: 'Solar Shield: Repair Enhancement III', desc: 'Maximizes drone repair efficiency for solar shield (+50% shield repair speed)', cost: 250, level: 5, shieldRepairBoost: 0.5 },
-            { id: 'thruster_3', name: 'Thruster Bay 3 Override', desc: 'Bypass safety lockout on Thruster Bay 3', cost: 200, level: 5, unlocksThruster: 3 },
+            { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 5, unlocksOrbital: true },
+            { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls + Thruster Bay 1', cost: 120, level: 5, unlocksThrusters: true, unlocksThruster: 1 },
+            { id: 'thruster_2', name: 'Thruster Bay 2 Override', desc: 'Bypass safety lockout on Thruster Bay 2', cost: 150, level: 5, unlocksThruster: 2 },
             { id: 'reactor_cap_4', name: 'Reactor Core: Neutrino-Indexed Reaction Governor', desc: 'Real-time neutrino detection monitors reaction state, preventing runaway spikes and enabling precision control (+20% max integrity)', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
             { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
             // Level 6 upgrades
+            { id: 'thruster_3', name: 'Thruster Bay 3 Override', desc: 'Bypass safety lockout on Thruster Bay 3', cost: 200, level: 6, unlocksThruster: 3 },
             { id: 'thruster_4', name: 'Thruster Bay 4 Override', desc: 'Bypass safety lockout on Thruster Bay 4', cost: 250, level: 6, unlocksThruster: 4 },
             { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
 
@@ -5310,8 +5310,8 @@
             // Shield decay (0.00156% per tick base at 5 ticks/sec, radiation only - flare damage already applied above)
             shield.integrity = Math.max(0, shield.integrity - 0.00156 * radiationMult);
 
-            // Orbital decay calculation - only active after CA Level 3
-            if (research.commandLevel >= 3) {
+            // Orbital decay calculation - only active after CA Level 4
+            if (research.commandLevel >= 4) {
                 // Base decay of 0.00334 per tick at 5 ticks/sec
                 // Each active thruster contributes 0.001 reduction (4 thrusters = 0.004, fully counters decay)
                 const activeThrusters = getActiveThrusters();
