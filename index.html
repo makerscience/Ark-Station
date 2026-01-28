@@ -4936,9 +4936,9 @@
             els.orbitalDistance.className = 'distance ' + distInfo.class;
 
             // Calculate orbital velocity for display (per second at 5 ticks/sec)
-            // Each thruster contributes baseDecay/3 (3 = stable, 4 = climbing)
+            // Each thruster contributes baseDecay/2 (2 = stable, 3 = climbing, 4 = fast climb)
             const baseDecay = 0.01336;
-            const thrusterContribution = baseDecay / 3;
+            const thrusterContribution = baseDecay / 2;
             const activeThrustersDisplay = getActiveThrusters();
             const thrusterEffectDisplay = activeThrustersDisplay * thrusterContribution;
             const velocityPerTick = thrusterEffectDisplay - baseDecay;
@@ -5409,9 +5409,9 @@
             // Orbital decay calculation - only active after CA Level 4
             if (research.commandLevel >= 4) {
                 // Base decay of 0.01336 per tick (4x original) at 5 ticks/sec
-                // Each thruster contributes baseDecay/3 (3 thrusters = stable, 4 = climbing)
+                // Each thruster contributes baseDecay/2 (2 = stable, 3 = climbing, 4 = fast climb)
                 const baseDecay = 0.01336;
-                const thrusterContribution = baseDecay / 3;
+                const thrusterContribution = baseDecay / 2;
                 const activeThrusters = getActiveThrusters();
                 const thrusterEffect = activeThrusters * thrusterContribution;
                 const netDecay = baseDecay - thrusterEffect;
