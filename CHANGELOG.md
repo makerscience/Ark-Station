@@ -6,6 +6,29 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-28 - Thruster Rebalance, UI Lockouts & Status Feedback
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Non-linear thruster mechanics** for more dramatic orbital control:
+  - Base decay: 0.1/sec (was 0.067/sec)
+  - 1 thruster: ↓0.07/sec (slows descent slightly)
+  - 2 thrusters: ↓0.02/sec (almost stable)
+  - 3 thrusters: ↑0.03/sec (climbing)
+  - 4 thrusters: ↑0.10/sec (fast climb)
+- **Death rate display** shows "STABILIZED" in green when at 0 (was "−0.0/sec")
+- **HACK SYSTEMS button** now locked during research:
+  - Shows "⟳ {upgrade name}... {time}s" while hacking
+  - Button grayed out and unclickable until complete
+  - Returns to "HACK SYSTEMS" when finished
+- **Start/Pause button** locked during solar flares:
+  - Shows "ERROR" in red during active flare
+  - Player cannot pause while flare is active
+  - Pause speed button also blocked during flares
+  - Returns to normal when flare ends
+
+---
+
 ### 2026-01-28 - Roche Limit Foreshadowing & 5-Zone Proximity System
 **Author:** Claude (AI Assistant)
 

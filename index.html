@@ -530,10 +530,22 @@
         .control-btn:hover {
             background: #00ff8844;
         }
+        .control-btn.flare-error {
+            background: #aa222222;
+            border-color: #ff4444;
+            color: #ff4444;
+            cursor: not-allowed;
+        }
+        .control-btn.flare-error:hover {
+            background: #aa222222;
+        }
         .death-rate {
             color: #ff4444;
             font-size: 12px;
             margin-top: 5px;
+        }
+        .death-rate.stabilized {
+            color: #00ff88;
         }
         .repair-target {
             display: flex;
@@ -1519,6 +1531,15 @@
         }
         .research-btn:hover {
             background: #4444aa44;
+        }
+        .research-btn.hacking {
+            background: #33337722;
+            border-color: #666688;
+            color: #8888aa;
+            cursor: not-allowed;
+        }
+        .research-btn.hacking:hover {
+            background: #33337722;
         }
         .modal-overlay {
             display: none;
@@ -4981,11 +5002,11 @@
             els.orbitalDistance.className = 'distance ' + distInfo.class;
 
             // Calculate orbital velocity for display (per second at 5 ticks/sec)
-            // Each thruster contributes baseDecay/2 (2 = stable, 3 = climbing, 4 = fast climb)
-            const baseDecay = 0.01336;
-            const thrusterContribution = baseDecay / 2;
+            // Non-linear thruster contributions: 1=slow descent, 2=almost stable, 3=climb, 4=fast climb
+            const baseDecay = 0.02; // 0.1/sec at 5 ticks/sec
+            const thrusterEffects = [0, 0.006, 0.016, 0.026, 0.04]; // cumulative contribution per thruster count
             const activeThrustersDisplay = getActiveThrusters();
-            const thrusterEffectDisplay = activeThrustersDisplay * thrusterContribution;
+            const thrusterEffectDisplay = thrusterEffects[activeThrustersDisplay];
             const velocityPerTick = thrusterEffectDisplay - baseDecay;
             const velocityPerSec = velocityPerTick * 5; // 5 ticks per second
 
@@ -5079,6 +5100,18 @@
                 els.flareDamage.textContent = `☀ Solar flare dealing ${solar.lastDamage.toFixed(1)}% damage to all systems!`;
             } else {
                 els.flareDamage.textContent = '';
+            }
+
+            // Start/Pause button locked during flare
+            if (solar.flareActive && !gameState.paused && !gameState.gameOver) {
+                els.startPause.textContent = 'ERROR';
+                els.startPause.classList.add('flare-error');
+            } else if (!gameState.gameOver) {
+                els.startPause.classList.remove('flare-error');
+                // Only reset text if not already showing game over state
+                if (!els.startPause.textContent.includes('LOST') && !els.startPause.textContent.includes('DESTROYED')) {
+                    els.startPause.textContent = gameState.paused ? 'START' : 'PAUSE';
+                }
             }
 
             // Solar flare screen effect - intensity based on shield power
@@ -5268,18 +5301,25 @@
             const dps = gameState.deathsPerSecond;
             if (dps >= 0.1) {
                 els.deathRate.textContent = `−${dps.toFixed(1)}/sec`;
+                els.deathRate.classList.remove('stabilized');
             } else if (dps > 0) {
                 els.deathRate.textContent = `−${dps.toFixed(2)}/sec`;
+                els.deathRate.classList.remove('stabilized');
             } else {
-                els.deathRate.textContent = '−0.0/sec';
+                els.deathRate.textContent = 'STABILIZED';
+                els.deathRate.classList.add('stabilized');
             }
 
-            // Research indicator
+            // Research button state
             const research = gameState.research;
             if (research.inProgress) {
                 const upgrade = UPGRADES.find(u => u.id === research.inProgress);
-                els.researchingIndicator.textContent = `⟳ Hacking ${upgrade.name}... ${Math.ceil(research.timeRemaining / 5)}s`;
+                els.researchBtn.textContent = `⟳ ${upgrade.name}... ${Math.ceil(research.timeRemaining / 5)}s`;
+                els.researchBtn.classList.add('hacking');
+                els.researchingIndicator.textContent = '';
             } else {
+                els.researchBtn.textContent = 'HACK SYSTEMS';
+                els.researchBtn.classList.remove('hacking');
                 els.researchingIndicator.textContent = '';
             }
 
@@ -5484,12 +5524,12 @@
 
             // Orbital decay calculation - only active after CA Level 4
             if (research.commandLevel >= 4) {
-                // Base decay of 0.01336 per tick (4x original) at 5 ticks/sec
-                // Each thruster contributes baseDecay/2 (2 = stable, 3 = climbing, 4 = fast climb)
-                const baseDecay = 0.01336;
-                const thrusterContribution = baseDecay / 2;
+                // Base decay of 0.02 per tick (0.1/sec at 5 ticks/sec)
+                // Non-linear thruster contributions: 1=slow descent, 2=almost stable, 3=climb, 4=fast climb
+                const baseDecay = 0.02;
+                const thrusterEffects = [0, 0.006, 0.016, 0.026, 0.04]; // cumulative contribution per thruster count
                 const activeThrusters = getActiveThrusters();
-                const thrusterEffect = activeThrusters * thrusterContribution;
+                const thrusterEffect = thrusterEffects[activeThrusters];
                 const netDecay = baseDecay - thrusterEffect;
 
                 orbital.decayRate = netDecay;
@@ -5670,6 +5710,8 @@
         // Start/Pause
         els.startPause.addEventListener('click', () => {
             if (gameState.survivors <= 0 || gameState.gameOver) return;
+            // Can't pause during solar flare
+            if (gameState.solar.flareActive && !gameState.paused) return;
             gameState.paused = !gameState.paused;
             els.startPause.textContent = gameState.paused ? 'START' : 'PAUSE';
             updateSpeedUI();
@@ -5677,6 +5719,8 @@
 
         // Research modal
         els.researchBtn.addEventListener('click', () => {
+            // Don't open modal while hacking is in progress
+            if (gameState.research.inProgress) return;
             renderUpgradeList();
             els.researchModal.classList.add('active');
             // Reset scroll position to top
@@ -5868,7 +5912,7 @@
 
         // Speed button event listeners
         els.speedPause.addEventListener('click', () => {
-            if (!gameState.gameOver) {
+            if (!gameState.gameOver && !gameState.solar.flareActive) {
                 gameState.paused = true;
                 els.startPause.textContent = 'START';
                 updateSpeedUI();
