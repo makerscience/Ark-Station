@@ -434,6 +434,13 @@
             color: #999;
             font-size: 12px;
         }
+        .ambient-temp { transition: color 0.5s; }
+        .ambient-temp.temp-cool { color: #88aaff; }
+        .ambient-temp.temp-warm { color: #ccaa44; }
+        .ambient-temp.temp-hot { color: #ff8800; }
+        .ambient-temp.temp-extreme { color: #ff4400; }
+        .ambient-temp.temp-critical { color: #ff0000; }
+        .ambient-temp.hidden { display: none; }
         .system {
             display: flex;
             justify-content: space-between;
@@ -1984,7 +1991,7 @@
         }
         /* Zone: Medium (60-80) - subtle darkening at edges */
         .roche-overlay.zone-medium {
-            opacity: 1;
+            opacity: var(--roche-dampen, 1);
             background: radial-gradient(ellipse at center,
                 transparent 40%,
                 rgba(80, 0, 0, 0.15) 70%,
@@ -1992,7 +1999,7 @@
         }
         /* Zone: Close (40-60) - noticeable red tint */
         .roche-overlay.zone-close {
-            opacity: 1;
+            opacity: var(--roche-dampen, 1);
             background: radial-gradient(ellipse at center,
                 transparent 30%,
                 rgba(100, 0, 0, 0.2) 60%,
@@ -2000,7 +2007,7 @@
         }
         /* Zone: Very Close (20-40) - strong red vignette */
         .roche-overlay.zone-veryclose {
-            opacity: 1;
+            opacity: var(--roche-dampen, 1);
             background: radial-gradient(ellipse at center,
                 transparent 20%,
                 rgba(120, 0, 0, 0.3) 50%,
@@ -2008,7 +2015,7 @@
         }
         /* Zone: Critical (≤20) - extreme red with pulse */
         .roche-overlay.zone-critical {
-            opacity: 1;
+            opacity: var(--roche-dampen, 1);
             background: radial-gradient(ellipse at center,
                 rgba(60, 0, 0, 0.1) 10%,
                 rgba(140, 0, 0, 0.4) 40%,
@@ -2016,8 +2023,8 @@
             animation: rochePulse 1.5s ease-in-out infinite;
         }
         @keyframes rochePulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            0%, 100% { opacity: var(--roche-dampen, 1); }
+            50% { opacity: calc(var(--roche-dampen, 1) * 0.7); }
         }
         /* Ending Screen */
         .ending-overlay {
@@ -2729,6 +2736,7 @@
                             <div class="integrity-locked" id="shieldLocked" style="width: 0%"></div>
                         </div>
                         <div class="stat-label">Integrity: <span id="shieldIntegrityText">3%</span></div>
+                        <div class="stat-label ambient-temp hidden" id="ambientTempRow">Ambient Temp: <span id="ambientTemp">--</span></div>
                         <div class="power-controls">
                             <button class="power-btn" id="shieldMinus">−</button>
                             <div class="power-display"><span id="shieldPower">0</span> ⚡</div>
@@ -2813,17 +2821,20 @@
             { id: 'shield_repair_3', name: 'Solar Shield: Repair Enhancement III', desc: 'Maximizes drone repair efficiency for solar shield (+50% shield repair speed)', cost: 250, level: 5, shieldRepairBoost: 0.5 },
             { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 5, unlocksOrbital: true },
             { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls + Thruster Bay 1', cost: 120, level: 5, unlocksThrusters: true, unlocksThruster: 1 },
-            { id: 'thruster_2', name: 'Thruster Bay 2 Override', desc: 'Bypass safety lockout on Thruster Bay 2', cost: 150, level: 5, unlocksThruster: 2 },
             { id: 'reactor_cap_4', name: 'Reactor Core: Neutrino-Indexed Reaction Governor', desc: 'Real-time neutrino detection monitors reaction state, preventing runaway spikes and enabling precision control (+20% max integrity)', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
             { id: 'auth_6', name: 'Command Authorization 6', desc: 'Unlock Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
             // Level 6 upgrades
-            { id: 'thruster_3', name: 'Thruster Bay 3 Override', desc: 'Bypass safety lockout on Thruster Bay 3', cost: 200, level: 6, unlocksThruster: 3 },
-            { id: 'thruster_4', name: 'Thruster Bay 4 Override', desc: 'Bypass safety lockout on Thruster Bay 4', cost: 250, level: 6, unlocksThruster: 4 },
-            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Emergency Override protocol', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
+            { id: 'thruster_2', name: 'Thruster Bay 2 Override', desc: 'Bypass safety lockout on Thruster Bay 2', cost: 150, level: 6, unlocksThruster: 2 },
+            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Unlock Level 7 system upgrades', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
 
-            // Level 7 upgrade
-            { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 400, level: 7, unlocksFinal: true }
+            // Level 7 upgrades
+            { id: 'thruster_3', name: 'Thruster Bay 3 Override', desc: 'Bypass safety lockout on Thruster Bay 3', cost: 200, level: 7, unlocksThruster: 3 },
+            { id: 'thruster_4', name: 'Thruster Bay 4 Override', desc: 'Bypass safety lockout on Thruster Bay 4', cost: 250, level: 7, unlocksThruster: 4 },
+            { id: 'auth_8', name: 'Command Authorization 8', desc: 'Unlock Emergency Override protocol', cost: 400, level: 7, unlocksLevel: 8, isGate: true },
+
+            // Level 8 upgrade
+            { id: 'final_command', name: 'Emergency Override', desc: 'Unlock final command sequence', cost: 500, level: 8, unlocksFinal: true }
         ];
 
         // Stasis grid constants
@@ -4048,7 +4059,7 @@
                 drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.01774, shieldRepairMultiplier: 1.0 }
             },
             orbital: {
-                distance: 50, // 100 = far, 66 = near, 33 = critical, 0 = destruction (start in NEAR zone)
+                distance: 100, // Starts safe; repositioned at CA2 (90), CA3 (70), CA4 (50, decay begins)
                 decayRate: 0
             },
             rocheWarnings: {
@@ -4163,6 +4174,8 @@
             shieldIntegrity: document.getElementById('shieldIntegrity'),
             shieldLocked: document.getElementById('shieldLocked'),
             shieldIntegrityText: document.getElementById('shieldIntegrityText'),
+            ambientTempRow: document.getElementById('ambientTempRow'),
+            ambientTemp: document.getElementById('ambientTemp'),
             shieldPower: document.getElementById('shieldPower'),
             shieldMinus: document.getElementById('shieldMinus'),
             shieldPlus: document.getElementById('shieldPlus'),
@@ -4690,7 +4703,7 @@
             gameState.systems.drones.target = 'reactor';
             gameState.systems.drones.repairRate = 0.00887;
             gameState.systems.drones.shieldRepairMultiplier = 1.0;
-            gameState.orbital.distance = 50;
+            gameState.orbital.distance = 100;
             gameState.orbital.decayRate = 0;
             gameState.rocheWarnings = { threshold40: false, threshold25: false, threshold15: false };
             gameState.solar.nextFlare = 600 + Math.floor(Math.random() * 600);
@@ -4730,6 +4743,7 @@
             els.emergencyOverride.classList.remove('active');
             els.flareOverlay.classList.remove('active');
             els.rocheOverlay.classList.remove('zone-medium', 'zone-close', 'zone-veryclose', 'zone-critical');
+            els.ambientTempRow.classList.add('hidden');
             els.container.classList.remove('shake-1', 'shake-2', 'shake-3');
             els.introOverlay.classList.remove('hidden');
 
@@ -4784,6 +4798,15 @@
             return { label: 'CRITICAL', class: 'critical' };
         }
 
+        // Get solar flare parameters based on distance zone
+        function getFlareParams(distance) {
+            if (distance > 80) return { cooldownMin: 900, cooldownRange: 900, durationMin: 50,  durationRange: 50,  damageMult: 0.5 };  // Far: rare, weak (3-6 min)
+            if (distance > 60) return { cooldownMin: 600, cooldownRange: 600, durationMin: 75,  durationRange: 75,  damageMult: 1.0 };  // Medium: uncommon (2-4 min)
+            if (distance > 40) return { cooldownMin: 600, cooldownRange: 600, durationMin: 37,  durationRange: 38,  damageMult: 1.5 };  // Close: (2-4 min, 7-15s)
+            if (distance > 20) return { cooldownMin: 300, cooldownRange: 300, durationMin: 50,  durationRange: 37,  damageMult: 2.0 };  // Very Close: (1-2 min, 10-17s)
+            return                      { cooldownMin: 100, cooldownRange: 100, durationMin: 50,  durationRange: 50,  damageMult: 3.0 };  // Critical: (20-40s, 10-20s)
+        }
+
         // Get roche limit proximity zone (5 zones: far, medium, close, veryclose, critical)
         function getRocheZone(distance) {
             if (distance > 80) return 'far';        // No effect
@@ -4791,6 +4814,19 @@
             if (distance > 40) return 'close';      // Noticeable
             if (distance > 20) return 'veryclose';  // Strong
             return 'critical';                       // Extreme
+        }
+
+        // Get ambient temperature based on distance (Kelvin, exponential curve)
+        function getAmbientTemp(distance) {
+            return Math.round(150 + Math.pow(100 - distance, 1.5) * 3.85);
+        }
+
+        function getTempClass(temp) {
+            if (temp >= 2500) return 'temp-critical';
+            if (temp >= 1500) return 'temp-extreme';
+            if (temp >= 800)  return 'temp-hot';
+            if (temp >= 400)  return 'temp-warm';
+            return 'temp-cool';
         }
 
         // Render upgrade list in modal as a tree structure
@@ -4806,7 +4842,7 @@
             }
 
             let html = '';
-            for (let level = 1; level <= 7; level++) {
+            for (let level = 1; level <= 8; level++) {
                 if (!levels[level]) continue;
 
                 const isCurrentLevel = level === research.commandLevel;
@@ -4905,6 +4941,15 @@
             // Gate upgrades unlock the next command level
             if (upgrade.unlocksLevel) {
                 gameState.research.commandLevel = upgrade.unlocksLevel;
+
+                // Reposition station as command authority reveals orbital situation
+                if (upgrade.unlocksLevel === 2) {
+                    gameState.orbital.distance = 90;  // FAR zone
+                } else if (upgrade.unlocksLevel === 3) {
+                    gameState.orbital.distance = 70;  // MEDIUM zone
+                } else if (upgrade.unlocksLevel === 4) {
+                    gameState.orbital.distance = 50;  // CLOSE zone (decay begins)
+                }
             }
 
             // Emergency Override - show the big red button
@@ -4963,15 +5008,25 @@
             els.arkStation.classList.toggle('critical', orbital.distance <= 20);
 
             // Roche limit proximity visual (foreshadowing before orbital panel unlock)
+            // Shield dampens the vignette (up to 50% at full integrity+power)
             const rocheZones = ['zone-medium', 'zone-close', 'zone-veryclose', 'zone-critical'];
             if (gameState.research.commandLevel >= 4) {
                 const zone = getRocheZone(orbital.distance);
                 els.rocheOverlay.classList.remove(...rocheZones);
                 if (zone !== 'far') {
                     els.rocheOverlay.classList.add('zone-' + zone);
+                    const shield = gameState.systems.shield;
+                    let rocheDampen = 1;
+                    if (shield.powerAllocated > 0) {
+                        rocheDampen = 1 - getShieldAbsorption(shield.integrity) * 0.5;
+                    }
+                    els.rocheOverlay.style.setProperty('--roche-dampen', rocheDampen);
+                } else {
+                    els.rocheOverlay.style.removeProperty('--roche-dampen');
                 }
             } else {
                 els.rocheOverlay.classList.remove(...rocheZones);
+                els.rocheOverlay.style.removeProperty('--roche-dampen');
             }
 
             // Radiation warning based on distance (5 zones)
@@ -5149,6 +5204,18 @@
             els.shieldIntegrityText.textContent = Math.round(shield.integrity) + '%';
             setIntegrityColor(els.shieldIntegrity, shieldFillPercent);
 
+            // Ambient temperature readout (appears at CA4 when orbital decay starts)
+            if (gameState.research.commandLevel >= 4) {
+                els.ambientTempRow.classList.remove('hidden');
+                const temp = getAmbientTemp(orbital.distance);
+                els.ambientTemp.textContent = temp.toLocaleString() + ' K';
+                const tempClasses = ['temp-cool', 'temp-warm', 'temp-hot', 'temp-extreme', 'temp-critical'];
+                els.ambientTempRow.classList.remove(...tempClasses);
+                els.ambientTempRow.classList.add(getTempClass(temp));
+            } else {
+                els.ambientTempRow.classList.add('hidden');
+            }
+
             // Update shield graphic based on power
             els.shieldGraphic.className = 'shield-graphic';
             const shieldPowerLevel = Math.min(5, shield.powerAllocated);
@@ -5312,19 +5379,21 @@
             }
 
             // Solar flare mechanics - only active after CA Level 2 (drones unlocked)
+            // Frequency and duration scale with proximity to Roche limit
             if (research.commandLevel >= 2) {
+                const flareParams = getFlareParams(orbital.distance);
                 if (solar.flareActive) {
                     solar.flareDuration--;
                     if (solar.flareDuration <= 0) {
                         solar.flareActive = false;
-                        solar.nextFlare = 600 + Math.floor(Math.random() * 600); // 600-1200 ticks (2-4 min at 5 ticks/sec)
+                        solar.nextFlare = flareParams.cooldownMin + Math.floor(Math.random() * flareParams.cooldownRange);
                         solar.lastDamage = 0;
                     }
                 } else {
                     solar.nextFlare--;
                     if (solar.nextFlare <= 0) {
                         solar.flareActive = true;
-                        solar.flareDuration = 75 + Math.floor(Math.random() * 75); // 75-150 ticks duration (15-30 sec at 5 ticks/sec)
+                        solar.flareDuration = flareParams.durationMin + Math.floor(Math.random() * flareParams.durationRange);
                     }
                 }
             }
@@ -5343,12 +5412,19 @@
                 radiationMult = 6.0;  // Critical - extreme damage
             }
 
+            // Shield reduces radiation damage (up to 50% at full integrity+power, 0% if unpowered/destroyed)
+            if (shield.powerAllocated > 0) {
+                const shieldRadReduction = getShieldAbsorption(shield.integrity) * 0.5;
+                radiationMult *= (1 - shieldRadReduction);
+            }
+
             // Solar flare damage - shield absorbs based on integrity tiers
-            // Shield takes damage first, then remaining damage passes through to other systems
+            // Flare damage scales with proximity to Roche limit
             let passThroughDamage = 0;
             if (research.commandLevel >= 2 && solar.flareActive) {
-                const baseFlare = 0.0666; // Base flare damage per tick (2x original)
-                const shieldFlareDamage = 0.0888; // Shield takes heavy damage during flares (4x original)
+                const flareMult = getFlareParams(orbital.distance).damageMult;
+                const baseFlare = 0.0666 * flareMult; // Base flare damage per tick, scaled by zone
+                const shieldFlareDamage = 0.0888 * flareMult; // Shield flare damage, scaled by zone
 
                 // Apply shield flare damage first
                 const newShieldIntegrity = Math.max(0, shield.integrity - shieldFlareDamage);

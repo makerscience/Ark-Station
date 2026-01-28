@@ -28,8 +28,77 @@ This document tracks all changes made to the project.
 - **Renamed "Casualty Log" to "System Log"**
 
 #### Notes
-- Station starts at distance 50 (Close zone, 2x damage) when orbital decay begins at CA4
 - Creates tension by letting players sense something is wrong before they can diagnose it
+
+---
+
+### 2026-01-28 - Orbital Distance Progression & Flare Timing
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Station distance now progresses through CA levels:**
+  - CA1: Distance 100 (safe, no orbital mechanics)
+  - CA2: Distance 90 (FAR zone - 0.5x radiation, rare flares)
+  - CA3: Distance 70 (MEDIUM zone - 1.0x radiation, uncommon flares)
+  - CA4: Distance 50 (CLOSE zone - 2.0x radiation, decay begins)
+- **Flare timing rebalanced for Close/Very Close/Critical zones:**
+  - Doubled cooldown between flares (more breathing room)
+  - Halved flare duration (shorter but equally intense bursts)
+  - Close: 2-4 min cooldown, 7-15s duration
+  - Very Close: 1-2 min cooldown, 10-17s duration
+  - Critical: 20-40s cooldown, 10-20s duration
+
+#### Notes
+- Orbital decay still only activates at CA4
+- Players experience each zone's ambient conditions before the real crisis starts
+
+---
+
+### 2026-01-28 - Shield Radiation Protection & Ambient Temperature
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Ambient Temperature readout** in Solar Shield Matrix panel
+  - Appears at CA4 when orbital decay starts (another foreshadowing hint)
+  - Exponential curve from ~150 K (far) to ~4,000 K (destruction)
+  - Color-coded: blue → yellow → orange → red-orange → red
+
+#### Changed
+- **Solar Shield now reduces radiation damage** from Roche limit proximity
+  - Up to 50% reduction at full integrity + powered (uses existing shield absorption tiers)
+  - Shield also dampens the red vignette overlay by up to 50%
+  - Neither effect fully blocks — shield helps but can't eliminate proximity danger
+
+---
+
+### 2026-01-28 - Thruster Rebalance & Research Restructure
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Thruster balance:** 2 thrusters now stabilize orbit (was 3), 3 climb, 4 climb fast
+  - Allows faster endgame recovery once all thrusters are online
+- **Research tree extended to 8 levels:**
+  - Level 5: Orbital Status + Thrusters + Bay 1
+  - Level 6: Thruster Bay 2 (stabilizes orbit)
+  - Level 7: Thruster Bays 3 & 4
+  - Level 8: Emergency Override (was Level 7)
+
+---
+
+### 2026-01-28 - Zone-Scaled Solar Flares
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Solar flare frequency, duration, and damage now scale with Roche limit proximity**
+  - Far (>80): Rare flares, 3-6 min cooldown, 0.5x damage
+  - Medium (60-80): Uncommon, 2-4 min cooldown, 1.0x damage
+  - Close (40-60): Common, 1-2 min cooldown, 1.5x damage
+  - Very Close (20-40): Very common, 30s-1min cooldown, 2.0x damage
+  - Critical (≤20): Near constant, 10-20s cooldown, 3.0x damage
+- Flare duration also increases at closer zones (longer flares near the sun)
+
+#### Notes
+- Combined with zone-scaled radiation damage, creates a dramatic escalation as the station falls
 
 ---
 
