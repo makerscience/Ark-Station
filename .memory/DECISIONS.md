@@ -63,3 +63,12 @@ Tip: Search with `rg "Tags:.*workflow" .memory/DECISIONS.md`
 - Rationale: User requested each reactor upgrade add 4 power capacity for cleaner progression. At 20% integrity = 4 power, each +20% integrity upgrade adds 4 power, max 20 power at 100%.
 - Alternatives considered: Keep 1 per 4% (max 25).
 - Consequences / Follow-ups: Slightly tighter power budget. Game may need rebalancing.
+
+---
+
+## 2026-01-27 (Session 3)
+- Tags: architecture
+- Decision: Thrusters converted from single integrity-based system to 4 individual binary units.
+- Rationale: Removes complexity of thruster integrity/repair. Each thruster is a simple on/off toggle that consumes 1 power. Unlocked progressively via research (T1 with panel, T2-T4 as separate upgrades at L4/L5/L6). 4 thrusters = stable orbit.
+- Alternatives considered: Keep integrity system with repair, variable power consumption per thruster.
+- Consequences / Follow-ups: Thrusters removed from drone repair targets. Simpler mental model for players. Orbital decay formula simplified (each thruster = 0.001 reduction vs 0.00334 base).

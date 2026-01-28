@@ -34,13 +34,13 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Converted thrusters from single integrity-based system to 4 individual toggle units
-- Each thruster: unlocked via research, consumes 1 power when ON, binary state (no repair)
-- Research: "Orbital Thrusters" unlocks panel+T1, then T2/T3/T4 as separate upgrades
+- Converted thrusters to 4 individual toggle units (unlocked separately, 1 power each, no repair)
+- New thruster UI: horizontal grid with per-unit status (LOCKED/OFF/ON) and flame animations
 - Removed thrusters from drone repair targets (now only Reactor, Stasis, Shield)
-- 4 active thrusters fully counter orbital decay (each contributes 0.001 vs 0.00334 base decay)
-- New UI: horizontal grid of 4 smaller thruster graphics with toggle buttons
-- Cleaned up old thruster CSS and removed MAX_THRUSTER_POWER constant
+- Added solar flare visual effect: red tint overlay + screen shake based on shield power
+  - Full shield = no disruption; no shield = max tint + heavy shake
+- Fixed research modal scroll position (now resets to top when opened)
+- Fixed thruster toggle cursor (was showing not-allowed when ON)
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`
