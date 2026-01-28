@@ -36,9 +36,14 @@ This document tracks all changes made to the project.
 - **New thruster UI:** Horizontal row of 4 smaller thruster graphics with individual toggle buttons
 - **Per-thruster status display:** LOCKED / OFF / ON with color-coded styling
 - **Flame animation on powered thrusters**
+- **Solar flare visual effect:** Screen tint and shake during flares, intensity based on shield power
+  - Red/orange tint overlay when flare is active
+  - Three levels of screen shake (light/medium/heavy) based on shield protection
+  - Full shield power = no visual disruption; no shield = maximum effect
 
 #### Fixed
 - **Thruster toggle cursor:** Now shows pointer cursor when hovering over ON buttons (was showing not-allowed)
+- **Research modal scroll position:** Now resets to top each time the modal is opened
 
 ---
 

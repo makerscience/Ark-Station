@@ -22,6 +22,34 @@
             margin: 0 auto;
             position: relative;
         }
+        .container.shake-1 {
+            animation: containerShake1 0.15s infinite;
+        }
+        .container.shake-2 {
+            animation: containerShake2 0.12s infinite;
+        }
+        .container.shake-3 {
+            animation: containerShake3 0.1s infinite;
+        }
+        @keyframes containerShake1 {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(1px, 0); }
+            50% { transform: translate(-1px, 1px); }
+            75% { transform: translate(0, -1px); }
+        }
+        @keyframes containerShake2 {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(2px, -1px); }
+            50% { transform: translate(-2px, 1px); }
+            75% { transform: translate(1px, 2px); }
+        }
+        @keyframes containerShake3 {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(3px, -2px); }
+            40% { transform: translate(-3px, 2px); }
+            60% { transform: translate(2px, 3px); }
+            80% { transform: translate(-2px, -3px); }
+        }
         .time-control-bar {
             display: flex;
             justify-content: space-between;
@@ -1923,6 +1951,23 @@
         .system-status.stressed { color: #ffaa00; }
         .system-status.critical { color: #ff4444; }
         .system-status.offline { color: #999; }
+        /* Solar Flare Screen Effect */
+        .flare-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.3s;
+            background: radial-gradient(ellipse at top, rgba(255, 100, 0, 0.4) 0%, rgba(255, 50, 0, 0.2) 40%, rgba(200, 0, 0, 0.15) 100%);
+            mix-blend-mode: screen;
+        }
+        .flare-overlay.active {
+            opacity: var(--flare-intensity, 0);
+        }
         /* Ending Screen */
         .ending-overlay {
             position: fixed;
@@ -2669,6 +2714,9 @@
         <div class="emergency-override-label">Emergency Override Ready</div>
         <button class="emergency-btn" id="emergencyBtn">EXECUTE</button>
     </div>
+
+    <!-- Solar Flare Effect Overlay -->
+    <div class="flare-overlay" id="flareOverlay"></div>
 
     <!-- Ending Screen -->
     <div class="ending-overlay" id="endingOverlay">
@@ -3999,6 +4047,7 @@
 
         // DOM Elements
         const els = {
+            container: document.querySelector('.container'),
             gameClock: document.getElementById('gameClock'),
             speedPause: document.getElementById('speedPause'),
             speedSlow: document.getElementById('speedSlow'),
@@ -4093,6 +4142,7 @@
             reactorStatus: document.getElementById('reactorStatus'),
             stasisStatus: document.getElementById('stasisStatus'),
             shieldStatus: document.getElementById('shieldStatus'),
+            flareOverlay: document.getElementById('flareOverlay'),
             endingOverlay: document.getElementById('endingOverlay'),
             endingTitle: document.getElementById('endingTitle'),
             endingStats: document.getElementById('endingStats'),
@@ -4605,6 +4655,8 @@
             els.startPause.disabled = false;
             els.endingOverlay.classList.remove('active');
             els.emergencyOverride.classList.remove('active');
+            els.flareOverlay.classList.remove('active');
+            els.container.classList.remove('shake-1', 'shake-2', 'shake-3');
             els.introOverlay.classList.remove('hidden');
 
             // Reset intro phases
@@ -4870,6 +4922,30 @@
                 els.flareDamage.textContent = `☀ Solar flare dealing ${solar.lastDamage.toFixed(1)}% damage to all systems!`;
             } else {
                 els.flareDamage.textContent = '';
+            }
+
+            // Solar flare screen effect - intensity based on shield power
+            if (solar.flareActive && gameState.research.commandLevel >= 2) {
+                const shieldPower = gameState.systems.shield.powerAllocated;
+                // Intensity: 1.0 at 0 power, 0.0 at max power (5)
+                const intensity = 1 - (shieldPower / MAX_SHIELD_POWER);
+
+                // Red overlay tint
+                els.flareOverlay.classList.add('active');
+                els.flareOverlay.style.setProperty('--flare-intensity', intensity);
+
+                // Screen shake on container based on intensity
+                els.container.classList.remove('shake-1', 'shake-2', 'shake-3');
+                if (intensity >= 0.8) {
+                    els.container.classList.add('shake-3'); // Heavy shake
+                } else if (intensity >= 0.5) {
+                    els.container.classList.add('shake-2'); // Medium shake
+                } else if (intensity >= 0.2) {
+                    els.container.classList.add('shake-1'); // Light shake
+                }
+            } else {
+                els.flareOverlay.classList.remove('active');
+                els.container.classList.remove('shake-1', 'shake-2', 'shake-3');
             }
 
             // Reactor system
@@ -5391,6 +5467,8 @@
         els.researchBtn.addEventListener('click', () => {
             renderUpgradeList();
             els.researchModal.classList.add('active');
+            // Reset scroll position to top
+            els.researchModal.querySelector('.modal').scrollTop = 0;
         });
 
         els.closeResearch.addEventListener('click', () => {
