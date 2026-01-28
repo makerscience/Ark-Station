@@ -567,7 +567,9 @@
             font-size: 18px;
         }
         .distance.far { color: #00ff88; }
-        .distance.near { color: #ffaa00; }
+        .distance.medium { color: #88ff88; }
+        .distance.close { color: #ffaa00; }
+        .distance.veryclose { color: #ff6600; }
         .distance.critical { color: #ff4444; }
         .climbing { color: #00ff88; }
         .falling { color: #ff4444; }
@@ -1968,6 +1970,55 @@
         .flare-overlay.active {
             opacity: var(--flare-intensity, 0);
         }
+        /* Roche Limit Proximity Overlay (foreshadowing) - 5 zones */
+        .roche-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 199;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, background 0.5s ease-in-out;
+        }
+        /* Zone: Medium (60-80) - subtle darkening at edges */
+        .roche-overlay.zone-medium {
+            opacity: 1;
+            background: radial-gradient(ellipse at center,
+                transparent 40%,
+                rgba(80, 0, 0, 0.15) 70%,
+                rgba(60, 0, 0, 0.25) 100%);
+        }
+        /* Zone: Close (40-60) - noticeable red tint */
+        .roche-overlay.zone-close {
+            opacity: 1;
+            background: radial-gradient(ellipse at center,
+                transparent 30%,
+                rgba(100, 0, 0, 0.2) 60%,
+                rgba(80, 0, 0, 0.4) 100%);
+        }
+        /* Zone: Very Close (20-40) - strong red vignette */
+        .roche-overlay.zone-veryclose {
+            opacity: 1;
+            background: radial-gradient(ellipse at center,
+                transparent 20%,
+                rgba(120, 0, 0, 0.3) 50%,
+                rgba(100, 0, 0, 0.55) 100%);
+        }
+        /* Zone: Critical (≤20) - extreme red with pulse */
+        .roche-overlay.zone-critical {
+            opacity: 1;
+            background: radial-gradient(ellipse at center,
+                rgba(60, 0, 0, 0.1) 10%,
+                rgba(140, 0, 0, 0.4) 40%,
+                rgba(120, 0, 0, 0.7) 100%);
+            animation: rochePulse 1.5s ease-in-out infinite;
+        }
+        @keyframes rochePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
         /* Ending Screen */
         .ending-overlay {
             position: fixed;
@@ -2690,7 +2741,7 @@
 
         <div class="death-log-panel">
             <div class="death-log-header">
-                <div class="death-log-title">Casualty Log</div>
+                <div class="death-log-title">System Log</div>
             </div>
             <div class="cryo-log" id="cryoLog"></div>
         </div>
@@ -2717,6 +2768,9 @@
 
     <!-- Solar Flare Effect Overlay -->
     <div class="flare-overlay" id="flareOverlay"></div>
+
+    <!-- Roche Limit Proximity Overlay -->
+    <div class="roche-overlay" id="rocheOverlay"></div>
 
     <!-- Ending Screen -->
     <div class="ending-overlay" id="endingOverlay">
@@ -3994,8 +4048,13 @@
                 drones: { powerAllocated: 0, target: 'reactor', repairRate: 0.01774, shieldRepairMultiplier: 1.0 }
             },
             orbital: {
-                distance: 100, // 100 = far, 66 = near, 33 = critical, 0 = destruction
+                distance: 50, // 100 = far, 66 = near, 33 = critical, 0 = destruction (start in NEAR zone)
                 decayRate: 0
+            },
+            rocheWarnings: {
+                threshold40: false,
+                threshold25: false,
+                threshold15: false
             },
             solar: {
                 nextFlare: 600 + Math.floor(Math.random() * 600), // 600-1200 ticks (2-4 min at 5 ticks/sec)
@@ -4143,6 +4202,7 @@
             stasisStatus: document.getElementById('stasisStatus'),
             shieldStatus: document.getElementById('shieldStatus'),
             flareOverlay: document.getElementById('flareOverlay'),
+            rocheOverlay: document.getElementById('rocheOverlay'),
             endingOverlay: document.getElementById('endingOverlay'),
             endingTitle: document.getElementById('endingTitle'),
             endingStats: document.getElementById('endingStats'),
@@ -4630,8 +4690,9 @@
             gameState.systems.drones.target = 'reactor';
             gameState.systems.drones.repairRate = 0.00887;
             gameState.systems.drones.shieldRepairMultiplier = 1.0;
-            gameState.orbital.distance = 100;
+            gameState.orbital.distance = 50;
             gameState.orbital.decayRate = 0;
+            gameState.rocheWarnings = { threshold40: false, threshold25: false, threshold15: false };
             gameState.solar.nextFlare = 600 + Math.floor(Math.random() * 600);
             gameState.solar.flareActive = false;
             gameState.solar.flareDuration = 0;
@@ -4668,6 +4729,7 @@
             els.endingOverlay.classList.remove('active');
             els.emergencyOverride.classList.remove('active');
             els.flareOverlay.classList.remove('active');
+            els.rocheOverlay.classList.remove('zone-medium', 'zone-close', 'zone-veryclose', 'zone-critical');
             els.container.classList.remove('shake-1', 'shake-2', 'shake-3');
             els.introOverlay.classList.remove('hidden');
 
@@ -4713,11 +4775,22 @@
             }
         }
 
-        // Get distance label and class
+        // Get distance label and class (5 zones)
         function getDistanceInfo(distance) {
-            if (distance > 66) return { label: 'FAR', class: 'far' };
-            if (distance > 33) return { label: 'NEAR', class: 'near' };
+            if (distance > 80) return { label: 'FAR', class: 'far' };
+            if (distance > 60) return { label: 'MEDIUM', class: 'medium' };
+            if (distance > 40) return { label: 'CLOSE', class: 'close' };
+            if (distance > 20) return { label: 'VERY CLOSE', class: 'veryclose' };
             return { label: 'CRITICAL', class: 'critical' };
+        }
+
+        // Get roche limit proximity zone (5 zones: far, medium, close, veryclose, critical)
+        function getRocheZone(distance) {
+            if (distance > 80) return 'far';        // No effect
+            if (distance > 60) return 'medium';     // Subtle
+            if (distance > 40) return 'close';      // Noticeable
+            if (distance > 20) return 'veryclose';  // Strong
+            return 'critical';                       // Extreme
         }
 
         // Render upgrade list in modal as a tree structure
@@ -4863,11 +4936,12 @@
             els.orbitalDistance.className = 'distance ' + distInfo.class;
 
             // Calculate orbital velocity for display (per second at 5 ticks/sec)
-            // Each active thruster contributes 0.001 reduction, base decay is 0.00334
+            // Each thruster contributes baseDecay/3 (3 = stable, 4 = climbing)
+            const baseDecay = 0.01336;
+            const thrusterContribution = baseDecay / 3;
             const activeThrustersDisplay = getActiveThrusters();
-            const thrusterEffect = activeThrustersDisplay * 0.001;
-            const baseDecay = 0.00334;
-            const velocityPerTick = thrusterEffect - baseDecay;
+            const thrusterEffectDisplay = activeThrustersDisplay * thrusterContribution;
+            const velocityPerTick = thrusterEffectDisplay - baseDecay;
             const velocityPerSec = velocityPerTick * 5; // 5 ticks per second
 
             // Display movement with direction
@@ -4886,13 +4960,29 @@
             // Distance 100 = left (safe), Distance 0 = right (destroyed)
             const stationPercent = 15 + ((100 - orbital.distance) * 0.65); // 15% to 80% of track
             els.arkStation.style.left = stationPercent + '%';
-            els.arkStation.classList.toggle('critical', orbital.distance <= 33);
+            els.arkStation.classList.toggle('critical', orbital.distance <= 20);
 
-            // Radiation warning based on distance
-            if (orbital.distance <= 33) {
-                els.radiationWarning.textContent = '⚠ EXTREME RADIATION - All systems taking damage!';
-            } else if (orbital.distance <= 66) {
-                els.radiationWarning.textContent = '⚠ High radiation - Systems degrading faster';
+            // Roche limit proximity visual (foreshadowing before orbital panel unlock)
+            const rocheZones = ['zone-medium', 'zone-close', 'zone-veryclose', 'zone-critical'];
+            if (gameState.research.commandLevel >= 4) {
+                const zone = getRocheZone(orbital.distance);
+                els.rocheOverlay.classList.remove(...rocheZones);
+                if (zone !== 'far') {
+                    els.rocheOverlay.classList.add('zone-' + zone);
+                }
+            } else {
+                els.rocheOverlay.classList.remove(...rocheZones);
+            }
+
+            // Radiation warning based on distance (5 zones)
+            if (orbital.distance <= 20) {
+                els.radiationWarning.textContent = '⚠ EXTREME RADIATION - All systems taking critical damage!';
+            } else if (orbital.distance <= 40) {
+                els.radiationWarning.textContent = '⚠ HIGH RADIATION - Systems degrading rapidly!';
+            } else if (orbital.distance <= 60) {
+                els.radiationWarning.textContent = '⚠ Elevated radiation - Systems degrading faster';
+            } else if (orbital.distance <= 80) {
+                els.radiationWarning.textContent = '⚠ Low radiation detected';
             } else {
                 els.radiationWarning.textContent = '';
             }
@@ -5239,12 +5329,18 @@
                 }
             }
 
-            // Calculate radiation multiplier based on distance
-            let radiationMult = 1;
-            if (orbital.distance <= 33) {
-                radiationMult = 2.0; // Critical - double decay
-            } else if (orbital.distance <= 66) {
-                radiationMult = 1.5; // Near - 50% more decay
+            // Calculate radiation multiplier based on distance (5 zones)
+            let radiationMult;
+            if (orbital.distance > 80) {
+                radiationMult = 0.5;  // Far - very low damage
+            } else if (orbital.distance > 60) {
+                radiationMult = 1.0;  // Medium - low damage (baseline)
+            } else if (orbital.distance > 40) {
+                radiationMult = 2.0;  // Close - medium damage
+            } else if (orbital.distance > 20) {
+                radiationMult = 3.5;  // Very Close - high damage
+            } else {
+                radiationMult = 6.0;  // Critical - extreme damage
             }
 
             // Solar flare damage - shield absorbs based on integrity tiers
@@ -5312,14 +5408,38 @@
 
             // Orbital decay calculation - only active after CA Level 4
             if (research.commandLevel >= 4) {
-                // Base decay of 0.00334 per tick at 5 ticks/sec
-                // Each active thruster contributes 0.001 reduction (4 thrusters = 0.004, fully counters decay)
+                // Base decay of 0.01336 per tick (4x original) at 5 ticks/sec
+                // Each thruster contributes baseDecay/3 (3 thrusters = stable, 4 = climbing)
+                const baseDecay = 0.01336;
+                const thrusterContribution = baseDecay / 3;
                 const activeThrusters = getActiveThrusters();
-                const thrusterEffect = activeThrusters * 0.001;
-                orbital.decayRate = Math.max(0, 0.00334 - thrusterEffect);
-                orbital.distance = Math.max(0, orbital.distance - orbital.decayRate);
+                const thrusterEffect = activeThrusters * thrusterContribution;
+                const netDecay = baseDecay - thrusterEffect;
+
+                orbital.decayRate = netDecay;
+                if (netDecay > 0) {
+                    orbital.distance = Math.max(0, orbital.distance - netDecay);
+                } else {
+                    orbital.distance = Math.min(100, orbital.distance - netDecay);
+                }
             } else {
                 orbital.decayRate = 0;
+            }
+
+            // Ambient warning messages as station approaches Roche limit (only if orbital panel not unlocked)
+            if (research.commandLevel >= 4 && !gameState.unlockedSystems.orbital) {
+                if (orbital.distance <= 40 && !gameState.rocheWarnings.threshold40) {
+                    gameState.rocheWarnings.threshold40 = true;
+                    addCryoLogEntry('[SENSOR] Anomalous thermal readings detected');
+                }
+                if (orbital.distance <= 25 && !gameState.rocheWarnings.threshold25) {
+                    gameState.rocheWarnings.threshold25 = true;
+                    addCryoLogEntry('[SENSOR] Hull stress exceeding baseline parameters');
+                }
+                if (orbital.distance <= 15 && !gameState.rocheWarnings.threshold15) {
+                    gameState.rocheWarnings.threshold15 = true;
+                    addCryoLogEntry('[WARNING] Gravitational anomaly - source unknown');
+                }
             }
 
             // Repair drones: restore integrity to target system

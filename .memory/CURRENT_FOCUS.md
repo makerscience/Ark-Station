@@ -8,6 +8,7 @@
 2. Playtest and balance gameplay
 
 ## Next Actions
+- [x] Add visual foreshadowing for Roche limit approach (red vignette + warning messages)
 - [ ] Playtest full game loop from intro to victory/defeat
 - [ ] Balance decay/repair rates if game feels too fast or slow
 - [ ] Add scientific names for shield repair upgrades (currently placeholders)
@@ -15,6 +16,7 @@
 - [ ] Consider individual drone assignment system (explored but deferred)
 
 ## Open Loops / Blockers
+- **Uncommitted changes pending playtest:** CA gate reordering (upgrades now at bottom of each level)
 - Shield repair upgrades have placeholder names ("Solar Shield: Repair Enhancement I/II/III")
 - Display power cost for solar/orbital panels not implemented
 
@@ -34,11 +36,13 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Implemented tiered shield absorption for solar flares (replaces power-based reduction)
-  - 8 tiers from 100% absorption (85%+ integrity) down to 0% (shield destroyed)
-  - Shield takes flare damage first, then absorption calculated
-- Removed old flareReduction calculation (was power × integrity × effectiveness)
-- Added `getShieldAbsorption()` helper function at line 4185
+- Added Roche limit visual foreshadowing (red vignette overlay)
+  - Activates at CA4, intensity scales with distance (0 at 66+ → 1.0 at 0)
+  - Pulses when in CRITICAL zone (≤33), uses `mix-blend-mode: multiply`
+- Added ambient warning messages before orbital panel unlocks:
+  - Distance ≤40: thermal anomaly, ≤25: hull stress, ≤15: gravitational anomaly
+- New helper `getRocheIntensity()` at line 4762
+- New state `gameState.rocheWarnings` for one-time message triggers
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

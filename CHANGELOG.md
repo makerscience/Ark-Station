@@ -6,6 +6,56 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-28 - Roche Limit Foreshadowing & 5-Zone Proximity System
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Red vignette overlay** that intensifies as the station approaches the Roche limit
+  - Activates at CA4 when orbital decay starts (before orbital panel unlocks at CA5)
+  - 5 distinct visual zones: Far (none), Medium (subtle), Close (noticeable), Very Close (strong), Critical (extreme + pulsing)
+  - Stacks correctly with solar flare overlay (z-index 199 vs 200)
+- **Ambient warning messages** in system log as station falls (only before orbital panel unlocked):
+  - Distance ≤40: "[SENSOR] Anomalous thermal readings detected"
+  - Distance ≤25: "[SENSOR] Hull stress exceeding baseline parameters"
+  - Distance ≤15: "[WARNING] Gravitational anomaly - source unknown"
+
+#### Changed
+- **5-zone proximity system** replaces old 3-zone system (Far/Near/Critical → Far/Medium/Close/Very Close/Critical)
+  - Zone boundaries: >80 / 60-80 / 40-60 / 20-40 / ≤20
+  - Radiation damage multipliers: 0.5x / 1.0x / 2.0x / 3.5x / 6.0x
+  - Orbital panel distance label and color now shows 5 zones
+  - Radiation warning messages updated for 5 zones
+- **Renamed "Casualty Log" to "System Log"**
+
+#### Notes
+- Station starts at distance 50 (Close zone, 2x damage) when orbital decay begins at CA4
+- Creates tension by letting players sense something is wrong before they can diagnose it
+
+---
+
+### 2026-01-28 - Orbital System Rebalancing
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Initial orbital distance: 100 → 50** (start in NEAR zone instead of FAR)
+- **Orbital decay rate 4x faster:** 0.00334 → 0.01336 per tick
+- **Thruster contribution redesigned:**
+  - Each thruster now contributes baseDecay/3 (~0.00445) instead of flat 0.001
+  - 0 thrusters: falling at -0.067/sec
+  - 1 thruster: falling at -0.045/sec
+  - 2 thrusters: falling at -0.022/sec
+  - 3 thrusters: STABLE (equilibrium)
+  - 4 thrusters: climbing at +0.022/sec
+- **Climbing mechanic added:** With 4 thrusters, station can recover distance (capped at 100)
+
+#### Notes
+- Creates more urgency - players start closer to danger
+- 3 thrusters = stability provides cleaner progression milestone
+- 4th thruster becomes a recovery tool, not just a stability requirement
+- Distance now properly caps at 100 when climbing
+
+---
+
 ### 2026-01-27 - Orbital System Research Restructure
 **Author:** Claude (AI Assistant)
 

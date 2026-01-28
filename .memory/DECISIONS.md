@@ -72,3 +72,30 @@ Tip: Search with `rg "Tags:.*workflow" .memory/DECISIONS.md`
 - Rationale: Removes complexity of thruster integrity/repair. Each thruster is a simple on/off toggle that consumes 1 power. Unlocked progressively via research (T1 with panel, T2-T4 as separate upgrades at L4/L5/L6). 4 thrusters = stable orbit.
 - Alternatives considered: Keep integrity system with repair, variable power consumption per thruster.
 - Consequences / Follow-ups: Thrusters removed from drone repair targets. Simpler mental model for players. Orbital decay formula simplified (each thruster = 0.001 reduction vs 0.00334 base).
+
+---
+
+## 2026-01-27 (Session 4)
+- Tags: architecture
+- Decision: Shield flare protection changed from power-based reduction to integrity-tiered absorption.
+- Rationale: Old system (power × integrity × 0.3, up to 90% reduction) made shield power the key variable. New tiered system (85%+ = 100% absorption, down to 0% at 0 integrity) makes shield integrity the key variable. Shield now takes 4× damage during flares (0.0888/tick), requiring active repair even at full power.
+- Alternatives considered: Keep power-based system, hybrid power+integrity formula.
+- Consequences / Follow-ups: Players must prioritize shield repair during flares. High integrity = full protection, degraded shield = increasing pass-through damage to reactor/stasis.
+
+---
+
+## 2026-01-27 (Session 4)
+- Tags: architecture
+- Decision: Orbital system unlocks pushed to later CA levels (CA5 for Orbital + Thrusters 1&2, CA6 for Thrusters 3&4). Hidden orbital decay starts at CA4 (was CA3).
+- Rationale: Gives players more time to deal with solar flares before orbital crisis is revealed. Creates longer buildup before the "falling toward the sun" discovery moment.
+- Alternatives considered: Keep at CA3/CA4, move even later.
+- Consequences / Follow-ups: Orbital decay has more time to accumulate before player can see/counter it. May need tuning if orbit falls too far before unlocks.
+
+---
+
+## 2026-01-28
+- Tags: architecture
+- Decision: Orbital rebalancing - start at 50 (NEAR zone), 4x faster decay (0.01336/tick), 3 thrusters = stable, 4 = climbing.
+- Rationale: Creates more urgency. Starting in the middle zone means players feel immediate tension when orbital status is revealed. 4x decay rate forces faster decision-making. Requiring 3 thrusters for stability (not 4) gives cleaner math and makes the 4th thruster feel like a meaningful upgrade for recovery.
+- Alternatives considered: Keep original decay with just starting position change, require all 4 thrusters for stability.
+- Consequences / Follow-ups: Players can now climb back to safety (cap at 100) with 4 thrusters. Balance may need adjustment if orbit falls too fast before CA5 unlocks.
