@@ -2731,13 +2731,14 @@
         // Command Authorization upgrades gate each tier
         // Phase 1: Intro (stasis only) | Phase 2: Drones | Phase 3: Solar | Phase 4: Orbital | Phase 5: Endgame
         const UPGRADES = [
-            // Level 1 -> 2 gate (Phase 1 - Intro)
+            // Level 1 upgrades (Phase 1 - Intro)
+            { id: 'stasis_cap_1', name: 'Stasis Bay: Atmospheric Blend Controller', desc: 'Regulates O₂/N₂ mixing, CO₂ scrubbing, humidity, and pressure smoothing to prevent hypoxia and embolism risk (+20% max integrity)', cost: 150, level: 1, system: 'stasis', capBonus: 20 },
             { id: 'auth_2', name: 'Command Authorization 2', desc: 'Unlock Level 2 system upgrades', cost: 75, level: 1, unlocksLevel: 2, isGate: true },
 
             // Level 2 upgrades (Phase 2 - Drones)
             { id: 'unlock_drones', name: 'Repair Drones System', desc: 'Activate repair drone bay', cost: 100, level: 2, unlocksDrones: true },
-            { id: 'stasis_cap_1', name: 'Stasis Bay: Atmospheric Blend Controller', desc: 'Regulates O₂/N₂ mixing, CO₂ scrubbing, humidity, and pressure smoothing to prevent hypoxia and embolism risk (+20% max integrity)', cost: 150, level: 1, system: 'stasis', capBonus: 20 },
             { id: 'reactor_cap_1', name: 'Reactor Core: Muon-Catalyzed Ignition Lattice', desc: 'Enables hot starts from low-power mode using muon-catalyzed fusion principles, reducing misfire chances (+20% max integrity)', cost: 150, level: 2, system: 'reactor', capBonus: 20 },
+            { id: 'stasis_cap_2', name: 'Stasis Bay: Hemobalance Perfusion Module', desc: 'Micro-pump with anticoagulant dosing and electrolyte/pH correction to prevent clotting and organ perfusion issues (+20% max integrity)', cost: 180, level: 2, system: 'stasis', capBonus: 20 },
             { id: 'auth_3', name: 'Command Authorization 3', desc: 'Unlock Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
 
             // Level 3 upgrades (Phase 3 - Solar)
@@ -2745,17 +2746,16 @@
             { id: 'unlock_shield', name: 'Solar Shield Matrix', desc: 'Activate solar shield controls', cost: 120, level: 3, unlocksShield: true },
             { id: 'shield_repair_1', name: 'Solar Shield: Repair Enhancement I', desc: 'Improves drone repair efficiency for solar shield (+50% shield repair speed)', cost: 150, level: 3, shieldRepairBoost: 0.5 },
             { id: 'reactor_cap_2', name: 'Reactor Core: Superconducting Flux Confinement Girdle', desc: 'Superconducting magnetic confinement stabilizes plasma geometry, enabling hotter and cleaner operation (+20% max integrity)', cost: 180, level: 3, system: 'reactor', capBonus: 20 },
-            { id: 'stasis_cap_2', name: 'Stasis Bay: Hemobalance Perfusion Module', desc: 'Micro-pump with anticoagulant dosing and electrolyte/pH correction to prevent clotting and organ perfusion issues (+20% max integrity)', cost: 180, level: 2, system: 'stasis', capBonus: 20 },
+            { id: 'stasis_cap_3', name: 'Stasis Bay: Neural Drift Dampener', desc: 'Low-power neuro-stimulation lattice that keeps brain activity in safe idle patterns, preventing memory corruption and personality drift (+20% max integrity)', cost: 220, level: 3, system: 'stasis', capBonus: 20 },
             { id: 'auth_4', name: 'Command Authorization 4', desc: 'Unlock Level 4 system upgrades', cost: 200, level: 3, unlocksLevel: 4, isGate: true },
 
             // Level 4 upgrades
             { id: 'shield_repair_2', name: 'Solar Shield: Repair Enhancement II', desc: 'Further improves drone repair efficiency for solar shield (+50% shield repair speed)', cost: 200, level: 4, shieldRepairBoost: 0.5 },
-            { id: 'stasis_cap_3', name: 'Stasis Bay: Neural Drift Dampener', desc: 'Low-power neuro-stimulation lattice that keeps brain activity in safe idle patterns, preventing memory corruption and personality drift (+20% max integrity)', cost: 220, level: 3, system: 'stasis', capBonus: 20 },
             { id: 'reactor_cap_3', name: 'Reactor Core: Thermoacoustic Resonance Recuperator', desc: 'Harvests waste heat and vibration via thermoacoustic conversion, boosting efficiency and extending fuel life (+20% max integrity)', cost: 220, level: 4, system: 'reactor', capBonus: 20 },
+            { id: 'stasis_cap_4', name: 'Stasis Bay: Bioelectric Homeostasis Harness', desc: 'Electrode mesh monitors ECG/EEG and delivers counterpulses to prevent arrhythmias, seizures, and neuromuscular jitter (+20% max integrity)', cost: 280, level: 4, system: 'stasis', capBonus: 20 },
             { id: 'auth_5', name: 'Command Authorization 5', desc: 'Unlock Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
 
             // Level 5 upgrades (Phase 4 - Orbital unlocks here)
-            { id: 'stasis_cap_4', name: 'Stasis Bay: Bioelectric Homeostasis Harness', desc: 'Electrode mesh monitors ECG/EEG and delivers counterpulses to prevent arrhythmias, seizures, and neuromuscular jitter (+20% max integrity)', cost: 280, level: 4, system: 'stasis', capBonus: 20 },
             { id: 'shield_repair_3', name: 'Solar Shield: Repair Enhancement III', desc: 'Maximizes drone repair efficiency for solar shield (+50% shield repair speed)', cost: 250, level: 5, shieldRepairBoost: 0.5 },
             { id: 'unlock_orbital', name: 'Orbital Status System', desc: 'Activate orbital monitoring (1 power)', cost: 100, level: 5, unlocksOrbital: true },
             { id: 'unlock_thrusters', name: 'Orbital Thrusters', desc: 'Activate thruster controls + Thruster Bay 1', cost: 120, level: 5, unlocksThrusters: true, unlocksThruster: 1 },
