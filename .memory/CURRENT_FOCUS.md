@@ -34,14 +34,14 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Implemented 5-zone proximity system: Far/Medium/Close/Very Close/Critical (boundaries 80/60/40/20)
-- Added red vignette overlay + ambient warning messages for Roche limit foreshadowing
-- Zone-scaled solar flares: frequency, duration, and damage scale with proximity
-- Shield now reduces radiation damage (up to 50%) and dampens vignette overlay
-- Added ambient temperature readout in shield panel (appears at CA4, 150K→4000K curve)
-- Orbital distance progression: CA2=90(FAR), CA3=70(MEDIUM), CA4=50(CLOSE, decay starts)
-- Thruster rebalance: 2=stable, 3=climb, 4=fast climb; research extended to 8 levels
-- Renamed "Casualty Log" to "System Log"
+- Non-linear thruster mechanics: base 0.1/sec decay, 1T=0.07↓, 2T=0.02↓, 3T=0.03↑, 4T=0.10↑
+- Death rate shows "STABILIZED" (green) when at zero
+- HACK SYSTEMS button locks during research, shows "HACKING {name}..." in smaller font
+- Start/Pause locked during solar flares, shows "ERROR" in red
+- Orbital distance shows zone + km (e.g., "FAR — 90,000 km")
+- Shield panel shows blocking % and radiation warning (5 levels + flare max)
+- Emergency Override locked until station climbs above 40,000 km
+- Removed ambient temperature display (replaced by radiation warning)
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

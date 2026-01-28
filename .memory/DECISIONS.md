@@ -117,3 +117,21 @@ Tip: Search with `rg "Tags:.*workflow" .memory/DECISIONS.md`
 - Rationale: Players experience each zone's ambient conditions (radiation, flares, visual effects) before orbital decay begins at CA4. Creates gradual escalation instead of sudden crisis reveal.
 - Alternatives considered: Start at CA4 distance immediately, randomize starting distance.
 - Consequences / Follow-ups: Research tree extended to 8 levels (Emergency Override at CA8). Thruster rebalanced: 2=stable, 3=climb, 4=fast climb for quicker endgame recovery.
+
+---
+
+## 2026-01-28 (Session 3)
+- Tags: architecture
+- Decision: Non-linear thruster contributions with 0.1/sec base decay.
+- Rationale: Creates more dramatic tension. 1 thruster barely helps (0.07/sec fall), 2 thrusters almost stabilize (0.02/sec fall), 3 thrusters climb slowly (0.03/sec rise), 4 thrusters climb fast (0.10/sec rise). Each thruster feels meaningfully different.
+- Alternatives considered: Linear contributions (each thruster = baseDecay/4).
+- Consequences / Follow-ups: Faster base decay creates urgency. 2 thrusters is a meaningful milestone (almost stable). 4 thrusters can recover as fast as base decay.
+
+---
+
+## 2026-01-28 (Session 3)
+- Tags: architecture
+- Decision: Emergency Override (victory) locked until station reaches >40,000 km from Roche limit.
+- Rationale: Forces players to stabilize orbit before winning. Can't just rush research while falling to destruction. Creates a two-phase endgame: first climb to safety, then hack victory.
+- Alternatives considered: No distance requirement (original), require FAR zone (>80,000 km).
+- Consequences / Follow-ups: Shows "Too Close to Roche Limit" message when locked. Players must use thrusters to escape Critical/Very Close zones before victory is possible.
