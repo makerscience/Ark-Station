@@ -4181,6 +4181,18 @@
             return gameState.systems.thrusters.units.filter(t => t.unlocked && t.powered).length;
         }
 
+        // Shield absorption based on integrity tiers
+        function getShieldAbsorption(shieldIntegrity) {
+            if (shieldIntegrity >= 85) return 1.0;
+            if (shieldIntegrity >= 65) return 0.8;
+            if (shieldIntegrity >= 45) return 0.6;
+            if (shieldIntegrity >= 25) return 0.4;
+            if (shieldIntegrity >= 15) return 0.2;
+            if (shieldIntegrity >= 6) return 0.1;
+            if (shieldIntegrity >= 1) return 0.05;
+            return 0;
+        }
+
         // Simple noise function for organic clustering
         function simpleNoise(x, y, seed) {
             const n = Math.sin(x * 12.9898 + y * 78.233 + seed) * 43758.5453;
@@ -5227,13 +5239,6 @@
                 }
             }
 
-            // Scale shield with integrity (every 20% = 1x effectiveness)
-            const shieldEffectiveness = shield.integrity / 20;
-            const shieldEffect = shield.powerAllocated * shieldEffectiveness * 0.2;
-            // At 20%: 1 * power * 0.2 = old baseline
-            // At 100%: 5 * power * 0.2 = 5x stronger protection
-            const flareReduction = Math.min(0.9, shieldEffect * 0.3); // Up to 90% reduction
-
             // Calculate radiation multiplier based on distance
             let radiationMult = 1;
             if (orbital.distance <= 33) {
@@ -5242,15 +5247,27 @@
                 radiationMult = 1.5; // Near - 50% more decay
             }
 
-            // Solar flare damage (affects all systems) - only after CA Level 2
-            let flareDamage = 0;
+            // Solar flare damage - shield absorbs based on integrity tiers
+            // Shield takes damage first, then remaining damage passes through to other systems
+            let passThroughDamage = 0;
             if (research.commandLevel >= 2 && solar.flareActive) {
-                flareDamage = 0.0333 * (1 - flareReduction); // Base 0.0333% damage per tick, reduced by shield
-                solar.lastDamage = flareDamage;
+                const baseFlare = 0.0666; // Base flare damage per tick (2x original)
+                const shieldFlareDamage = 0.0888; // Shield takes heavy damage during flares (4x original)
+
+                // Apply shield flare damage first
+                const newShieldIntegrity = Math.max(0, shield.integrity - shieldFlareDamage);
+
+                // Calculate absorption based on shield integrity AFTER taking flare damage
+                const absorption = getShieldAbsorption(newShieldIntegrity);
+                passThroughDamage = baseFlare * (1 - absorption);
+                solar.lastDamage = passThroughDamage;
+
+                // Update shield integrity (will be further reduced by base decay below)
+                shield.integrity = newShieldIntegrity;
             }
 
             // Reactor decays (0.00222% per tick base at 5 ticks/sec, affected by radiation and flares)
-            reactor.integrity = Math.max(0, reactor.integrity - 0.00222 * radiationMult - flareDamage);
+            reactor.integrity = Math.max(0, reactor.integrity - 0.00222 * radiationMult - passThroughDamage);
 
             // Calculate total power based on reactor integrity
             // Power increases at 5%, 9%, 13%, 17%, etc. (every 4% starting from 5)
@@ -5288,11 +5305,10 @@
             gameState.power.total = newPower;
 
             // Stasis integrity decays (0.00334% per tick base at 5 ticks/sec, affected by radiation and flares)
-            stasis.integrity = Math.max(0, stasis.integrity - 0.00334 * radiationMult - flareDamage);
+            stasis.integrity = Math.max(0, stasis.integrity - 0.00334 * radiationMult - passThroughDamage);
 
-            // Shield decay (0.00156% per tick base at 5 ticks/sec, affected by radiation and takes extra flare damage)
-            const shieldFlareDamage = (research.commandLevel >= 2 && solar.flareActive) ? 0.0222 : 0; // Shield takes extra damage during flares
-            shield.integrity = Math.max(0, shield.integrity - 0.00156 * radiationMult - shieldFlareDamage);
+            // Shield decay (0.00156% per tick base at 5 ticks/sec, radiation only - flare damage already applied above)
+            shield.integrity = Math.max(0, shield.integrity - 0.00156 * radiationMult);
 
             // Orbital decay calculation - only active after CA Level 3
             if (research.commandLevel >= 3) {

@@ -34,13 +34,11 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Converted thrusters to 4 individual toggle units (unlocked separately, 1 power each, no repair)
-- New thruster UI: horizontal grid with per-unit status (LOCKED/OFF/ON) and flame animations
-- Removed thrusters from drone repair targets (now only Reactor, Stasis, Shield)
-- Added solar flare visual effect: red tint overlay + screen shake based on shield power
-  - Full shield = no disruption; no shield = max tint + heavy shake
-- Fixed research modal scroll position (now resets to top when opened)
-- Fixed thruster toggle cursor (was showing not-allowed when ON)
+- Implemented tiered shield absorption for solar flares (replaces power-based reduction)
+  - 8 tiers from 100% absorption (85%+ integrity) down to 0% (shield destroyed)
+  - Shield takes flare damage first, then absorption calculated
+- Removed old flareReduction calculation (was power × integrity × effectiveness)
+- Added `getShieldAbsorption()` helper function at line 4185
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

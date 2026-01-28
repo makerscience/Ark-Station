@@ -6,6 +6,33 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-27 - Solar Flare Shield Absorption Mechanic
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Shield absorption now uses tiered system based on integrity:**
+  - 85-100% integrity: 100% flare absorption (no pass-through damage)
+  - 65-84%: 80% absorption
+  - 45-64%: 60% absorption
+  - 25-44%: 40% absorption
+  - 15-24%: 20% absorption
+  - 6-14%: 10% absorption
+  - 1-5%: 5% absorption
+  - 0%: 0% absorption (full damage passes through)
+- **Shield takes flare damage first**, then absorption is calculated based on new integrity
+- **Removed old power-based flare reduction system** (was: shield power × integrity × 0.3, up to 90%)
+- **Base flare damage doubled** (0.0333 → 0.0666 per tick)
+- **Shield flare damage quadrupled** (0.0222 → 0.0888 per tick)
+  - Shield now takes ~0.44%/sec during flares (6.7-13.3% per flare)
+  - Requires active repair to maintain high integrity through sustained flares
+
+#### Notes
+- Damage order: Shield takes 0.0888% → absorption calculated → pass-through damage to reactor/stasis
+- Creates more strategic shield management - maintain high integrity for full protection
+- Lower tiers still provide partial protection even with damaged shields
+
+---
+
 ### 2026-01-27 - Thruster System Overhaul
 **Author:** Claude (AI Assistant)
 
