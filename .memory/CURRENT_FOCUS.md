@@ -8,7 +8,6 @@
 2. Playtest and balance gameplay
 
 ## Next Actions
-- [x] Add visual foreshadowing for Roche limit approach (red vignette + warning messages)
 - [ ] Playtest full game loop from intro to victory/defeat
 - [ ] Balance decay/repair rates if game feels too fast or slow
 - [ ] Add scientific names for shield repair upgrades (currently placeholders)
@@ -16,7 +15,6 @@
 - [ ] Consider individual drone assignment system (explored but deferred)
 
 ## Open Loops / Blockers
-- **Uncommitted changes pending playtest:** CA gate reordering (upgrades now at bottom of each level)
 - Shield repair upgrades have placeholder names ("Solar Shield: Repair Enhancement I/II/III")
 - Display power cost for solar/orbital panels not implemented
 
@@ -36,13 +34,14 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Added Roche limit visual foreshadowing (red vignette overlay)
-  - Activates at CA4, intensity scales with distance (0 at 66+ → 1.0 at 0)
-  - Pulses when in CRITICAL zone (≤33), uses `mix-blend-mode: multiply`
-- Added ambient warning messages before orbital panel unlocks:
-  - Distance ≤40: thermal anomaly, ≤25: hull stress, ≤15: gravitational anomaly
-- New helper `getRocheIntensity()` at line 4762
-- New state `gameState.rocheWarnings` for one-time message triggers
+- Implemented 5-zone proximity system: Far/Medium/Close/Very Close/Critical (boundaries 80/60/40/20)
+- Added red vignette overlay + ambient warning messages for Roche limit foreshadowing
+- Zone-scaled solar flares: frequency, duration, and damage scale with proximity
+- Shield now reduces radiation damage (up to 50%) and dampens vignette overlay
+- Added ambient temperature readout in shield panel (appears at CA4, 150K→4000K curve)
+- Orbital distance progression: CA2=90(FAR), CA3=70(MEDIUM), CA4=50(CLOSE, decay starts)
+- Thruster rebalance: 2=stable, 3=climb, 4=fast climb; research extended to 8 levels
+- Renamed "Casualty Log" to "System Log"
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

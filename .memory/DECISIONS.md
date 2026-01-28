@@ -99,3 +99,21 @@ Tip: Search with `rg "Tags:.*workflow" .memory/DECISIONS.md`
 - Rationale: Creates more urgency. Starting in the middle zone means players feel immediate tension when orbital status is revealed. 4x decay rate forces faster decision-making. Requiring 3 thrusters for stability (not 4) gives cleaner math and makes the 4th thruster feel like a meaningful upgrade for recovery.
 - Alternatives considered: Keep original decay with just starting position change, require all 4 thrusters for stability.
 - Consequences / Follow-ups: Players can now climb back to safety (cap at 100) with 4 thrusters. Balance may need adjustment if orbit falls too fast before CA5 unlocks.
+
+---
+
+## 2026-01-28 (Session 2)
+- Tags: architecture
+- Decision: 5-zone proximity system with zone-scaled mechanics.
+- Rationale: Old 3-zone system (Far/Near/Critical at 66/33) was too coarse. New 5-zone system (Far/Medium/Close/Very Close/Critical at 80/60/40/20) enables finer-grained scaling of radiation damage (0.5x→6x), solar flare frequency/duration/damage, and visual intensity.
+- Alternatives considered: Keep 3 zones with steeper curves, continuous scaling without discrete zones.
+- Consequences / Follow-ups: All zone-dependent mechanics now share consistent boundaries. Shield provides partial protection (up to 50% reduction) but cannot fully block proximity effects.
+
+---
+
+## 2026-01-28 (Session 2)
+- Tags: architecture
+- Decision: Orbital distance progression through CA levels (CA2=90/FAR, CA3=70/MEDIUM, CA4=50/CLOSE).
+- Rationale: Players experience each zone's ambient conditions (radiation, flares, visual effects) before orbital decay begins at CA4. Creates gradual escalation instead of sudden crisis reveal.
+- Alternatives considered: Start at CA4 distance immediately, randomize starting distance.
+- Consequences / Follow-ups: Research tree extended to 8 levels (Emergency Override at CA8). Thruster rebalanced: 2=stable, 3=climb, 4=fast climb for quicker endgame recovery.
