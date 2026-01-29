@@ -6,6 +6,29 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-29 - Shield Power Scaling & UI Refinements
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Starting survivors fixed at 1347** (was random 1200-1500)
+- **Shield effectiveness now scales with power allocation:**
+  - Effective absorption = integrity-based absorption × (power / 5)
+  - 5 power = 100% of integrity protection, 4 power = 80%, etc.
+  - Applies to both flare absorption and radiation reduction
+  - Shield blocking display now shows actual effective percentage
+- **Upgrade names now show effects directly in titles:**
+  - "Stasis Bay: +20% Max Integrity" (was "Stasis Bay: Atmospheric Blend Controller")
+  - "Reactor Core: +20% Max Integrity" (was scientific name)
+  - "Solar Shield: +50% Repair Speed" (was "Repair Enhancement I/II/III")
+  - "Command Authorization X: Unlock Level X" (clearer gate labels)
+  - Scientific flavor text moved to descriptions
+- **Orbital Status panel UI refinements:**
+  - Distance and movement text reduced to 11px (matching radiation warning)
+  - "Distance to Roche Limit", "Movement", and "Orbital Thrusters" labels now green (#00ff88)
+  - Matches "Orbital Status" title color for visual consistency
+
+---
+
 ### 2026-01-28 - UI Polish, Distance Display & Victory Condition
 **Author:** Claude (AI Assistant)
 
