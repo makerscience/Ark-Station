@@ -241,17 +241,8 @@
             padding: 63px 20px;
         }
         #dronesPanel .drone-visual-container {
-            height: 136px;
-            margin-bottom: 8px;
-        }
-        #dronesPanel .drone-targets {
-            padding: 8px;
-        }
-        #dronesPanel .drone-controls {
-            gap: 6px;
-        }
-        #dronesPanel .target-buttons {
-            gap: 5px;
+            height: 235px;
+            margin-bottom: 0;
         }
         #dronesPanel .target-btn {
             padding: 3px 6px;
@@ -1276,33 +1267,31 @@
         /* Repair Drones Visual */
         .drone-visual-container {
             position: relative;
-            height: 140px;
+            height: 160px;
             background: radial-gradient(ellipse at center, #0a1520 0%, #0a0a0f 100%);
             border-radius: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 0;
             overflow: hidden;
         }
-        .drone-targets {
+        /* Targets row at top */
+        .drone-targets-row {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            padding: 10px;
-        }
-        .drone-target-row {
+            right: 0;
+            padding: 8px 0;
             display: flex;
             justify-content: space-around;
+            align-items: flex-start;
         }
+
         .drone-target {
             display: flex;
             flex-direction: column;
             align-items: center;
-            opacity: 0.4;
+            opacity: 0.7;
             transition: opacity 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
         }
         .drone-target.active {
             opacity: 1;
@@ -1316,35 +1305,52 @@
             50% { opacity: 0.7; }
         }
         .target-icon {
-            width: 36px;
-            height: 36px;
+            width: 56px;
+            height: 56px;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .target-label {
-            font-size: 9px;
-            color: #999;
+
+        /* Integrated target buttons */
+        .drone-target .target-btn {
             margin-top: 4px;
+            padding: 3px 10px;
+            font-size: 10px;
+            background: rgba(0, 170, 255, 0.1);
+            border: 1px solid #00aaff33;
+            color: #666;
+            cursor: pointer;
+            border-radius: 3px;
             text-transform: uppercase;
         }
-        .drone-target.active .target-label {
-            color: #00ff88;
+        .drone-target .target-btn:hover {
+            background: rgba(0, 170, 255, 0.15);
+            border-color: #00aaff;
+            color: #00aaff;
+        }
+        .drone-target .target-btn.active {
+            background: rgba(0, 170, 255, 0.2);
+            border-color: #00aaff;
+            color: #00aaff;
+        }
+        .drone-target.locked .target-btn {
+            display: none;
         }
 
         /* Reactor Icon */
         .reactor-icon-core {
-            width: 14px;
-            height: 14px;
+            width: 22px;
+            height: 22px;
             background: radial-gradient(circle, #ffaa00 0%, #ff6600 100%);
             border-radius: 50%;
             position: absolute;
         }
         .reactor-icon-ring {
-            width: 28px;
-            height: 28px;
-            border: 2px solid #ff880066;
+            width: 44px;
+            height: 44px;
+            border: 3px solid #ff880066;
             border-radius: 50%;
             position: absolute;
         }
@@ -1360,14 +1366,14 @@
         /* Stasis Icon */
         .stasis-icon {
             display: flex;
-            gap: 3px;
+            gap: 5px;
         }
         .stasis-icon-pod {
-            width: 8px;
-            height: 18px;
+            width: 12px;
+            height: 28px;
             background: linear-gradient(180deg, #004422 0%, #002211 100%);
-            border-radius: 4px 4px 2px 2px;
-            border: 1px solid #00ff8833;
+            border-radius: 6px 6px 3px 3px;
+            border: 2px solid #00ff8833;
         }
         .drone-target.active .stasis-icon-pod {
             background: linear-gradient(180deg, #00aa66 0%, #006644 100%);
@@ -1405,32 +1411,32 @@
         /* Shield Icon */
         .shield-icon {
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
         }
         .shield-icon-arc {
-            width: 24px;
-            height: 10px;
-            border: 2px solid #00aaff33;
+            width: 40px;
+            height: 16px;
+            border: 3px solid #00aaff33;
             border-bottom: none;
-            border-radius: 12px 12px 0 0;
+            border-radius: 20px 20px 0 0;
         }
         .shield-icon-arc:nth-child(2) {
-            width: 18px;
-            height: 8px;
+            width: 28px;
+            height: 12px;
         }
         .drone-target.active .shield-icon-arc {
             border-color: #00ffff;
             box-shadow: 0 0 6px #00ffff44;
         }
 
-        /* Drone Hub */
+        /* Drone Hub - positioned above power section */
         .drone-hub {
             position: absolute;
-            top: 50%;
+            bottom: 48px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 30px;
-            height: 30px;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
         }
         .drone-hub-core {
             position: absolute;
@@ -1442,6 +1448,33 @@
             background: radial-gradient(circle, #334455 0%, #1a2233 100%);
             border: 1px solid #445566;
             border-radius: 50%;
+        }
+
+        /* Power section at bottom */
+        .drone-power-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0 12px 6px 12px;
+        }
+        .drone-power-bar {
+            width: 100%;
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+        .drone-power-fill {
+            height: 100%;
+            width: 0%;
+            background: #00aaff;
+            transition: width 0.3s;
+            box-shadow: 0 0 8px #00aaff66;
+        }
+        .drone-power-section .power-controls {
+            justify-content: center;
         }
 
         /* Individual Drones */
@@ -1487,19 +1520,19 @@
         .drone-visual-container.target-thrusters .drone { animation: flyToThrusters 2s ease-in-out infinite; }
         .drone-visual-container.target-shield .drone { animation: flyToShield 2s ease-in-out infinite; }
 
-        #drone1 { top: 10px; left: 10px; animation-delay: 0s !important; }
-        #drone2 { top: 10px; left: 18px; animation-delay: 0.4s !important; }
-        #drone3 { top: 14px; left: 6px; animation-delay: 0.8s !important; }
-        #drone4 { top: 14px; left: 22px; animation-delay: 1.2s !important; }
-        #drone5 { top: 18px; left: 14px; animation-delay: 1.6s !important; }
+        #drone1 { top: 5px; left: 5px; animation-delay: 0s !important; }
+        #drone2 { top: 5px; left: 13px; animation-delay: 0.4s !important; }
+        #drone3 { top: 9px; left: 1px; animation-delay: 0.8s !important; }
+        #drone4 { top: 9px; left: 17px; animation-delay: 1.2s !important; }
+        #drone5 { top: 13px; left: 9px; animation-delay: 1.6s !important; }
 
         @keyframes flyToReactor {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-75px, -38px); }
+            50% { transform: translate(0, -50px); }
         }
         @keyframes flyToStasis {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(75px, -38px); }
+            50% { transform: translate(-122px, -50px); }
         }
         @keyframes flyToThrusters {
             0%, 100% { transform: translate(0, 0); }
@@ -1507,25 +1540,9 @@
         }
         @keyframes flyToShield {
             0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(75px, 38px); }
+            50% { transform: translate(122px, -50px); }
         }
 
-        
-        /* Drone Controls */
-        .drone-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .target-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .drone-controls .power-controls {
-            justify-content: center;
-        }
 
         .button-row {
             display: flex;
@@ -2493,32 +2510,33 @@
                         <div class="locked-text">System Offline</div>
                     </div>
                     <div class="drone-visual-container" id="droneVisualContainer">
-                        <div class="drone-targets">
-                            <div class="drone-target-row">
-                                <div class="drone-target" id="droneTargetReactor">
-                                    <div class="target-icon reactor-icon">
-                                        <div class="reactor-icon-core"></div>
-                                        <div class="reactor-icon-ring"></div>
-                                    </div>
-                                    <div class="target-label">Reactor</div>
+                        <div class="drone-targets-row">
+                            <!-- Stasis (left) -->
+                            <div class="drone-target" id="droneTargetStasis">
+                                <div class="target-icon stasis-icon">
+                                    <div class="stasis-icon-pod"></div>
+                                    <div class="stasis-icon-pod"></div>
+                                    <div class="stasis-icon-pod"></div>
                                 </div>
-                                <div class="drone-target" id="droneTargetStasis">
-                                    <div class="target-icon stasis-icon">
-                                        <div class="stasis-icon-pod"></div>
-                                        <div class="stasis-icon-pod"></div>
-                                        <div class="stasis-icon-pod"></div>
-                                    </div>
-                                    <div class="target-label">Stasis</div>
-                                </div>
+                                <button class="target-btn" id="targetStasis">Stasis</button>
                             </div>
-                            <div class="drone-target-row">
-                                <div class="drone-target locked" id="droneTargetShield">
-                                    <div class="target-icon shield-icon">
-                                        <div class="shield-icon-arc"></div>
-                                        <div class="shield-icon-arc"></div>
-                                    </div>
-                                    <div class="target-label">Shield</div>
+
+                            <!-- Reactor (center) -->
+                            <div class="drone-target" id="droneTargetReactor">
+                                <div class="target-icon reactor-icon">
+                                    <div class="reactor-icon-core"></div>
+                                    <div class="reactor-icon-ring"></div>
                                 </div>
+                                <button class="target-btn active" id="targetReactor">Reactor</button>
+                            </div>
+
+                            <!-- Shield (right) -->
+                            <div class="drone-target locked" id="droneTargetShield">
+                                <div class="target-icon shield-icon">
+                                    <div class="shield-icon-arc"></div>
+                                    <div class="shield-icon-arc"></div>
+                                </div>
+                                <button class="target-btn locked" id="targetShield">Shield</button>
                             </div>
                         </div>
                         <div class="drone-hub">
@@ -2529,17 +2547,15 @@
                             <div class="drone" id="drone4"></div>
                             <div class="drone" id="drone5"></div>
                         </div>
-                    </div>
-                    <div class="drone-controls">
-                        <div class="target-buttons">
-                            <button class="target-btn active" id="targetReactor">Reactor</button>
-                            <button class="target-btn" id="targetStasis">Stasis</button>
-                            <button class="target-btn locked" id="targetShield">Shield</button>
-                        </div>
-                        <div class="power-controls">
-                            <button class="power-btn" id="dronesMinus">−</button>
-                            <div class="power-display"><span id="dronesPower">0</span> ⚡</div>
-                            <button class="power-btn" id="dronesPlus">+</button>
+                        <div class="drone-power-section">
+                            <div class="drone-power-bar">
+                                <div class="drone-power-fill" id="dronePowerFill"></div>
+                            </div>
+                            <div class="power-controls">
+                                <button class="power-btn" id="dronesMinus">−</button>
+                                <div class="power-display"><span id="dronesPower">0</span> ⚡</div>
+                                <button class="power-btn" id="dronesPlus">+</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4213,6 +4229,7 @@
             droneTargetReactor: document.getElementById('droneTargetReactor'),
             droneTargetStasis: document.getElementById('droneTargetStasis'),
             droneTargetShield: document.getElementById('droneTargetShield'),
+            dronePowerFill: document.getElementById('dronePowerFill'),
             dronesPower: document.getElementById('dronesPower'),
             dronesMinus: document.getElementById('dronesMinus'),
             dronesPlus: document.getElementById('dronesPlus'),
@@ -5285,6 +5302,7 @@
             // Drones system
             const drones = gameState.systems.drones;
             els.dronesPower.textContent = drones.powerAllocated;
+            els.dronePowerFill.style.width = `${(drones.powerAllocated / 5) * 100}%`;
 
             // Update target buttons
             els.targetReactor.classList.toggle('active', drones.target === 'reactor');
@@ -5714,7 +5732,7 @@
             }
         });
 
-        // Drones target selection
+        // Drones target selection - both button and icon clicks
         els.targetReactor.addEventListener('click', () => {
             gameState.systems.drones.target = 'reactor';
             updateUI();
@@ -5726,6 +5744,23 @@
         });
 
         els.targetShield.addEventListener('click', () => {
+            gameState.systems.drones.target = 'shield';
+            updateUI();
+        });
+
+        // Icon container click handlers (allow clicking on the icon area too)
+        els.droneTargetReactor.addEventListener('click', () => {
+            gameState.systems.drones.target = 'reactor';
+            updateUI();
+        });
+
+        els.droneTargetStasis.addEventListener('click', () => {
+            gameState.systems.drones.target = 'stasis';
+            updateUI();
+        });
+
+        els.droneTargetShield.addEventListener('click', () => {
+            // Shield is already hidden via CSS when locked, so no JS check needed
             gameState.systems.drones.target = 'shield';
             updateUI();
         });

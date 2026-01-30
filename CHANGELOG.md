@@ -6,6 +6,59 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-29 - Repair Drone Panel Positioning Fix
+**Author:** Claude (AI Assistant)
+
+#### Fixed
+- **Layout positioning:** Converted drone panel from flexbox to absolute positioning for reliable element placement
+- **Container height mismatch:** Increased `.drone-visual-container` from 160px to 235px to fill the 271px panel
+- **Drone flight distance:** Increased horizontal travel for Stasis/Shield animations (70px → 122px) so drones reach side targets
+
+---
+
+### 2026-01-29 - Repair Drone Panel Layout Refinement
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Horizontal row layout:** Icons now arranged in a row at top (Stasis | Reactor | Shield)
+- **Blue power bar:** Added power allocation bar similar to Stasis Bay at bottom of panel
+- **Drone hub repositioned:** Now located above power bar (bottom-center area)
+- **Blue active styling:** Active button uses blue (#00aaff) instead of green
+- **Brighter inactive icons:** Opacity 0.7 (was 0.4) for better visibility when not selected
+- **Clickable icons:** Both icon area and button are now clickable to select target
+- **Power controls integrated:** Moved inside visual container below power bar
+- **Scaled down icons:** Reactor, stasis, and shield icons sized to fit row layout
+- **Updated drone animations:** Drones now fly upward from hub to top row targets
+
+---
+
+### 2026-01-29 - Repair Drone Panel UI Refactor
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Triangular layout for drone targets:**
+  - Stasis positioned top-left, Shield top-right, Reactor bottom-center
+  - Targets form a wide "V" shape with the drone hub in the center
+- **Integrated target buttons:**
+  - Buttons now appear directly below each icon (removed separate button row)
+  - Buttons hidden when target is locked (Shield before research)
+- **Doubled icon sizes (2x):**
+  - Target icons: 36x36px → 72x72px
+  - Reactor core: 14px → 28px, ring: 28px → 56px (border 2px → 4px)
+  - Stasis pods: 8x18px → 16x36px, gap 3px → 6px
+  - Shield arcs: 24x10px → 48x20px, inner arc: 18x8px → 36x16px
+- **Updated drone animations:**
+  - flyToReactor: now flies to bottom-center (was top-left)
+  - flyToStasis: now flies to top-left (was top-right)
+  - flyToShield: now flies to top-right (was bottom-right)
+
+#### Removed
+- `.drone-target-row` layout (replaced with absolute positioning)
+- `.target-label` styles (replaced with integrated buttons)
+- `.target-buttons` container (buttons moved into targets)
+
+---
+
 ### 2026-01-29 - Shield Power Scaling & UI Refinements
 **Author:** Claude (AI Assistant)
 

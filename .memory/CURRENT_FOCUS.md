@@ -34,14 +34,11 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Non-linear thruster mechanics: base 0.1/sec decay, 1T=0.07↓, 2T=0.02↓, 3T=0.03↑, 4T=0.10↑
-- Death rate shows "STABILIZED" (green) when at zero
-- HACK SYSTEMS button locks during research, shows "HACKING {name}..." in smaller font
-- Start/Pause locked during solar flares, shows "ERROR" in red
-- Orbital distance shows zone + km (e.g., "FAR — 90,000 km")
-- Shield panel shows blocking % and radiation warning (5 levels + flare max)
-- Emergency Override locked until station climbs above 40,000 km
-- Removed ambient temperature display (replaced by radiation warning)
+- Fixed Repair Drone panel layout issue
+- Converted from flexbox to absolute positioning for targets row, drone hub, and power section
+- Root cause: `.drone-visual-container` was 160px but panel was locked at 271px
+- Fix: Increased container height to 235px to fill the panel
+- Targets row now at top, power section at bottom, drone hub in middle
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`
