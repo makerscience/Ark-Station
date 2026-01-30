@@ -525,13 +525,7 @@
             width: 450px;
             max-width: 100%;
             height: 10px;
-            background:
-                linear-gradient(90deg,
-                    transparent 19.5%, #444 19.5%, #444 20.5%, transparent 20.5%,
-                    transparent 39.5%, #444 39.5%, #444 40.5%, transparent 40.5%,
-                    transparent 59.5%, #444 59.5%, #444 60.5%, transparent 60.5%,
-                    transparent 79.5%, #444 79.5%, #444 80.5%, transparent 80.5%),
-                #222;
+            background: #222;
             border-radius: 4px;
             overflow: hidden;
             position: relative;
@@ -2411,17 +2405,13 @@
         .ark-power-indicator {
             width: 100%;
             text-align: center;
+            padding: 0 12px;
+            box-sizing: border-box;
         }
         .ark-power-bar {
             width: 100%;
             height: 8px;
-            background:
-                linear-gradient(90deg,
-                    transparent 19.5%, #444 19.5%, #444 20.5%, transparent 20.5%,
-                    transparent 39.5%, #444 39.5%, #444 40.5%, transparent 40.5%,
-                    transparent 59.5%, #444 59.5%, #444 60.5%, transparent 60.5%,
-                    transparent 79.5%, #444 79.5%, #444 80.5%, transparent 80.5%),
-                #222;
+            background: #222;
             border-radius: 4px;
             overflow: hidden;
             position: relative;
@@ -2487,6 +2477,7 @@
         .stasis-controls-section {
             margin-top: auto;
             padding-top: 15px;
+            padding-bottom: 15px;
             border-top: 1px solid #222;
         }
         .stasis-header {
@@ -2494,7 +2485,7 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         .stasis-title {
             font-size: 12px;
@@ -2519,6 +2510,8 @@
             display: flex;
             gap: 20px;
             margin-top: 8px;
+            padding: 0 12px;
+            box-sizing: border-box;
         }
         .stasis-stat {
             flex: 1;
@@ -5171,11 +5164,13 @@
             // System unlock upgrades
             if (upgrade.unlocksStasis) {
                 gameState.unlockedSystems.stasis = true;
-                // Show tutorial popup and pause game
-                gameState.paused = true;
-                els.startPause.textContent = 'START';
-                updateSpeedUI();
-                els.stasisTutorialModal.classList.add('active');
+                // Show tutorial popup after 3 second delay
+                setTimeout(() => {
+                    gameState.paused = true;
+                    els.startPause.textContent = 'START';
+                    updateSpeedUI();
+                    els.stasisTutorialModal.classList.add('active');
+                }, 3000);
             }
             if (upgrade.unlocksDrones) {
                 gameState.unlockedSystems.drones = true;

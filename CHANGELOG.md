@@ -6,6 +6,17 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Stasis Panel UI Polish
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Removed vertical segment lines from progress bars** (integrity bars and Life Support Power bar)
+- **Added horizontal padding to Life Support Power and integrity bars** for better spacing from panel edges
+- **Increased vertical spacing** between Life Support section and integrity bar, and from bottom of panel
+- **Tutorial popup now appears after 3-second delay** instead of immediately when stasis research completes
+
+---
+
 ### 2026-01-30 - Stasis Bay Tutorial Popup
 **Author:** Claude (AI Assistant)
 
