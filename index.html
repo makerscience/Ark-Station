@@ -2087,37 +2087,44 @@
         }
         .cryo-log {
             display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding-bottom: 5px;
+            flex-direction: column;
+            gap: 2px;
+            max-height: 180px;
+            overflow: hidden;
+        }
+        .cryo-log.expanded {
+            max-height: 500px;
+            overflow-y: auto;
         }
         .log-entry {
-            flex-shrink: 0;
-            padding: 8px 15px;
-            background: #0a0a0f;
-            border: 1px solid #ff444422;
-            border-radius: 4px;
+            padding: 2px 0;
             font-size: 13px;
             color: #aaa;
             line-height: 1.4;
-            opacity: 0.8;
-        }
-        .log-entry.recent {
-            color: #ff6666;
-            border-color: #ff444444;
-            opacity: 1;
         }
         .pod-failure {
-            display: block;
             color: #ff4444;
             font-size: 10px;
             font-weight: bold;
             letter-spacing: 1px;
-            margin-top: 4px;
+            margin-right: 8px;
+        }
+        .death-log-toggle {
+            background: transparent;
+            border: 1px solid #ff444444;
+            color: #ff6666;
+            padding: 4px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+        .death-log-toggle:hover {
+            background: #ff444422;
         }
         .cryo-log::-webkit-scrollbar {
-            height: 6px;
+            width: 6px;
         }
         .cryo-log::-webkit-scrollbar-track {
             background: #1a1a1f;
@@ -2940,6 +2947,7 @@
         <div class="death-log-panel">
             <div class="death-log-header">
                 <div class="death-log-title">System Log</div>
+                <button class="death-log-toggle" id="deathLogToggle">▼ Expand</button>
             </div>
             <div class="cryo-log" id="cryoLog"></div>
         </div>
@@ -4501,6 +4509,7 @@
             skipAllBtn: document.getElementById('skipAllBtn'),
             reactorBtn: document.getElementById('reactorBtn'),
             cryoLog: document.getElementById('cryoLog'),
+            deathLogToggle: document.getElementById('deathLogToggle'),
             reactorStatus: document.getElementById('reactorStatus'),
             stasisStatus: document.getElementById('stasisStatus'),
             shieldStatus: document.getElementById('shieldStatus'),
@@ -4729,6 +4738,9 @@
         // Throttle rendering to once per animation frame
         let renderPending = false;
 
+        // Death log expanded state
+        let deathLogExpanded = false;
+
         function scheduleRender() {
             if (renderPending) return;
             renderPending = true;
@@ -4903,13 +4915,13 @@
                 gameState.passengerIndex = 0;
             }
             const p = PASSENGER_DATABASE[idx];
-            return `${p.name} (${p.age}), ${p.specialization}<br><span class="pod-failure">POD FAILURE</span>`;
+            return `<span class="pod-failure">POD FAILURE</span> ${p.name} (${p.age}), ${p.specialization}`;
         }
 
         // Add entry to cryo-log
         function addCryoLogEntry(message) {
             gameState.cryoLog.unshift({ message, recent: true });
-            if (gameState.cryoLog.length > 10) {
+            if (gameState.cryoLog.length > 50) {
                 gameState.cryoLog.pop();
             }
             // Mark all but first as not recent after a tick
@@ -4924,7 +4936,8 @@
 
         // Render cryo-log
         function renderCryoLog() {
-            els.cryoLog.innerHTML = gameState.cryoLog.map(entry =>
+            const entriesToShow = deathLogExpanded ? gameState.cryoLog : gameState.cryoLog.slice(0, 4);
+            els.cryoLog.innerHTML = entriesToShow.map(entry =>
                 `<div class="log-entry ${entry.recent ? 'recent' : ''}">${entry.message}</div>`
             ).join('');
         }
@@ -5204,7 +5217,7 @@
                             <div class="upgrade-name">${upgrade.isGate ? '🔓 ' : ''}${upgrade.name}</div>
                             <div class="upgrade-desc">${upgrade.desc}</div>
                         </div>
-                        <div class="upgrade-cost">${upgrade.cost / 5}s</div>
+                        <div class="upgrade-cost">${Math.ceil((upgrade.researchTime || upgrade.cost) / 5)}s</div>
                         ${isPurchased ? '<span style="color:#00ff88">✓</span>' :
                           !isAvailable ? lockMessage :
                           `<button class="upgrade-btn" onclick="startResearch('${upgrade.id}')">HACK</button>`}
@@ -6097,6 +6110,13 @@
                 gameState.power.allocated.drones++;
                 updateUI();
             }
+        });
+
+        // Death log expand/collapse toggle
+        els.deathLogToggle.addEventListener('click', () => {
+            deathLogExpanded = !deathLogExpanded;
+            els.cryoLog.classList.toggle('expanded', deathLogExpanded);
+            els.deathLogToggle.textContent = deathLogExpanded ? '▲ Collapse' : '▼ Expand';
         });
 
         // Drones target selection - both button and icon clicks

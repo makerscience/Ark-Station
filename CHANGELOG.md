@@ -6,6 +6,19 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Vertical Death Log with Expandable History
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **System Log converted to vertical layout** with entries stacked instead of horizontal scroll
+- **Added expand/collapse button** - shows 4 entries by default, expands to show up to 50
+- **Simplified log entry styling** - removed individual boxes around each entry for cleaner list appearance
+- **Removed highlighting on recent deaths** - all entries now display uniformly
+- **Fixed research time display** - times now show correctly (was displaying 5x actual duration)
+- **Emergency Override research time increased to 30 seconds** (was 6 seconds)
+
+---
+
 ### 2026-01-30 - Death Rate Rebalancing & Delayed Start
 **Author:** Claude (AI Assistant)
 
