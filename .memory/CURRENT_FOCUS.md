@@ -34,11 +34,12 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Added "Skip Intro + Tutorials" button to intro screen
-- Implemented 6 tutorial popups: stasis unlock, first flare, CA4, very close zone, orbital status, deaths stabilized
-- Tutorial modals can only be closed via button (no background click dismiss)
-- Solar Shield Matrix text now bright green when online
-- All tutorials respect `skipAllTutorials` flag
+- Converted System Log from horizontal scroll to vertical stacked layout
+- Added expand/collapse button (4 entries default, up to 50 expanded)
+- Removed individual boxes around log entries for cleaner list appearance
+- Removed highlighting on recent deaths - all entries display uniformly
+- Fixed research time display (was showing 5x actual duration)
+- Increased Emergency Override research time to 30 seconds
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`
