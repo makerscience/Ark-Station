@@ -3064,14 +3064,14 @@
         const UPGRADES = [
             // Level 1 upgrades (Phase 1 - Intro)
             { id: 'unlock_stasis', name: 'Stasis Bay: Activate Monitoring', desc: 'Enables stasis pod monitoring array and life support controls', cost: 75, level: 1, unlocksStasis: true },
-            { id: 'auth_2', name: 'Command Authorization 2: Unlock Level 2', desc: 'Access Level 2 system upgrades', cost: 75, level: 1, unlocksLevel: 2, isGate: true, requires: 'unlock_stasis' },
+            { id: 'auth_2', name: 'Command Authorization 2', desc: 'Access Level 2 system upgrades', cost: 75, level: 1, unlocksLevel: 2, isGate: true, requires: 'unlock_stasis' },
 
             // Level 2 upgrades (Phase 2 - Drones)
             { id: 'unlock_drones', name: 'Repair Drones: Activate Drone Bay', desc: 'Enables repair drone deployment and power allocation', cost: 100, level: 2, unlocksDrones: true },
             { id: 'stasis_cap_1', name: 'Stasis Bay: +20% Max Integrity', desc: 'Atmospheric Blend Controller - Regulates O₂/N₂ mixing, CO₂ scrubbing, humidity, and pressure smoothing', cost: 150, level: 2, system: 'stasis', capBonus: 20 },
             { id: 'reactor_cap_1', name: 'Reactor Core: +20% Max Integrity', desc: 'Muon-Catalyzed Ignition Lattice - Enables hot starts from low-power mode', cost: 150, level: 2, system: 'reactor', capBonus: 20 },
             { id: 'stasis_cap_2', name: 'Stasis Bay: +20% Max Integrity', desc: 'Hemobalance Perfusion Module - Micro-pump with anticoagulant dosing and electrolyte correction', cost: 180, level: 2, system: 'stasis', capBonus: 20 },
-            { id: 'auth_3', name: 'Command Authorization 3: Unlock Level 3', desc: 'Access Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
+            { id: 'auth_3', name: 'Command Authorization 3', desc: 'Access Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
 
             // Level 3 upgrades (Phase 3 - Solar)
             { id: 'unlock_solar', name: 'Solar Forecast: Activate Monitoring', desc: 'Enables solar activity monitoring array (1 power)', cost: 100, level: 3, unlocksSolar: true },
@@ -3079,24 +3079,24 @@
             { id: 'shield_repair_1', name: 'Solar Shield: +50% Repair Speed', desc: 'Repair Enhancement I - Improves drone repair efficiency for solar shield', cost: 150, level: 3, shieldRepairBoost: 0.5 },
             { id: 'reactor_cap_2', name: 'Reactor Core: +20% Max Integrity', desc: 'Superconducting Flux Confinement Girdle - Stabilizes plasma geometry for cleaner operation', cost: 180, level: 3, system: 'reactor', capBonus: 20 },
             { id: 'stasis_cap_3', name: 'Stasis Bay: +20% Max Integrity', desc: 'Neural Drift Dampener - Neuro-stimulation lattice prevents memory corruption', cost: 220, level: 3, system: 'stasis', capBonus: 20 },
-            { id: 'auth_4', name: 'Command Authorization 4: Unlock Level 4', desc: 'Access Level 4 system upgrades', cost: 200, level: 3, unlocksLevel: 4, isGate: true },
+            { id: 'auth_4', name: 'Command Authorization 4', desc: 'Access Level 4 system upgrades', cost: 200, level: 3, unlocksLevel: 4, isGate: true },
 
             // Level 4 upgrades
             { id: 'shield_repair_2', name: 'Solar Shield: +50% Repair Speed', desc: 'Repair Enhancement II - Further improves drone repair efficiency', cost: 200, level: 4, shieldRepairBoost: 0.5 },
             { id: 'reactor_cap_3', name: 'Reactor Core: +20% Max Integrity', desc: 'Thermoacoustic Resonance Recuperator - Harvests waste heat to boost efficiency', cost: 220, level: 4, system: 'reactor', capBonus: 20 },
             { id: 'stasis_cap_4', name: 'Stasis Bay: +20% Max Integrity', desc: 'Bioelectric Homeostasis Harness - Prevents arrhythmias and neuromuscular jitter', cost: 280, level: 4, system: 'stasis', capBonus: 20 },
-            { id: 'auth_5', name: 'Command Authorization 5: Unlock Level 5', desc: 'Access Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
+            { id: 'auth_5', name: 'Command Authorization 5', desc: 'Access Level 5 system upgrades', cost: 250, level: 4, unlocksLevel: 5, isGate: true },
 
             // Level 5 upgrades (Phase 4 - Orbital unlocks here)
             { id: 'shield_repair_3', name: 'Solar Shield: +50% Repair Speed', desc: 'Repair Enhancement III - Maximizes drone repair efficiency', cost: 250, level: 5, shieldRepairBoost: 0.5 },
             { id: 'unlock_orbital', name: 'Orbital Status: Activate Monitoring', desc: 'Enables orbital position monitoring (1 power)', cost: 100, level: 5, unlocksOrbital: true },
             { id: 'unlock_thrusters', name: 'Thrusters: Activate + Bay 1', desc: 'Enables thruster controls and unlocks Thruster Bay 1', cost: 120, level: 5, unlocksThrusters: true, unlocksThruster: 1, requires: 'unlock_orbital' },
             { id: 'reactor_cap_4', name: 'Reactor Core: +20% Max Integrity', desc: 'Neutrino-Indexed Reaction Governor - Precision control prevents runaway spikes', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
-            { id: 'auth_6', name: 'Command Authorization 6: Unlock Level 6', desc: 'Access Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
+            { id: 'auth_6', name: 'Command Authorization 6', desc: 'Access Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
             // Level 6 upgrades
             { id: 'thruster_2', name: 'Thruster Bay 2: Bypass Lockout', desc: 'Override safety lockout on Thruster Bay 2', cost: 150, level: 6, unlocksThruster: 2 },
-            { id: 'auth_7', name: 'Command Authorization 7: Unlock Level 7', desc: 'Access Level 7 system upgrades', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
+            { id: 'auth_7', name: 'Command Authorization 7', desc: 'Access Level 7 system upgrades', cost: 350, level: 6, unlocksLevel: 7, isGate: true },
 
             // Level 7 upgrades
             { id: 'thruster_3', name: 'Thruster Bay 3: Bypass Lockout', desc: 'Override safety lockout on Thruster Bay 3', cost: 200, level: 7, unlocksThruster: 3 },
@@ -5524,13 +5524,18 @@
             setIntegrityColor(els.stasisIntegrity, stasisFillPercent);
 
             // Calculate and display projected death rate (for when paused)
+            // Only applies after Stasis Bay monitoring is activated
             // Smooth curve: effectiveness = (power/5) * min(1, integrity/95)
             // At 5 power + 95% integrity = 0 deaths
-            const powerContrib = stasis.powerAllocated / MAX_STASIS_POWER;
-            const integrityContrib = Math.min(1, stasis.integrity / 95);
-            const lifeSupport = powerContrib * integrityContrib;
-            const projectedDPS = 0.3705 * (1 - lifeSupport) * 5;
-            gameState.deathsPerSecond = projectedDPS;
+            if (gameState.unlockedSystems.stasis) {
+                const powerContrib = stasis.powerAllocated / MAX_STASIS_POWER;
+                const integrityContrib = Math.min(1, stasis.integrity / 95);
+                const lifeSupport = powerContrib * integrityContrib;
+                const projectedDPS = 0.2 * (1 - lifeSupport) * 5;
+                gameState.deathsPerSecond = projectedDPS;
+            } else {
+                gameState.deathsPerSecond = 0;
+            }
 
             // Thrusters system - 4 individual units
             const thrusters = gameState.systems.thrusters;
@@ -5956,44 +5961,50 @@
                 }
             }
 
-            // Calculate death rate
+            // Calculate death rate (only after Stasis Bay monitoring is activated)
             // Smooth curve: effectiveness = (power/5) * min(1, integrity/95)
             // At 5 power + 95% integrity = 0 deaths
-            const powerContrib = stasis.powerAllocated / MAX_STASIS_POWER;
-            const integrityContrib = Math.min(1, stasis.integrity / 95);
-            const lifeSupport = powerContrib * integrityContrib;
+            if (gameState.unlockedSystems.stasis) {
+                const powerContrib = stasis.powerAllocated / MAX_STASIS_POWER;
+                const integrityContrib = Math.min(1, stasis.integrity / 95);
+                const lifeSupport = powerContrib * integrityContrib;
 
-            // Base deaths per tick (0.3705 at 0% effectiveness = ~1.85 deaths/sec)
-            const baseDeaths = 0.3705;
-            const fractionalDeaths = baseDeaths * (1 - lifeSupport);
+                // Base deaths per tick (0.2 at 0% effectiveness = 1 death/sec)
+                const baseDeaths = 0.2;
+                const fractionalDeaths = baseDeaths * (1 - lifeSupport);
 
-            // Store deaths per second for UI display (fractionalDeaths * 5 ticks/sec)
-            gameState.deathsPerSecond = fractionalDeaths * 5;
+                // Store deaths per second for UI display (fractionalDeaths * 5 ticks/sec)
+                gameState.deathsPerSecond = fractionalDeaths * 5;
 
-            // Deaths stabilized tutorial - triggers when death rate first reaches 0
-            if (gameState.deathsPerSecond === 0 && !gameState.stabilizedTutorialShown && !gameState.intro.skipAllTutorials) {
-                gameState.stabilizedTutorialShown = true;
-                setTimeout(() => {
-                    gameState.paused = true;
-                    els.startPause.textContent = 'START';
-                    updateSpeedUI();
-                    els.stabilizedTutorialModal.classList.add('active');
-                }, 3000);
-            }
+                // Deaths stabilized tutorial - triggers when death rate first reaches 0
+                if (gameState.deathsPerSecond === 0 && !gameState.stabilizedTutorialShown && !gameState.intro.skipAllTutorials) {
+                    gameState.stabilizedTutorialShown = true;
+                    setTimeout(() => {
+                        gameState.paused = true;
+                        els.startPause.textContent = 'START';
+                        updateSpeedUI();
+                        els.stabilizedTutorialModal.classList.add('active');
+                    }, 3000);
+                }
 
-            // Accumulate fractional deaths and apply when >= 1
-            gameState.fractionalDeaths += fractionalDeaths;
-            const deaths = Math.floor(gameState.fractionalDeaths);
-            gameState.fractionalDeaths -= deaths;
+                // Accumulate fractional deaths and apply when >= 1
+                gameState.fractionalDeaths += fractionalDeaths;
+                const deaths = Math.floor(gameState.fractionalDeaths);
+                gameState.fractionalDeaths -= deaths;
 
-            gameState.lastDeaths = deaths;
+                gameState.lastDeaths = deaths;
 
-            // Kill individual colonists and update visual
-            if (deaths > 0) {
-                killColonists(deaths);
+                // Kill individual colonists and update visual
+                if (deaths > 0) {
+                    killColonists(deaths);
 
-                // Add passenger death record to cryo-log (one per tick)
-                addCryoLogEntry(getNextPassengerDeath());
+                    // Add passenger death record to cryo-log (one per tick)
+                    addCryoLogEntry(getNextPassengerDeath());
+                }
+            } else {
+                // No deaths until Stasis Bay monitoring is activated
+                gameState.deathsPerSecond = 0;
+                gameState.lastDeaths = 0;
             }
 
             // Check for game over

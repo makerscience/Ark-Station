@@ -6,6 +6,24 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Death Rate Rebalancing & Delayed Start
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Death rate reduced to 1/sec at 0% life support** (was ~1.85/sec)
+  - Base deaths constant changed from 0.3705 to 0.2
+  - Gives players more time to react and manage systems
+- **Deaths now delayed until Stasis Bay monitoring is activated**
+  - No colonists die until player researches "Stasis Bay: Activate Monitoring"
+  - Allows players to explore the research tree before pressure begins
+  - Death rate displays as 0 until stasis is unlocked
+- **Simplified Command Authorization upgrade titles**
+  - Removed redundant ": Unlock Level X" suffix from all CA upgrades
+  - Now just "Command Authorization 2", "Command Authorization 3", etc.
+  - Descriptions still explain what they unlock
+
+---
+
 ### 2026-01-30 - Expanded Ending Tiers
 **Author:** Claude (AI Assistant)
 
