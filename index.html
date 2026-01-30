@@ -1805,7 +1805,7 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            padding-top: 15vh;
+            padding-top: 5vh;
             padding-bottom: 80px;
             overflow-y: auto;
         }
@@ -1816,9 +1816,9 @@
             color: #aaa;
             text-align: center;
             max-width: 600px;
-            margin-bottom: 30px;
-            line-height: 1.8;
-            font-size: 16px;
+            margin-bottom: 18px;
+            line-height: 1.6;
+            font-size: 19px;
             opacity: 0;
             transition: opacity 2s ease-in;
             padding: 0 20px;
@@ -1830,25 +1830,19 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            padding: 16px 32px;
+            padding: 8px 16px;
             background: transparent;
-            border: 2px solid #666;
+            border: 1px solid #666;
             color: #aaa;
-            font-size: 24px;
+            font-size: 12px;
             cursor: pointer;
             font-family: inherit;
             border-radius: 4px;
             transition: all 0.3s;
-            animation: skipFlash 1.5s ease-in-out infinite;
-        }
-        @keyframes skipFlash {
-            0%, 100% { opacity: 1; border-color: #aaa; color: #aaa; }
-            50% { opacity: 0.4; border-color: #777; color: #888; }
         }
         .skip-btn:hover {
             border-color: #00ff88;
             color: #00ff88;
-            animation: none;
         }
         .continue-btn {
             padding: 12px 30px;
@@ -1865,10 +1859,16 @@
         }
         .continue-btn.visible {
             opacity: 1;
+            animation: continueFlash 1.5s ease-in-out infinite;
+        }
+        @keyframes continueFlash {
+            0%, 100% { opacity: 1; border-color: #00ff88; }
+            50% { opacity: 0.4; border-color: #00ff8855; }
         }
         .continue-btn:hover {
             background: #00ff8822;
             border-color: #00ff88;
+            animation: none;
         }
         /* Reactor Phase */
         .intro-reactor {
@@ -2500,12 +2500,14 @@
     <div class="intro-overlay" id="introOverlay">
         <!-- Story Phase -->
         <div class="intro-story" id="introStory">
-            <p class="story-paragraph" id="story1">You entered a stasis pod alongside thousands of others, each one of you dreaming of life in a new world. You woke to the violent screams of tearing metal and the howl of rapid decompression. </p>
-            <p class="story-paragraph" id="story2">Thousands of bodies were ripped from their pods and flung into the vast darkness of space. You clawed your way free and hacked the emergency override to seal the breach. You survived, but everyone with Command Authorization to open the pods was dead. </p>
-            <p class="story-paragraph" id="story3">Ark station is your only hope. The orbiting sanctuary is your foothold in a new solar system. But as the Ark Ship draws close, your hope sours. </p>
-            <p class="story-paragraph" id="story4">There is no welcome beacon. No hail from the automatic systems. You dock with the silent hulk and step into a graveyard of cold, dark corridors. </p>
-            <p class="story-paragraph" id="story5">The heart of the station--the reactor--is dead. Backup life support is failing. More than a thousand colonists remain trapped in stasis, unaware their time is running out.  </p>
-            <p class="story-paragraph" id="story6">You stand before the silent reactor and pray it will start. </p>
+            <p class="story-paragraph" id="story1">You entered stasis alongside thousands--dreaming of a new world.</p>
+            <p class="story-paragraph" id="story2">You woke to metal screaming and the howl of decompression as most of them were torn into the void.</p>
+            <p class="story-paragraph" id="story3">You clawed free, hacked the emergency override, and sealed the breach.</p>
+            <p class="story-paragraph" id="story4">You survived. Everyone with Command Authorization didn't. You can't open the pods without authorization. Ark station is your only hope.</p>
+            <p class="story-paragraph" id="story5">As you close in, that hope sours. There is no welcome beacon. No hail from the automatic systems.</p>
+            <p class="story-paragraph" id="story6">You dock with the silent hulk and step into a graveyard of cold, dark corridors.</p>
+            <p class="story-paragraph" id="story7">The heart of the station is dead. Backup life support is failing. More than a thousand colonists are still trapped in stasis, unaware their time is running out.</p>
+            <p class="story-paragraph" id="story8">You stand before the silent reactor and pray it will start.</p>
             <button class="continue-btn" id="continueBtn">CONTINUE</button>
             <button class="skip-btn" id="skipBtn">SKIP</button>
         </div>
@@ -4356,6 +4358,8 @@
             story4: document.getElementById('story4'),
             story5: document.getElementById('story5'),
             story6: document.getElementById('story6'),
+            story7: document.getElementById('story7'),
+            story8: document.getElementById('story8'),
             continueBtn: document.getElementById('continueBtn'),
             skipBtn: document.getElementById('skipBtn'),
             reactorBtn: document.getElementById('reactorBtn'),
@@ -4925,6 +4929,8 @@
             els.story4.classList.remove('visible');
             els.story5.classList.remove('visible');
             els.story6.classList.remove('visible');
+            els.story7.classList.remove('visible');
+            els.story8.classList.remove('visible');
             els.continueBtn.classList.remove('visible');
             els.reactorBtn.classList.remove('active');
             els.reactorBtn.style.boxShadow = '';
@@ -5922,10 +5928,10 @@
             intro.storyTimers.forEach(t => clearTimeout(t));
             intro.storyTimers = [];
 
-            const paragraphs = [els.story1, els.story2, els.story3, els.story4, els.story5, els.story6];
-            // Custom timing: P1 fast, then gaps reduced by 5s each
-            const delays = [1500, 5000, 22000, 32000, 44000, 56000];
-            const continueDelay = 61000; // 5s after final paragraph
+            const paragraphs = [els.story1, els.story2, els.story3, els.story4, els.story5, els.story6, els.story7, els.story8];
+            // First paragraph immediate, then every 3 seconds
+            const delays = [0, 3000, 6000, 9000, 12000, 15000, 18000, 21000];
+            const continueDelay = 26000; // 5s after final paragraph
 
             // Schedule each paragraph to appear
             delays.forEach((delay, i) => {

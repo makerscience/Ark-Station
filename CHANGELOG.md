@@ -6,6 +6,19 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Intro Sequence Overhaul
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Revised intro story to 8 shorter paragraphs** with tighter pacing
+- **Faster text timing:** first paragraph appears immediately, then every 3 seconds
+- **Text layout adjusted to fit on screen:** reduced top padding, paragraph spacing, and line height
+- **Font size increased ~20%** (16px → 19px) for better readability
+- **Skip button reduced by 50%** and no longer flashes
+- **Continue button now flashes** to draw attention when it appears
+
+---
+
 ### 2026-01-30 - Reactor Power-On Indicator Lights
 **Author:** Claude (AI Assistant)
 
