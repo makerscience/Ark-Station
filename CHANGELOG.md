@@ -6,6 +6,46 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Tutorial Popup System
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **"Skip Intro + Tutorials" button on intro screen:**
+  - Positioned above the existing "Skip Intro" button
+  - Sets `skipAllTutorials` flag to disable all tutorial popups for the session
+- **Six tutorial popups throughout gameplay:**
+  1. **Stasis Bay unlock** (3s after researching): Guides player to increase power and get repair drones online
+  2. **First solar flare ends**: Alerts player to get Solar Forecast back online
+  3. **Command Authority 4 complete** (3s after): Hints at faster decay and rising temperature
+  4. **Very Close zone entered** (3s after distance ≤40): Warns about radiation spike, urges Orbital Status
+  5. **Orbital Status unlocked** (3s after researching): Reveals station is falling, need thrusters
+  6. **Deaths stabilized** (3s after reaching 0/sec): Congratulates player, points to CA8 and emergency override
+- **Tutorial modals can only be closed via button** - clicking outside no longer dismisses them
+
+#### Changed
+- **Solar Shield Matrix text now bright green when online** (was grey)
+
+---
+
+### 2026-01-30 - Tutorial Skip System
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **"Skip Intro + Tutorials" button on intro screen:**
+  - Positioned above the existing "Skip Intro" button
+  - Sets `gameState.intro.skipAllTutorials` flag when clicked
+  - All tutorial popups check this flag before displaying
+- **`skipAllTutorials` flag in gameState.intro** - tracks whether tutorials are disabled for the session
+
+#### Changed
+- **Stasis tutorial popup now respects skip flag** - wrapped in conditional check
+
+#### Notes
+- Future tutorial pattern: wrap trigger in `if (!gameState.intro.skipAllTutorials) { ... }`
+- Allows experienced players to skip tutorial popups on subsequent playthroughs
+
+---
+
 ### 2026-01-30 - Stasis Panel UI Polish
 **Author:** Claude (AI Assistant)
 

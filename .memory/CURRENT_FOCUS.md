@@ -34,11 +34,11 @@
 ---
 
 ## Last Session Summary (max ~8 bullets)
-- Fixed Repair Drone panel layout issue
-- Converted from flexbox to absolute positioning for targets row, drone hub, and power section
-- Root cause: `.drone-visual-container` was 160px but panel was locked at 271px
-- Fix: Increased container height to 235px to fill the panel
-- Targets row now at top, power section at bottom, drone hub in middle
+- Added "Skip Intro + Tutorials" button to intro screen
+- Implemented 6 tutorial popups: stasis unlock, first flare, CA4, very close zone, orbital status, deaths stabilized
+- Tutorial modals can only be closed via button (no background click dismiss)
+- Solar Shield Matrix text now bright green when online
+- All tutorials respect `skipAllTutorials` flag
 
 ## Pinned References
 - Governance rules: `CLAUDE.md`

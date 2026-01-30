@@ -1331,7 +1331,7 @@
         }
         .shield-controls .system-name {
             font-size: 13px;
-            color: #aaa;
+            color: #00ff88;
         }
         .shield-controls .integrity-bar {
             margin-bottom: 5px;
@@ -1871,6 +1871,9 @@
         .skip-btn:hover {
             border-color: #00ff88;
             color: #00ff88;
+        }
+        .skip-all-btn {
+            bottom: 70px;
         }
         .continue-btn {
             padding: 12px 30px;
@@ -2536,7 +2539,8 @@
             <p class="story-paragraph" id="story7">The heart of the station is dead. Backup life support is failing. More than a thousand colonists are still trapped in stasis, unaware their time is running out.</p>
             <p class="story-paragraph" id="story8">You stand before the silent reactor and pray it will start.</p>
             <button class="continue-btn" id="continueBtn">CONTINUE</button>
-            <button class="skip-btn" id="skipBtn">SKIP</button>
+            <button class="skip-btn" id="skipBtn">SKIP INTRO</button>
+            <button class="skip-btn skip-all-btn" id="skipAllBtn">SKIP INTRO + TUTORIALS</button>
         </div>
         <!-- Reactor Phase -->
         <div class="intro-reactor" id="introReactor">
@@ -2966,6 +2970,70 @@
                 <p>You'll have to hack the Command Authority system to give you level 2 access.</p>
             </div>
             <button class="close-btn" id="closeStasisTutorial">UNDERSTOOD</button>
+        </div>
+    </div>
+
+    <!-- Solar Flare Tutorial Modal -->
+    <div class="modal-overlay" id="solarFlareTutorialModal">
+        <div class="modal tutorial-modal">
+            <div class="modal-title">SOLAR EVENT DETECTED</div>
+            <div class="tutorial-text">
+                <p>What the hell was that? The whole station was shaking.</p>
+                <p>That's bad. You've got to get the Solar Forecast back online to see what's going on out there.</p>
+            </div>
+            <button class="close-btn" id="closeSolarFlareTutorial">UNDERSTOOD</button>
+        </div>
+    </div>
+
+    <!-- Orbital Decay Tutorial Modal -->
+    <div class="modal-overlay" id="orbitalDecayTutorialModal">
+        <div class="modal tutorial-modal">
+            <div class="modal-title">ANOMALY DETECTED</div>
+            <div class="tutorial-text">
+                <p>You notice a slight vibration and the integrity of the systems appears to be falling a bit faster.</p>
+                <p>That's not the solar flares, that's something else.</p>
+                <p>Also, is it getting a little warmer in here?</p>
+            </div>
+            <button class="close-btn" id="closeOrbitalDecayTutorial">UNDERSTOOD</button>
+        </div>
+    </div>
+
+    <!-- Very Close Zone Tutorial Modal -->
+    <div class="modal-overlay" id="veryCloseTutorialModal">
+        <div class="modal tutorial-modal">
+            <div class="modal-title">WARNING</div>
+            <div class="tutorial-text">
+                <p>What is going on? Radiation is spiking, but there's no flare.</p>
+                <p>You need to get the Orbital Status back online ASAP.</p>
+                <p>You've got a bad feeling about this.</p>
+            </div>
+            <button class="close-btn" id="closeVeryCloseTutorial">UNDERSTOOD</button>
+        </div>
+    </div>
+
+    <!-- Orbital Status Unlock Tutorial Modal -->
+    <div class="modal-overlay" id="orbitalStatusTutorialModal">
+        <div class="modal tutorial-modal">
+            <div class="modal-title">ORBITAL ALERT</div>
+            <div class="tutorial-text">
+                <p>The station is falling into the sun.</p>
+                <p>If it passes the Roche Limit, there's no pulling out of the descent.</p>
+                <p>You've got to get the thrusters back online.</p>
+            </div>
+            <button class="close-btn" id="closeOrbitalStatusTutorial">UNDERSTOOD</button>
+        </div>
+    </div>
+
+    <!-- Deaths Stabilized Tutorial Modal -->
+    <div class="modal-overlay" id="stabilizedTutorialModal">
+        <div class="modal tutorial-modal">
+            <div class="modal-title">LIFE SUPPORT STABLE</div>
+            <div class="tutorial-text">
+                <p>Finally, you've stopped the bleeding. Nobody's dying in the stasis bay.</p>
+                <p>That's good, but if you want to wake them up, you'll need Command Authority Level 8.</p>
+                <p>That will allow you to hack the emergency override.</p>
+            </div>
+            <button class="close-btn" id="closeStabilizedTutorial">UNDERSTOOD</button>
         </div>
     </div>
 
@@ -4267,13 +4335,15 @@
             rocheWarnings: {
                 threshold40: false,
                 threshold25: false,
-                threshold15: false
+                threshold15: false,
+                veryCloseTutorialShown: false
             },
             solar: {
                 nextFlare: 600 + Math.floor(Math.random() * 600), // 600-1200 ticks (2-4 min at 5 ticks/sec)
                 flareActive: false,
                 flareDuration: 0,
-                lastDamage: 0
+                lastDamage: 0,
+                firstFlareShown: false
             },
             research: {
                 commandLevel: 1,
@@ -4295,7 +4365,8 @@
                 storyStep: 0,
                 storyTimers: [],
                 clicks: 0,
-                requiredClicks: 10
+                requiredClicks: 10,
+                skipAllTutorials: false
             },
             cryoLog: [],
             passengerQueue: [],      // Shuffled array of passenger indices
@@ -4306,6 +4377,7 @@
             paused: true,
             lastDeaths: 0,
             deathsPerSecond: 0,
+            stabilizedTutorialShown: false,
             gameTime: {
                 minute: 0,    // Start at 00:00 (midnight)
                 hour: 0,
@@ -4402,6 +4474,16 @@
             researchingIndicator: document.getElementById('researchingIndicator'),
             stasisTutorialModal: document.getElementById('stasisTutorialModal'),
             closeStasisTutorial: document.getElementById('closeStasisTutorial'),
+            solarFlareTutorialModal: document.getElementById('solarFlareTutorialModal'),
+            closeSolarFlareTutorial: document.getElementById('closeSolarFlareTutorial'),
+            orbitalDecayTutorialModal: document.getElementById('orbitalDecayTutorialModal'),
+            closeOrbitalDecayTutorial: document.getElementById('closeOrbitalDecayTutorial'),
+            veryCloseTutorialModal: document.getElementById('veryCloseTutorialModal'),
+            closeVeryCloseTutorial: document.getElementById('closeVeryCloseTutorial'),
+            orbitalStatusTutorialModal: document.getElementById('orbitalStatusTutorialModal'),
+            closeOrbitalStatusTutorial: document.getElementById('closeOrbitalStatusTutorial'),
+            stabilizedTutorialModal: document.getElementById('stabilizedTutorialModal'),
+            closeStabilizedTutorial: document.getElementById('closeStabilizedTutorial'),
             // Intro elements
             introOverlay: document.getElementById('introOverlay'),
             introStory: document.getElementById('introStory'),
@@ -4416,6 +4498,7 @@
             story8: document.getElementById('story8'),
             continueBtn: document.getElementById('continueBtn'),
             skipBtn: document.getElementById('skipBtn'),
+            skipAllBtn: document.getElementById('skipAllBtn'),
             reactorBtn: document.getElementById('reactorBtn'),
             cryoLog: document.getElementById('cryoLog'),
             reactorStatus: document.getElementById('reactorStatus'),
@@ -5164,13 +5247,15 @@
             // System unlock upgrades
             if (upgrade.unlocksStasis) {
                 gameState.unlockedSystems.stasis = true;
-                // Show tutorial popup after 3 second delay
-                setTimeout(() => {
-                    gameState.paused = true;
-                    els.startPause.textContent = 'START';
-                    updateSpeedUI();
-                    els.stasisTutorialModal.classList.add('active');
-                }, 3000);
+                // Show tutorial popup after 3 second delay (if not skipped)
+                if (!gameState.intro.skipAllTutorials) {
+                    setTimeout(() => {
+                        gameState.paused = true;
+                        els.startPause.textContent = 'START';
+                        updateSpeedUI();
+                        els.stasisTutorialModal.classList.add('active');
+                    }, 3000);
+                }
             }
             if (upgrade.unlocksDrones) {
                 gameState.unlockedSystems.drones = true;
@@ -5183,6 +5268,15 @@
             }
             if (upgrade.unlocksOrbital) {
                 gameState.unlockedSystems.orbital = true;
+                // Show tutorial after 3 second delay (if not skipped)
+                if (!gameState.intro.skipAllTutorials) {
+                    setTimeout(() => {
+                        gameState.paused = true;
+                        els.startPause.textContent = 'START';
+                        updateSpeedUI();
+                        els.orbitalStatusTutorialModal.classList.add('active');
+                    }, 3000);
+                }
             }
             if (upgrade.unlocksThrusters) {
                 gameState.unlockedSystems.thrusters = true;
@@ -5204,6 +5298,15 @@
                     gameState.orbital.distance = 70;  // MEDIUM zone
                 } else if (upgrade.unlocksLevel === 4) {
                     gameState.orbital.distance = 50;  // CLOSE zone (decay begins)
+                    // Show tutorial after 3 second delay (if not skipped)
+                    if (!gameState.intro.skipAllTutorials) {
+                        setTimeout(() => {
+                            gameState.paused = true;
+                            els.startPause.textContent = 'START';
+                            updateSpeedUI();
+                            els.orbitalDecayTutorialModal.classList.add('active');
+                        }, 3000);
+                    }
                 }
             }
 
@@ -5680,6 +5783,14 @@
                         solar.flareActive = false;
                         solar.nextFlare = flareParams.cooldownMin + Math.floor(Math.random() * flareParams.cooldownRange);
                         solar.lastDamage = 0;
+                        // Show tutorial after first flare ends (if not skipped)
+                        if (!solar.firstFlareShown && !gameState.intro.skipAllTutorials) {
+                            solar.firstFlareShown = true;
+                            gameState.paused = true;
+                            els.startPause.textContent = 'START';
+                            updateSpeedUI();
+                            els.solarFlareTutorialModal.classList.add('active');
+                        }
                     }
                 } else {
                     solar.nextFlare--;
@@ -5792,6 +5903,17 @@
                 orbital.decayRate = 0;
             }
 
+            // Very Close zone tutorial - triggers when distance first falls to 40 or below
+            if (orbital.distance <= 40 && !gameState.rocheWarnings.veryCloseTutorialShown && !gameState.intro.skipAllTutorials) {
+                gameState.rocheWarnings.veryCloseTutorialShown = true;
+                setTimeout(() => {
+                    gameState.paused = true;
+                    els.startPause.textContent = 'START';
+                    updateSpeedUI();
+                    els.veryCloseTutorialModal.classList.add('active');
+                }, 3000);
+            }
+
             // Ambient warning messages as station approaches Roche limit (only if orbital panel not unlocked)
             if (research.commandLevel >= 4 && !gameState.unlockedSystems.orbital) {
                 if (orbital.distance <= 40 && !gameState.rocheWarnings.threshold40) {
@@ -5834,6 +5956,17 @@
 
             // Store deaths per second for UI display (fractionalDeaths * 5 ticks/sec)
             gameState.deathsPerSecond = fractionalDeaths * 5;
+
+            // Deaths stabilized tutorial - triggers when death rate first reaches 0
+            if (gameState.deathsPerSecond === 0 && !gameState.stabilizedTutorialShown && !gameState.intro.skipAllTutorials) {
+                gameState.stabilizedTutorialShown = true;
+                setTimeout(() => {
+                    gameState.paused = true;
+                    els.startPause.textContent = 'START';
+                    updateSpeedUI();
+                    els.stabilizedTutorialModal.classList.add('active');
+                }, 3000);
+            }
 
             // Accumulate fractional deaths and apply when >= 1
             gameState.fractionalDeaths += fractionalDeaths;
@@ -6005,15 +6138,29 @@
             }
         });
 
-        // Stasis tutorial modal
+        // Tutorial modal close buttons (no background click to close - must use button)
         els.closeStasisTutorial.addEventListener('click', () => {
             els.stasisTutorialModal.classList.remove('active');
         });
 
-        els.stasisTutorialModal.addEventListener('click', (e) => {
-            if (e.target === els.stasisTutorialModal) {
-                els.stasisTutorialModal.classList.remove('active');
-            }
+        els.closeSolarFlareTutorial.addEventListener('click', () => {
+            els.solarFlareTutorialModal.classList.remove('active');
+        });
+
+        els.closeOrbitalDecayTutorial.addEventListener('click', () => {
+            els.orbitalDecayTutorialModal.classList.remove('active');
+        });
+
+        els.closeVeryCloseTutorial.addEventListener('click', () => {
+            els.veryCloseTutorialModal.classList.remove('active');
+        });
+
+        els.closeOrbitalStatusTutorial.addEventListener('click', () => {
+            els.orbitalStatusTutorialModal.classList.remove('active');
+        });
+
+        els.closeStabilizedTutorial.addEventListener('click', () => {
+            els.stabilizedTutorialModal.classList.remove('active');
         });
 
         // Story sequence functions
@@ -6073,6 +6220,14 @@
         // Skip button handler
         els.skipBtn.addEventListener('click', () => {
             if (gameState.intro.phase === 'story') {
+                transitionToReactorPhase();
+            }
+        });
+
+        // Skip all (intro + tutorials) button handler
+        els.skipAllBtn.addEventListener('click', () => {
+            if (gameState.intro.phase === 'story') {
+                gameState.intro.skipAllTutorials = true;
                 transitionToReactorPhase();
             }
         });
