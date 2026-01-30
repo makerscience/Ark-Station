@@ -6,6 +6,24 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Reactor Power-On Indicator Lights
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **10 LED-style indicator lights around reactor button during startup:**
+  - Large circular lights (48px) arranged in a ring around the button
+  - Lights turn on sequentially with each click (50ms stagger between lights)
+  - Lights hold briefly (400ms) then turn off in reverse order
+  - On 10th click, all lights stay permanently lit
+  - Lights animate clockwise starting from the bottom
+
+#### Removed
+- Progress percentage text ("Initializing... X%") - lights now show progress visually
+- Cumulative glow effect on reactor button during startup
+- Pulse animation on each click (kept final screen flash)
+
+---
+
 ### 2026-01-30 - Ending Screen Timer
 **Author:** Claude (AI Assistant)
 

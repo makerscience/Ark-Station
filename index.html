@@ -1924,6 +1924,47 @@
             color: #00ff88;
             box-shadow: 0 0 30px #00ff8855;
         }
+        .reactor-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .reactor-lights {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .reactor-light {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #333;
+            border: 2px solid #444;
+            top: 50%;
+            left: 50%;
+            transition: background 0.1s, box-shadow 0.1s;
+        }
+        .reactor-light.lit {
+            background: #00ff88;
+            border-color: #00ff88;
+            box-shadow: 0 0 16px #00ff88, 0 0 32px #00ff8888;
+        }
+        /* Position lights in a circle (352px radius, 36deg apart, starting at bottom, clockwise) */
+        .reactor-light[data-index="0"] { transform: translate(-50%, -50%) translate(0px, 352px); }
+        .reactor-light[data-index="1"] { transform: translate(-50%, -50%) translate(-204px, 284px); }
+        .reactor-light[data-index="2"] { transform: translate(-50%, -50%) translate(-336px, 108px); }
+        .reactor-light[data-index="3"] { transform: translate(-50%, -50%) translate(-336px, -108px); }
+        .reactor-light[data-index="4"] { transform: translate(-50%, -50%) translate(-204px, -284px); }
+        .reactor-light[data-index="5"] { transform: translate(-50%, -50%) translate(0px, -352px); }
+        .reactor-light[data-index="6"] { transform: translate(-50%, -50%) translate(204px, -284px); }
+        .reactor-light[data-index="7"] { transform: translate(-50%, -50%) translate(336px, -108px); }
+        .reactor-light[data-index="8"] { transform: translate(-50%, -50%) translate(336px, 108px); }
+        .reactor-light[data-index="9"] { transform: translate(-50%, -50%) translate(204px, 284px); }
         .reactor-btn .pulse {
             position: absolute;
             top: 50%;
@@ -1991,11 +2032,6 @@
             100% {
                 opacity: 0;
             }
-        }
-        .intro-progress {
-            margin-top: 20px;
-            color: #777;
-            font-size: 12px;
         }
         /* Death Log Panel - Bottom Bar */
         .death-log-panel {
@@ -2475,8 +2511,21 @@
         </div>
         <!-- Reactor Phase -->
         <div class="intro-reactor" id="introReactor">
-            <button class="reactor-btn" id="reactorBtn">REACTOR<br>OFFLINE</button>
-            <div class="intro-progress" id="introProgress"></div>
+            <div class="reactor-container">
+                <div class="reactor-lights">
+                    <div class="reactor-light" data-index="0"></div>
+                    <div class="reactor-light" data-index="1"></div>
+                    <div class="reactor-light" data-index="2"></div>
+                    <div class="reactor-light" data-index="3"></div>
+                    <div class="reactor-light" data-index="4"></div>
+                    <div class="reactor-light" data-index="5"></div>
+                    <div class="reactor-light" data-index="6"></div>
+                    <div class="reactor-light" data-index="7"></div>
+                    <div class="reactor-light" data-index="8"></div>
+                    <div class="reactor-light" data-index="9"></div>
+                </div>
+                <button class="reactor-btn" id="reactorBtn">REACTOR<br>OFFLINE</button>
+            </div>
         </div>
     </div>
 
@@ -4310,7 +4359,6 @@
             continueBtn: document.getElementById('continueBtn'),
             skipBtn: document.getElementById('skipBtn'),
             reactorBtn: document.getElementById('reactorBtn'),
-            introProgress: document.getElementById('introProgress'),
             cryoLog: document.getElementById('cryoLog'),
             reactorStatus: document.getElementById('reactorStatus'),
             stasisStatus: document.getElementById('stasisStatus'),
@@ -4881,7 +4929,7 @@
             els.reactorBtn.classList.remove('active');
             els.reactorBtn.style.boxShadow = '';
             els.reactorBtn.innerHTML = 'REACTOR<br>OFFLINE';
-            els.introProgress.textContent = '';
+            document.querySelectorAll('.reactor-light').forEach(light => light.classList.remove('lit'));
 
             // Clear dying colonists effect and reset canvas contexts
             dyingColonists.clear();
@@ -5931,30 +5979,36 @@
             if (!intro.active || intro.phase !== 'reactor') return;
 
             intro.clicks++;
-            const progress = Math.round((intro.clicks / intro.requiredClicks) * 100);
             const isFinalClick = intro.clicks >= intro.requiredClicks;
+            const lightsToShow = intro.clicks;
 
-            // Calculate pulse intensity: starts at 0.3, increases to 1.0 by final click
-            const intensity = 0.3 + (intro.clicks / intro.requiredClicks) * 0.7;
+            // Get all reactor lights
+            const lights = document.querySelectorAll('.reactor-light');
 
-            // Create pulse effect with scaling intensity
-            const pulse = document.createElement('div');
-            pulse.className = isFinalClick ? 'pulse final' : 'pulse';
-            pulse.style.setProperty('--pulse-intensity', intensity);
-            els.reactorBtn.appendChild(pulse);
-            // Remove pulse element after animation completes
-            setTimeout(() => pulse.remove(), isFinalClick ? 1200 : 500);
+            // Turn on lights sequentially (0 to lightsToShow-1)
+            for (let i = 0; i < lightsToShow; i++) {
+                setTimeout(() => {
+                    lights[i].classList.add('lit');
+                }, i * 50);
+            }
 
             if (!isFinalClick) {
-                els.introProgress.textContent = `Initializing... ${progress}%`;
-                els.reactorBtn.style.boxShadow = `0 0 ${intro.clicks * 5}px #00ff8844`;
+                // After hold period, turn lights off in reverse order
+                const holdDuration = 400;
+                const lastLightOnTime = (lightsToShow - 1) * 50;
+                const turnOffStart = lastLightOnTime + holdDuration;
+
+                for (let i = lightsToShow - 1; i >= 0; i--) {
+                    setTimeout(() => {
+                        lights[i].classList.remove('lit');
+                    }, turnOffStart + (lightsToShow - 1 - i) * 30);
+                }
             } else {
-                // Reactor online!
+                // Reactor online! Lights stay on permanently
                 intro.active = false;
                 gameState.runStartTime = Date.now();
                 els.reactorBtn.classList.add('active');
                 els.reactorBtn.innerHTML = 'REACTOR<br>ONLINE';
-                els.introProgress.textContent = '';
 
                 // Create screen flash after the final pulse ripples out
                 setTimeout(() => {
