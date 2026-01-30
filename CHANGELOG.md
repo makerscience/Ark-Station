@@ -6,6 +6,28 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Stasis Bay Tutorial Popup
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Tutorial popup when "Stasis Bay: Activate Monitoring" research completes** - pauses game and shows internal monologue guiding player to unlock repair drones and hack Command Authority level 2
+
+---
+
+### 2026-01-30 - Stasis Bay Unlock Tech
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **New Level 1 tech "Stasis Bay: Activate Monitoring"** (75 research) unlocks stasis bay visuals and controls
+- **"System Offline" indicator for Stasis panel** when not yet researched, matching other locked panels
+- **Prerequisite system for techs** - upgrades can now require other upgrades to be purchased first
+
+#### Changed
+- **Stasis Bay: +20% Max Integrity moved from Level 1 to Level 2** (now requires Command Authorization 2 first)
+- **Command Authorization 2 now requires Stasis Bay: Activate Monitoring** - forces player to unlock stasis first
+
+---
+
 ### 2026-01-30 - Intro Sequence Overhaul
 **Author:** Claude (AI Assistant)
 

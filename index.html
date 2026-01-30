@@ -205,18 +205,20 @@
             color: #777;
             text-align: center;
         }
-        /* Show locked indicators in orbital/solar section placeholders */
+        /* Show locked indicators in orbital/solar/stasis section placeholders */
         .orbital-status-section .section-locked-indicator,
         .thruster-section-locked .section-locked-indicator,
         .solar-forecast-section .section-locked-indicator,
-        .shield-section-locked .section-locked-indicator {
+        .shield-section-locked .section-locked-indicator,
+        .stasis-section-locked .section-locked-indicator {
             display: flex;
         }
         /* Hide them when parent section gets locked class (meaning content is now showing) */
         .orbital-status-section.locked .section-locked-indicator,
         .thruster-section-locked.locked .section-locked-indicator,
         .solar-forecast-section.locked .section-locked-indicator,
-        .shield-section-locked.locked .section-locked-indicator {
+        .shield-section-locked.locked .section-locked-indicator,
+        .stasis-section-locked.locked .section-locked-indicator {
             display: none;
         }
         .section-locked-indicator .locked-icon {
@@ -304,6 +306,24 @@
         .shield-section-locked .section-locked-indicator .locked-text {
             font-size: 8px;
             letter-spacing: 1px;
+        }
+        /* Stasis section locked indicator - centered in tall panel */
+        .stasis-section-locked {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 600px;
+        }
+        .stasis-section-locked .section-locked-indicator {
+            padding: 40px 20px;
+        }
+        .stasis-section-locked.locked {
+            display: none;
+        }
+        .stasis-content-section.locked {
+            display: none;
         }
         .panel-title {
             color: #aaa;
@@ -1737,6 +1757,20 @@
         .close-btn:hover {
             background: #444;
         }
+        .tutorial-modal {
+            max-width: 450px;
+        }
+        .tutorial-text {
+            color: #aaa;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .tutorial-text p {
+            margin-bottom: 12px;
+        }
+        .tutorial-text p:last-child {
+            margin-bottom: 0;
+        }
         .researching-indicator {
             color: #8888ff;
             font-size: 12px;
@@ -2551,11 +2585,18 @@
 
         <div class="main-layout">
             <div class="left-sidebar">
-                <div class="panel">
+                <div class="panel" id="stasisPanel">
                     <div class="locked-section-header">
                             <span class="system-name">Ark Ship — Stasis Bay</span>
-                            <span class="system-status">ONLINE</span>
+                            <span class="system-status offline" id="stasisSystemStatus">OFFLINE</span>
                         </div>
+                    <div class="stasis-section-locked" id="stasisSectionLocked">
+                        <div class="section-locked-indicator">
+                            <div class="locked-icon">⚠</div>
+                            <div class="locked-text">System Offline</div>
+                        </div>
+                    </div>
+                    <div class="stasis-content-section locked" id="stasisContentSection">
                     <div class="survivors-panel-vertical">
                         <div class="ark-ship-visual">
                             <div class="ark-ship-container">
@@ -2598,6 +2639,7 @@
                                 <div class="system-status critical" id="stasisStatus">CRITICAL</div>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </div>
 
@@ -2919,6 +2961,21 @@
         </div>
     </div>
 
+    <!-- Stasis Unlock Tutorial Modal -->
+    <div class="modal-overlay" id="stasisTutorialModal">
+        <div class="modal tutorial-modal">
+            <div class="modal-title">SYSTEM ONLINE</div>
+            <div class="tutorial-text">
+                <p>You've got the reactor up and running. Now you can see the Ark Ship Stasis Bay.</p>
+                <p>It doesn't look good. People are dying by the minute.</p>
+                <p>You should increase power to the system immediately.</p> 
+		<p>Once that's done, there's got to be some way to increase the integrity. Can you get the station's repair drones back online?</p>
+                <p>You'll have to hack the Command Authority system to give you level 2 access.</p>
+            </div>
+            <button class="close-btn" id="closeStasisTutorial">UNDERSTOOD</button>
+        </div>
+    </div>
+
     <!-- Emergency Override Button -->
     <div class="emergency-override" id="emergencyOverride">
         <div class="emergency-override-label">Emergency Override Ready</div>
@@ -2945,11 +3002,12 @@
         // Phase 1: Intro (stasis only) | Phase 2: Drones | Phase 3: Solar | Phase 4: Orbital | Phase 5: Endgame
         const UPGRADES = [
             // Level 1 upgrades (Phase 1 - Intro)
-            { id: 'stasis_cap_1', name: 'Stasis Bay: +20% Max Integrity', desc: 'Atmospheric Blend Controller - Regulates O₂/N₂ mixing, CO₂ scrubbing, humidity, and pressure smoothing', cost: 150, level: 1, system: 'stasis', capBonus: 20 },
-            { id: 'auth_2', name: 'Command Authorization 2: Unlock Level 2', desc: 'Access Level 2 system upgrades', cost: 75, level: 1, unlocksLevel: 2, isGate: true },
+            { id: 'unlock_stasis', name: 'Stasis Bay: Activate Monitoring', desc: 'Enables stasis pod monitoring array and life support controls', cost: 75, level: 1, unlocksStasis: true },
+            { id: 'auth_2', name: 'Command Authorization 2: Unlock Level 2', desc: 'Access Level 2 system upgrades', cost: 75, level: 1, unlocksLevel: 2, isGate: true, requires: 'unlock_stasis' },
 
             // Level 2 upgrades (Phase 2 - Drones)
             { id: 'unlock_drones', name: 'Repair Drones: Activate Drone Bay', desc: 'Enables repair drone deployment and power allocation', cost: 100, level: 2, unlocksDrones: true },
+            { id: 'stasis_cap_1', name: 'Stasis Bay: +20% Max Integrity', desc: 'Atmospheric Blend Controller - Regulates O₂/N₂ mixing, CO₂ scrubbing, humidity, and pressure smoothing', cost: 150, level: 2, system: 'stasis', capBonus: 20 },
             { id: 'reactor_cap_1', name: 'Reactor Core: +20% Max Integrity', desc: 'Muon-Catalyzed Ignition Lattice - Enables hot starts from low-power mode', cost: 150, level: 2, system: 'reactor', capBonus: 20 },
             { id: 'stasis_cap_2', name: 'Stasis Bay: +20% Max Integrity', desc: 'Hemobalance Perfusion Module - Micro-pump with anticoagulant dosing and electrolyte correction', cost: 180, level: 2, system: 'stasis', capBonus: 20 },
             { id: 'auth_3', name: 'Command Authorization 3: Unlock Level 3', desc: 'Access Level 3 system upgrades', cost: 150, level: 2, unlocksLevel: 3, isGate: true },
@@ -4231,6 +4289,7 @@
                 timeRemaining: 0
             },
             unlockedSystems: {
+                stasis: false,      // Unlocked by "Stasis Bay: Activate Monitoring"
                 drones: false,      // Unlocked by "Repair Drones System"
                 solar: false,       // Unlocked by "Solar Forecast System"
                 shield: false,      // Unlocked by "Solar Shield Matrix"
@@ -4348,6 +4407,8 @@
             upgradeList: document.getElementById('upgradeList'),
             closeResearch: document.getElementById('closeResearch'),
             researchingIndicator: document.getElementById('researchingIndicator'),
+            stasisTutorialModal: document.getElementById('stasisTutorialModal'),
+            closeStasisTutorial: document.getElementById('closeStasisTutorial'),
             // Intro elements
             introOverlay: document.getElementById('introOverlay'),
             introStory: document.getElementById('introStory'),
@@ -4392,7 +4453,12 @@
             shieldSection: document.getElementById('shieldSection'),
             // Lockable drone targets
             droneTargetShield: document.getElementById('droneTargetShield'),
-            targetShieldBtn: document.getElementById('targetShield')
+            targetShieldBtn: document.getElementById('targetShield'),
+            // Stasis panel sections
+            stasisPanel: document.getElementById('stasisPanel'),
+            stasisSystemStatus: document.getElementById('stasisSystemStatus'),
+            stasisSectionLocked: document.getElementById('stasisSectionLocked'),
+            stasisContentSection: document.getElementById('stasisContentSection')
         };
 
         // Get total allocated power
@@ -4887,6 +4953,7 @@
             gameState.research.purchased = [];
             gameState.research.inProgress = null;
             gameState.research.timeRemaining = 0;
+            gameState.unlockedSystems.stasis = false;
             gameState.unlockedSystems.drones = false;
             gameState.unlockedSystems.solar = false;
             gameState.unlockedSystems.shield = false;
@@ -5019,6 +5086,10 @@
                     const isPurchased = research.purchased.includes(upgrade.id);
                     let isAvailable = !isPurchased && upgrade.level <= research.commandLevel;
 
+                    // Check if prerequisite upgrade is purchased
+                    const needsPrerequisite = upgrade.requires && !research.purchased.includes(upgrade.requires);
+                    if (needsPrerequisite) isAvailable = false;
+
                     // Emergency Override requires station to be out of critical/very close zones (distance > 40)
                     const needsSafeDistance = upgrade.unlocksFinal && gameState.orbital.distance <= 40;
                     if (needsSafeDistance) isAvailable = false;
@@ -5028,8 +5099,13 @@
                     else if (isAvailable) statusClass = 'available';
                     if (upgrade.isGate) statusClass += ' gate-upgrade';
 
-                    // Custom lock message for Emergency Override when too close
+                    // Custom lock message for various lock conditions
                     let lockMessage = '<span style="color:#666">Locked</span>';
+                    if (needsPrerequisite) {
+                        const prereqUpgrade = UPGRADES.find(u => u.id === upgrade.requires);
+                        const prereqName = prereqUpgrade ? prereqUpgrade.name.split(':')[0] : 'prerequisite';
+                        lockMessage = `<span style="color:#666">Requires ${prereqName}</span>`;
+                    }
                     if (needsSafeDistance) {
                         lockMessage = '<span style="color:#ff6666">Too Close to Roche Limit</span>';
                     }
@@ -5055,6 +5131,8 @@
             const upgrade = UPGRADES.find(u => u.id === upgradeId);
             if (!upgrade || gameState.research.purchased.includes(upgradeId)) return;
             if (upgrade.level > gameState.research.commandLevel) return;
+            // Check prerequisite
+            if (upgrade.requires && !gameState.research.purchased.includes(upgrade.requires)) return;
             // Emergency Override requires station to be out of critical/very close zones
             if (upgrade.unlocksFinal && gameState.orbital.distance <= 40) return;
 
@@ -5091,6 +5169,14 @@
             }
 
             // System unlock upgrades
+            if (upgrade.unlocksStasis) {
+                gameState.unlockedSystems.stasis = true;
+                // Show tutorial popup and pause game
+                gameState.paused = true;
+                els.startPause.textContent = 'START';
+                updateSpeedUI();
+                els.stasisTutorialModal.classList.add('active');
+            }
             if (upgrade.unlocksDrones) {
                 gameState.unlockedSystems.drones = true;
             }
@@ -5503,6 +5589,12 @@
 
             // Panel visibility based on unlocked systems
             const unlocked = gameState.unlockedSystems;
+            // Stasis bay panel
+            els.stasisSectionLocked.classList.toggle('locked', unlocked.stasis);      // Hide locked indicator when unlocked
+            els.stasisContentSection.classList.toggle('locked', !unlocked.stasis);    // Show content when unlocked
+            els.stasisSystemStatus.textContent = unlocked.stasis ? 'ONLINE' : 'OFFLINE';
+            els.stasisSystemStatus.classList.toggle('offline', !unlocked.stasis);
+            // Drones panel
             els.dronesPanel.classList.toggle('locked', !unlocked.drones);
             els.dronesStatusText.textContent = unlocked.drones ? 'ONLINE' : 'OFFLINE';
             els.dronesStatusText.classList.toggle('offline', !unlocked.drones);
@@ -5915,6 +6007,17 @@
         els.researchModal.addEventListener('click', (e) => {
             if (e.target === els.researchModal) {
                 els.researchModal.classList.remove('active');
+            }
+        });
+
+        // Stasis tutorial modal
+        els.closeStasisTutorial.addEventListener('click', () => {
+            els.stasisTutorialModal.classList.remove('active');
+        });
+
+        els.stasisTutorialModal.addEventListener('click', (e) => {
+            if (e.target === els.stasisTutorialModal) {
+                els.stasisTutorialModal.classList.remove('active');
             }
         });
 
