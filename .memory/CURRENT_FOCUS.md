@@ -28,7 +28,7 @@
 - Changelog: `CHANGELOG.md`
 - How to start session: "Follow the Session Start Protocol"
 - How to end session: "Do the Session End Protocol"
-- Main game file: `index.html`
+- Main game file: `Ark_Station.html`
 - Design document: `Ark Station — Crisis Management Survival Game Design Document.pdf`
 
 ---
