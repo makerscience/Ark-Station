@@ -3075,7 +3075,7 @@
 
             // Level 3 upgrades (Phase 3 - Solar)
             { id: 'unlock_solar', name: 'Solar Forecast: Activate Monitoring', desc: 'Enables solar activity monitoring array (1 power)', cost: 100, level: 3, unlocksSolar: true },
-            { id: 'unlock_shield', name: 'Solar Shield: Activate Controls', desc: 'Enables solar shield power allocation and status display', cost: 120, level: 3, unlocksShield: true },
+            { id: 'unlock_shield', name: 'Solar Shield: Activate Controls', desc: 'Enables solar shield power allocation and status display', cost: 120, level: 3, unlocksShield: true, requires: 'unlock_solar' },
             { id: 'shield_repair_1', name: 'Solar Shield: +50% Repair Speed', desc: 'Repair Enhancement I - Improves drone repair efficiency for solar shield', cost: 150, level: 3, shieldRepairBoost: 0.5 },
             { id: 'reactor_cap_2', name: 'Reactor Core: +20% Max Integrity', desc: 'Superconducting Flux Confinement Girdle - Stabilizes plasma geometry for cleaner operation', cost: 180, level: 3, system: 'reactor', capBonus: 20 },
             { id: 'stasis_cap_3', name: 'Stasis Bay: +20% Max Integrity', desc: 'Neural Drift Dampener - Neuro-stimulation lattice prevents memory corruption', cost: 220, level: 3, system: 'stasis', capBonus: 20 },
@@ -3090,7 +3090,7 @@
             // Level 5 upgrades (Phase 4 - Orbital unlocks here)
             { id: 'shield_repair_3', name: 'Solar Shield: +50% Repair Speed', desc: 'Repair Enhancement III - Maximizes drone repair efficiency', cost: 250, level: 5, shieldRepairBoost: 0.5 },
             { id: 'unlock_orbital', name: 'Orbital Status: Activate Monitoring', desc: 'Enables orbital position monitoring (1 power)', cost: 100, level: 5, unlocksOrbital: true },
-            { id: 'unlock_thrusters', name: 'Thrusters: Activate + Bay 1', desc: 'Enables thruster controls and unlocks Thruster Bay 1', cost: 120, level: 5, unlocksThrusters: true, unlocksThruster: 1 },
+            { id: 'unlock_thrusters', name: 'Thrusters: Activate + Bay 1', desc: 'Enables thruster controls and unlocks Thruster Bay 1', cost: 120, level: 5, unlocksThrusters: true, unlocksThruster: 1, requires: 'unlock_orbital' },
             { id: 'reactor_cap_4', name: 'Reactor Core: +20% Max Integrity', desc: 'Neutrino-Indexed Reaction Governor - Precision control prevents runaway spikes', cost: 280, level: 5, system: 'reactor', capBonus: 20 },
             { id: 'auth_6', name: 'Command Authorization 6: Unlock Level 6', desc: 'Access Level 6 system upgrades', cost: 300, level: 5, unlocksLevel: 6, isGate: true },
 
@@ -3104,7 +3104,7 @@
             { id: 'auth_8', name: 'Command Authorization 8: Emergency Access', desc: 'Unlock Emergency Override protocol', cost: 400, level: 7, unlocksLevel: 8, isGate: true },
 
             // Level 8 upgrade
-            { id: 'final_command', name: 'Emergency Override: Initiate Escape', desc: 'Execute final command sequence to save the Ark', cost: 500, level: 8, unlocksFinal: true }
+            { id: 'final_command', name: 'Emergency Override: Initiate Escape', desc: 'Execute final command sequence to save the Ark', cost: 500, level: 8, unlocksFinal: true, researchTime: 150 }
         ];
 
         // Stasis grid constants
@@ -4945,26 +4945,38 @@
 
             let title, titleClass, message;
 
-            if (survivors === 0) {
-                title = 'MISSION FAILED';
+            if (gameState.crossedRocheLimit) {
+                title = 'CATASTROPHIC FAILURE';
+                titleClass = 'defeat';
+                message = 'You crossed the Roche Limit. Every pod, every dreamer, every hope was incinerated in seconds as the station fell into the sun.';
+            } else if (survivors === 0) {
+                title = 'ALL SURVIVORS PERISHED';
                 titleClass = 'defeat';
                 message = 'The last pod has gone dark. No one remains to remember Earth.';
-            } else if (percent >= 90) {
-                title = 'MISSION COMPLETE';
+            } else if (percent >= 80) {
+                title = 'OUTSTANDING VICTORY';
                 titleClass = 'victory';
                 message = 'Against all odds, you saved nearly everyone. Humanity will remember this day.';
-            } else if (percent >= 50) {
+            } else if (percent >= 60) {
+                title = 'MAJOR VICTORY';
+                titleClass = 'victory';
+                message = 'The future will be difficult, but the colony will almost certainly survive. The fallen would be proud.';
+            } else if (percent >= 40) {
                 title = 'MISSION COMPLETE';
                 titleClass = 'partial';
-                message = 'The colony will survive, but at a great cost. The losses will haunt you forever.';
+                message = 'The colony will survive, but at great cost. The losses will haunt you forever';
+            } else if (percent >= 20) {
+                title = 'COSTLY VICTORY';
+                titleClass = 'partial';
+                message = 'The colony lives, but the margin is razor-thin. One more crisis could end everything.';
             } else if (percent >= 10) {
                 title = 'PYRRHIC VICTORY';
                 titleClass = 'partial';
-                message = 'A handful survived. Is it enough to rebuild? Only time will tell.';
+                message = 'So few remain. They may yet build a future... or simply delay the end.';
             } else {
                 title = 'NEAR TOTAL LOSS';
                 titleClass = 'defeat';
-                message = 'A few souls cling to life. The Ark is but a tomb now.';
+                message = 'A few souls cling to life. Ark Station will almost certainly be their tomb.';
             }
 
             // Calculate real elapsed time
@@ -5043,6 +5055,7 @@
             gameState.intro.clicks = 0;
             gameState.cryoLog = [];
             gameState.gameOver = false;
+            gameState.crossedRocheLimit = false;
             gameState.victory = false;
             gameState.paused = true;
             gameState.lastDeaths = 0;
@@ -5213,7 +5226,7 @@
             if (upgrade.unlocksFinal && gameState.orbital.distance <= 40) return;
 
             gameState.research.inProgress = upgradeId;
-            gameState.research.timeRemaining = upgrade.cost;
+            gameState.research.timeRemaining = upgrade.researchTime || upgrade.cost;
             els.researchModal.classList.remove('active');
 
             // Unpause if paused
@@ -5992,9 +6005,10 @@
                 showEnding();
             }
 
-            // Check for orbital destruction
+            // Check for orbital destruction (crossed Roche limit)
             if (orbital.distance <= 0 && !gameState.gameOver) {
                 gameState.gameOver = true;
+                gameState.crossedRocheLimit = true;
                 gameState.paused = true;
                 els.startPause.textContent = 'STATION DESTROYED';
                 els.startPause.disabled = true;

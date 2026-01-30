@@ -6,6 +6,33 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Expanded Ending Tiers
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Ending system expanded from 5 tiers to 8 tiers:**
+  - 0% survivors: "ALL SURVIVORS PERISHED" (defeat) - unchanged message
+  - 1-9%: "NEAR TOTAL LOSS" (defeat) - "A few souls cling to life. Ark Station will almost certainly be their tomb."
+  - 10-19%: "PYRRHIC VICTORY" (partial) - "So few remain. They may yet build a future... or simply delay the end."
+  - 20-39%: "COSTLY VICTORY" (partial) - "The colony lives, but the margin is razor-thin. One more crisis could end everything."
+  - 40-59%: "MISSION COMPLETE" (partial) - "The colony will survive, but at great cost. The losses will haunt you forever"
+  - 60-79%: "MAJOR VICTORY" (victory) - "The future will be difficult, but the colony will almost certainly survive. The fallen would be proud."
+  - 80%+: "OUTSTANDING VICTORY" (victory) - unchanged message
+
+#### Added
+- **Catastrophic Failure ending when crossing Roche Limit:**
+  - Triggers immediately when station distance reaches 0 (no emergency button needed)
+  - Title: "CATASTROPHIC FAILURE" (defeat)
+  - Message: "You crossed the Roche Limit. Every pod, every dreamer, every hope was incinerated in seconds as the station fell into the sun."
+  - Takes priority over all other endings
+- **`crossedRocheLimit` flag** in gameState to track Roche limit breach
+
+#### Notes
+- "All Survivors Perished" and "Catastrophic Failure" endings trigger immediately on their conditions
+- Other endings still require the Emergency Override button
+
+---
+
 ### 2026-01-30 - Tutorial Popup System
 **Author:** Claude (AI Assistant)
 
