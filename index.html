@@ -4212,7 +4212,8 @@
             },
             fractionalDeaths: 0,  // Accumulator for sub-integer deaths
             gameSpeed: 1,         // Speed multiplier: 0.5, 1, 2, 4
-            tickInterval: null    // Reference to the game tick interval
+            tickInterval: null,   // Reference to the game tick interval
+            runStartTime: null    // Real-world timestamp when run started
         };
 
         // DOM Elements
@@ -4772,12 +4773,25 @@
                 message = 'A few souls cling to life. The Ark is but a tomb now.';
             }
 
+            // Calculate real elapsed time
+            const elapsedMs = gameState.runStartTime ? Date.now() - gameState.runStartTime : 0;
+            const totalSecs = Math.floor(elapsedMs / 1000);
+            const hours = Math.floor(totalSecs / 3600);
+            const mins = Math.floor((totalSecs % 3600) / 60);
+            const secs = totalSecs % 60;
+
+            let elapsedStr = '';
+            if (hours > 0) elapsedStr += `${hours}h `;
+            if (mins > 0 || hours > 0) elapsedStr += `${mins}m `;
+            elapsedStr += `${secs}s`;
+
             els.endingTitle.textContent = title;
             els.endingTitle.className = 'ending-title ' + titleClass;
             els.endingStats.innerHTML = `
                 <div>Initial Colonists: ${initial.toLocaleString()}</div>
                 <div>Survivors: ${survivors.toLocaleString()}</div>
                 <div>Survival Rate: ${percent}%</div>
+                <div>Time Elapsed: ${elapsedStr.trim()}</div>
             `;
             els.endingMessage.textContent = message;
             els.endingOverlay.classList.add('active');
@@ -4837,6 +4851,7 @@
             gameState.victory = false;
             gameState.paused = true;
             gameState.lastDeaths = 0;
+            gameState.runStartTime = null;
             gameState.deathsPerSecond = 0;
             gameState.fractionalDeaths = 0;
             gameState.gameTime = { minute: 0, hour: 0, day: 17, month: 9, year: 3326 };
@@ -5936,6 +5951,7 @@
             } else {
                 // Reactor online!
                 intro.active = false;
+                gameState.runStartTime = Date.now();
                 els.reactorBtn.classList.add('active');
                 els.reactorBtn.innerHTML = 'REACTOR<br>ONLINE';
                 els.introProgress.textContent = '';

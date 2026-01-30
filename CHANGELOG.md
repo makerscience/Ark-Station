@@ -6,6 +6,14 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-30 - Ending Screen Timer
+**Author:** Claude (AI Assistant)
+
+#### Added
+- **Real-time elapsed timer on ending screen:** Shows actual play time (e.g., "12m 45s") from when reactor comes online to game end
+
+---
+
 ### 2026-01-29 - UI Layout Stabilization & Visual Polish
 **Author:** Claude (AI Assistant)
 
