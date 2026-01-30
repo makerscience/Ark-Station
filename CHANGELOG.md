@@ -6,6 +6,28 @@ This document tracks all changes made to the project.
 
 ## [Unreleased]
 
+### 2026-01-29 - UI Layout Stabilization & Visual Polish
+**Author:** Claude (AI Assistant)
+
+#### Changed
+- **Fixed panel heights to prevent resizing during unlocks:**
+  - Orbital panel: fixed min-height 345px
+  - Solar panel: fixed min-height 375px
+  - Stasis Bay panel: fixed height 736px to match sidebar
+- **Added "System Offline" indicators to Orbital and Solar panels:**
+  - Shows warning icon and "System Offline" text when subsystems are locked
+  - Reduced indicator size (25% smaller) to avoid pushing panels down
+- **Ark Ship visual enlarged 35%:**
+  - Ship container, hull, engine, and glow all scaled proportionally
+  - Stasis canvas resolution updated (194×648) with matching JS drawing code
+  - Survivors info section positioned at bottom of panel using absolute positioning
+- **Added tick marks to all power/integrity bars:**
+  - Vertical lines at 20%, 40%, 60%, and 80% positions
+  - Applied to both integrity bars and ark power bar using CSS gradients
+- **"Life Support Power" text now uses bright green (#00ff88)** to match panel header
+
+---
+
 ### 2026-01-29 - Repair Drone Panel Positioning Fix
 **Author:** Claude (AI Assistant)
 

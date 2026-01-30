@@ -159,7 +159,7 @@
             background: #111118;
             border: 1px solid #00ff8833;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 0px;
             border-radius: 4px;
         }
         .panel.locked {
@@ -205,6 +205,20 @@
             color: #777;
             text-align: center;
         }
+        /* Show locked indicators in orbital/solar section placeholders */
+        .orbital-status-section .section-locked-indicator,
+        .thruster-section-locked .section-locked-indicator,
+        .solar-forecast-section .section-locked-indicator,
+        .shield-section-locked .section-locked-indicator {
+            display: flex;
+        }
+        /* Hide them when parent section gets locked class (meaning content is now showing) */
+        .orbital-status-section.locked .section-locked-indicator,
+        .thruster-section-locked.locked .section-locked-indicator,
+        .solar-forecast-section.locked .section-locked-indicator,
+        .shield-section-locked.locked .section-locked-indicator {
+            display: none;
+        }
         .section-locked-indicator .locked-icon {
             font-size: 24px;
             margin-bottom: 8px;
@@ -241,12 +255,55 @@
             padding: 63px 20px;
         }
         #dronesPanel .drone-visual-container {
-            height: 235px;
+            height: 225px;
             margin-bottom: 0;
         }
         #dronesPanel .target-btn {
             padding: 3px 6px;
             font-size: 10px;
+        }
+        /* Stasis Bay Panel - fixed height to match sidebar */
+        .left-sidebar > .panel {
+            height: 736px;
+            position: relative;
+        }
+        .left-sidebar > .panel .survivors-info-vertical {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        .left-sidebar > .panel .survivors-info-vertical .integrity-bar,
+        .left-sidebar > .panel .survivors-info-vertical .ark-power-bar {
+            width: 100%;
+        }
+        /* Orbital and Solar Panels - fixed heights to prevent resizing during unlocks */
+        #orbitalPanel {
+            min-height: 345px;
+        }
+        #solarPanel {
+            min-height: 375px;
+        }
+        /* Locked section indicators - reduced size for orbital/solar panels */
+        .orbital-status-section .section-locked-indicator,
+        .thruster-section-locked .section-locked-indicator,
+        .solar-forecast-section .section-locked-indicator,
+        .shield-section-locked .section-locked-indicator {
+            padding: 15px 12px;
+        }
+        .orbital-status-section .section-locked-indicator .locked-icon,
+        .thruster-section-locked .section-locked-indicator .locked-icon,
+        .solar-forecast-section .section-locked-indicator .locked-icon,
+        .shield-section-locked .section-locked-indicator .locked-icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        .orbital-status-section .section-locked-indicator .locked-text,
+        .thruster-section-locked .section-locked-indicator .locked-text,
+        .solar-forecast-section .section-locked-indicator .locked-text,
+        .shield-section-locked .section-locked-indicator .locked-text {
+            font-size: 8px;
+            letter-spacing: 1px;
         }
         .panel-title {
             color: #aaa;
@@ -448,7 +505,13 @@
             width: 450px;
             max-width: 100%;
             height: 10px;
-            background: #222;
+            background:
+                linear-gradient(90deg,
+                    transparent 19.5%, #444 19.5%, #444 20.5%, transparent 20.5%,
+                    transparent 39.5%, #444 39.5%, #444 40.5%, transparent 40.5%,
+                    transparent 59.5%, #444 59.5%, #444 60.5%, transparent 60.5%,
+                    transparent 79.5%, #444 79.5%, #444 80.5%, transparent 80.5%),
+                #222;
             border-radius: 4px;
             overflow: hidden;
             position: relative;
@@ -2187,10 +2250,12 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
+            flex: 1;
+            justify-content: space-between;
         }
         .ark-ship-visual {
             position: relative;
-            width: 140px;
+            width: 189px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
@@ -2199,19 +2264,19 @@
         }
         .ark-ship-container {
             position: relative;
-            width: 120px;
-            height: 320px;
+            width: 162px;
+            height: 432px;
         }
         /* Ark Ship structure - ship-shaped outline */
         .ark-ship-hull {
             position: absolute;
-            top: 10px;
+            top: 14px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90px;
-            height: 290px;
+            width: 122px;
+            height: 392px;
             background: linear-gradient(90deg, #0a0a15 0%, #1a1a2e 20%, #1a1a2e 80%, #0a0a15 100%);
-            border-radius: 45px 45px 15px 15px;
+            border-radius: 61px 61px 21px 21px;
             border: 1px solid #3a3a5e;
             overflow: hidden;
             display: flex;
@@ -2224,23 +2289,23 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
-            height: 30px;
+            width: 54px;
+            height: 41px;
             background: linear-gradient(180deg, #4a4a6e 0%, #2a2a4e 100%);
-            border-radius: 20px 20px 0 0;
+            border-radius: 27px 27px 0 0;
         }
         /* Stasis bay canvas container */
         .stasis-canvas-container {
             position: absolute;
-            top: 35px;
+            top: 48px;
             left: 50%;
             transform: translateX(-50%);
-            width: 72px;
-            height: 240px;
+            width: 97px;
+            height: 324px;
         }
         #stasisCanvas {
-            width: 72px;
-            height: 240px;
+            width: 97px;
+            height: 324px;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
         }
@@ -2249,18 +2314,18 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 50px;
-            height: 25px;
+            width: 68px;
+            height: 34px;
             background: linear-gradient(180deg, #2a2a4e 0%, #1a1a2e 100%);
-            border-radius: 0 0 10px 10px;
+            border-radius: 0 0 14px 14px;
         }
         .ark-engine-glow {
             position: absolute;
-            bottom: -8px;
+            bottom: -11px;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
-            height: 20px;
+            width: 54px;
+            height: 27px;
             background: radial-gradient(ellipse at center top, #00aaff44 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.5s;
@@ -2280,28 +2345,16 @@
         .ark-power-bar {
             width: 100%;
             height: 8px;
-            background: #222;
+            background:
+                linear-gradient(90deg,
+                    transparent 19.5%, #444 19.5%, #444 20.5%, transparent 20.5%,
+                    transparent 39.5%, #444 39.5%, #444 40.5%, transparent 40.5%,
+                    transparent 59.5%, #444 59.5%, #444 60.5%, transparent 60.5%,
+                    transparent 79.5%, #444 79.5%, #444 80.5%, transparent 80.5%),
+                #222;
             border-radius: 4px;
             overflow: hidden;
             position: relative;
-        }
-        .ark-power-bar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 20%;
-            width: 1px;
-            height: 100%;
-            background: #444;
-        }
-        .ark-power-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 40%;
-            width: 1px;
-            height: 100%;
-            background: #444;
         }
         .ark-power-fill {
             height: 100%;
@@ -2375,7 +2428,7 @@
         }
         .stasis-title {
             font-size: 12px;
-            color: #aaa;
+            color: #00ff88;
             text-transform: uppercase;
         }
         .stasis-power-controls {
@@ -2457,7 +2510,7 @@
                             <div class="ark-ship-container">
                                 <div class="ark-ship-hull">
                                     <div class="stasis-canvas-container">
-                                        <canvas id="stasisCanvas" width="144" height="480"></canvas>
+                                        <canvas id="stasisCanvas" width="194" height="648"></canvas>
                                     </div>
                                 </div>
                                 <div class="ark-ship-engine"></div>
@@ -4501,8 +4554,8 @@
             // Initialize offscreen canvas for double-buffering (prevents flicker)
             if (!offscreenCanvas) {
                 offscreenCanvas = document.createElement('canvas');
-                offscreenCanvas.width = 144;
-                offscreenCanvas.height = 480;
+                offscreenCanvas.width = 194;
+                offscreenCanvas.height = 648;
                 offscreenCtx = offscreenCanvas.getContext('2d', { alpha: false, willReadFrequently: false });
             }
             if (!stasisCtx) {
@@ -4511,15 +4564,15 @@
 
             const ctx = offscreenCtx;
 
-            // Cell dimensions
-            const bayWidth = 7;
-            const bayHeight = 9;
-            const cellWidth = 3;
+            // Cell dimensions (scaled for 194x648 canvas)
+            const bayWidth = 9;
+            const bayHeight = 12;
+            const cellWidth = 4;
             const cellHeight = 1;
 
             // Clear canvas with background
             ctx.fillStyle = '#0a0a15';
-            ctx.fillRect(0, 0, 144, 480);
+            ctx.fillRect(0, 0, 194, 648);
 
             // Batch rendering by color to minimize fillStyle changes (fixes Chrome flicker)
             // First pass: collect all cell positions by state
@@ -4530,15 +4583,15 @@
             for (let bayRow = 0; bayRow < STASIS_ROWS; bayRow++) {
                 for (let bayCol = 0; bayCol < STASIS_COLS; bayCol++) {
                     const bayIdx = bayRow * STASIS_COLS + bayCol;
-                    const bayX = 2 + bayCol * bayWidth;
-                    const bayY = 2 + bayRow * bayHeight;
+                    const bayX = 3 + bayCol * bayWidth;
+                    const bayY = 3 + bayRow * bayHeight;
 
                     for (let cellRow = 0; cellRow < 5; cellRow++) {
                         for (let cellCol = 0; cellCol < 2; cellCol++) {
                             const cellIdx = cellRow * 2 + cellCol;
                             const colonistIdx = bayIdx * CELLS_PER_BAY + cellIdx;
-                            const cellX = bayX + cellCol * 4;
-                            const cellY = bayY + cellRow * 2;
+                            const cellX = bayX + cellCol * 5;
+                            const cellY = bayY + cellRow * 3;
 
                             if (dyingColonists.has(colonistIdx)) {
                                 dyingCellsArr.push({ x: cellX, y: cellY });
@@ -4570,7 +4623,7 @@
                 ctx.shadowBlur = 20;
                 ctx.fillStyle = '#ff4444';
                 for (let i = 0; i < dyingCellsArr.length; i++) {
-                    ctx.fillRect(dyingCellsArr[i].x - 2, dyingCellsArr[i].y - 2, cellWidth + 4, cellHeight + 4);
+                    ctx.fillRect(dyingCellsArr[i].x - 3, dyingCellsArr[i].y - 3, cellWidth + 6, cellHeight + 6);
                 }
                 ctx.shadowColor = '#ffffff';
                 ctx.shadowBlur = 10;
